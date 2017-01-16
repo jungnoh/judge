@@ -1,0 +1,140 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Problem Information</title>
+    <script
+		  src="https://code.jquery.com/jquery-3.1.1.min.js"
+		  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+		  crossorigin="anonymous">
+    </script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
+    <script src="/static/js/problem.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/problem.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <div class="container" id="div-content">
+      <% if(found!=1) {%>
+        <div class="page-header">
+          <h1>Problem not found</h1>
+        </div>
+      <% } else { %>
+        <!--Storing sample data for copying-->
+        <div class="row">
+          <div class="col-md-3">
+            <div class="list-group" id="div-sidebar" data-spy="affix">
+              <a class="list-group-item active" href="#">Problem <%= id+": "+title %></a>
+              <a class="list-group-item" href="#div-sample-data">Sample Data</a>
+              <% if(hint!=null) {%>
+                <a class="list-group-item" href="#div-hint">Hint</a>
+              <% } %>
+              <% if(source!=null) {%>
+                <a class="list-group-item" href="#div-source">Source</a>
+              <% } %>
+              <a class="list-group-item" href="<%= "/problems/"+id+"/submit" %>">Submit</a>
+              <a class="list-group-item" href="<%= "/problems/"+id+"/stats" %>">Stats</a>
+              <a class="list-group-item" href="#source">Forum</a>
+          	</div>
+      		</div>
+          <div class="col-md-9">
+            <div class="page-header">
+              <h1><%= id+". "+title %></h1>
+            </div>
+            <p id="div-problem-info">
+              <h4>
+                <span class="label label-warning label-limit-info"><%= "Accept Count: "+accept_count+" / Submit Count: "+submit_count+" ("+((accept_count*100)/submit_count).toFixed(0)+"%)" %></span>
+                <span class="label label-success label-limit-info"><%= "Time limit : "+time_limit+" sec" %></span>
+                <span class="label label-success label-limit-info"><%= "Memory limit : "+memory_limit+" MB" %></span>
+              </h4>
+            </p>
+            <div id="div-problem" class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title">Problem</h3>
+              </div>
+              <div class="panel-body">
+                <p id="desc"><%= description %></p>
+              </div>
+            </div>
+            <div id="div-sample-data" class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title">Sample Data</h3>
+              </div>
+              <div class="panel-body">
+                <% for(var i=0;i<sample_input.length;i++) { %>
+                  <h2>Sample Data <%= i+1 %></h2>
+                  <h3>
+                    Input <% i+1 %>
+                    <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-in-"+i %>>
+                      Copy
+                    </button>
+                  </h3>
+                  <div class="well">
+                    <p id=<%= "p-in-"+i %>><%- sample_input[i].trim() %></p>
+                  </div>
+                  <h3>
+                    Output <% i+1 %>
+                    <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-out-"+i %>>
+                      Copy
+                    </button>
+                  </h3>
+                  <div class="well">
+                    <p id=<%= "p-out-"+i %>><%- sample_output[i].trim() %></p>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+            <% if(hint!=null) {%>
+              <div id="div-hint" class="panel panel-info">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Hint</h3>
+                </div>
+                <div class="panel-body">
+                  <p><%- hint %></p>
+                </div>
+              </div>
+            <% } %>
+            <% if(source!=null) { %>
+              <div id="div-source" class="panel panel-info">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Source</h3>
+                </div>
+                <div class="panel-body">
+                  <p><%= source %></p>
+                </div>
+              </div>
+            <% } %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

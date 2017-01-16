@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Problem Information</title>
+    <!--<script type="text/javascript" src="/static/js/tools.js"></script>-->
+    <script
+		  src="https://code.jquery.com/jquery-3.1.1.min.js"
+		  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+		  crossorigin="anonymous">
+    </script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
+    <script src="/static/js/ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/auth/login.css">
+    <script src="/static/js/auth/login.js"></script>
+  </head>
+  <body>
+    <script>
+      <% if(ret===undefined) {}
+      else {%>
+        var returnUrl=<%=JSON.stringify(ret)%>; 
+      <%}%>
+    </script>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <div class="container" id="div-content">
+      <div class="row" id="div-spacer-top">
+      </div>
+    </div>
+    <div class="container" id="div-login-container">
+      <div class="row" id="div-login">
+        <div class="page-header"><h2>Login</h2></div>
+        <div id='div-auth-input'>
+          <div class="input-group">
+            <span class="input-group-addon glyphicon glyphicon-user"></span>
+            <input type="text" class="form-control" placeholder="ID">
+          </div>
+          <div class="input-group">
+            <span class="input-group-addon glyphicon glyphicon-lock"></span>
+            <input type="text" class="form-control" placeholder="Password">
+          </div>
+        </div>
+        <div id="div-auth-commands">
+          <p>
+            <button type="button" id="btn-login" class="btn btn-default btn-md" href="#">Login</button>
+            <button type="button" id="btn-signup" class="btn btn-info btn-md" href="#">Sign Up</button>
+          </p>
+          <p>
+            <button type="button" id="btn-iforgot" class="btn btn-link btn-md" href="#">Forgot ID/Password?</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

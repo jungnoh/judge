@@ -1,0 +1,18 @@
+#div-content {
+  pading-top: 50px;
+}
+#div-spacer-top {
+  height: 10%;
+}
+#div-login-container {
+  width: 30%;
+  text-align: center;
+  vertical-align: top;
+}
+#div-login {
+  text-align: left;
+}
+#div-auth-commands {
+  padding-top: 10px;
+  text-align: center;
+}

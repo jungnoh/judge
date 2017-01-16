@@ -1,0 +1,31 @@
+#div-content {
+  padding-left: 20px;
+  padding-top: 70px; /*navbar 50px+ padding*/
+}
+.limits {
+  font-weight: bold;
+  color: red;
+}
+#div-problem-info {
+  align-content: center;
+}
+#div-sidebar.affix-top {
+    position: static;
+    margin-top:30px;
+    width:228px;
+  }
+
+#div-sidebar.affix {
+  position: fixed;
+  top:70px;
+  width:228px;
+}
+#div-sidebar li.active {
+  	border:0 #eee solid;
+  	border-right-width:4px;
+}
+@media (max-width: 979px) {
+  #sidebar {
+    display: none;
+  }
+}

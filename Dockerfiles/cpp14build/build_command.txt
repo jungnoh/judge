@@ -1,0 +1,1 @@
+g++ source.cpp -o run -std=c++14 -O2 --static --Wall
