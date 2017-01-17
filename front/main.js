@@ -1,14 +1,34 @@
 var judger            = require('./judger/judge');
 var express           = require('express');
 var session           = require('express-session');
-var flash             = require('req-flash');
 var logger            = require('morgan');
+var cookieParser      = require('cookie-parser');
 var bodyParser        = require('body-parser');
 var passport          = require('passport');
 var localStrategy     = require('passport-local').Strategy;
 var sql               = require('./sql');
 var MySQLSessionStore = require('express-mysql-session')(session);
 var app = express();
+
+
+var options = {
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'asdfasdf',
+    database: 'sessions'
+};
+const cookieKey='@ruby';
+app.set('views',__dirname+'/views');
+app.set('view engine','ejs');
+app.use('/static',express.static('public'));
+app.use(logger('dev'));
+//app.use(cookieParser(cookieKey));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text());
+app.use(session({ secret: cookieKey, resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.use(new localStrategy({
         usernameField: 'id',
@@ -26,41 +46,24 @@ passport.use(new localStrategy({
       if(result[0].password === password) {
         return done(null,result);
       }
+
       return done(null, false, { message: 'Password incorrect'});
     });
   }
 ));
 passport.serializeUser(function(user, done) {
-    console.log('serialize');
-    done(null, user);
+    sql.userInfo_Username(user[0].id,function(err,result) {
+      if(err) {
+        console.error(err);
+        return done(err,null);
+      }
+      done(null, {id: user[0].id,nickname: result[0].nickname});
+    });
 });
 passport.deserializeUser(function(user, done) {
-    console.log('deserialize');
     done(null, user);
 });
-var options = {
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'asdfasdf',
-    database: 'sessions'
-};
-app.set('views',__dirname+'/views');
-app.set('view engine','ejs');
-app.use(passport.initialize());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.text());
-app.use('/static',express.static('public'));
-app.use(logger('dev'));
-var sessionStore = new MySQLSessionStore(options);
-app.use(session({
-    key: 'session_cookie_name',
-    secret: 'session_cookie_secret',
-    store: sessionStore,
-    resave: true,
-    saveUninitialized: true
-}));
-app.use(flash());
+
 app.engine('html',require('ejs').renderFile);
 
 var router_main = require('./routes/main')(app);

@@ -22,7 +22,6 @@ function getPoolConnection(callback) {
 module.exports = {
   //function userInfo_Username: Retrieve user information with matching id
   //callback: function(err,result)
-  /*
   userInfo_Username: function(username,callback) {
     pool.getConnection(function(err,conn) {
       if(err) {
@@ -30,9 +29,17 @@ module.exports = {
         callback(err,null);
         return;
       }
-      conn.query('select id, ')
+      conn.query('select * from users where id='+mysql.escape(username),
+      function(err, result) {
+        if(err) {
+          logger.logException(err,2);
+          callback(err,null);
+          return;
+        }
+        callback(null,result);
+      })
     });
-  }, */
+  },
   //function userLogin_Username: Retrieve id/password of matching id
   //callback: function(err,result)
   userLogin_Username: function(username,callback) {

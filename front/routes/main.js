@@ -4,7 +4,8 @@ module.exports = function(app)
 {
     app.get('/',function(req,res){
       res.render('problem',{
-        found: 0
+        found: 0,
+        myid: req.user
       });
     });
     app.get('/about',function(req,res){
@@ -15,19 +16,25 @@ module.exports = function(app)
     });
     app.get('/problems/:id/submit',function(req,res) {
       sql.problemInfo(req.params.id, function(err,result) {
+        console.log(req.session);
+        console.log(req.user);
+        console.log('>');
+        console.log(JSON.stringify(req.user));
         if(err) {
           res.render('error.html');
         }
         else {
           if(result.length!=1) {
             res.render('problem', {
-              found: 0
+              found: 0,
+              myid: req.user
             });
           }
           else {
             var prob=result[0];
             res.render('submit', {
-              id: req.params.id
+              id: req.params.id,
+              myid: req.user
             });
           }
         }
@@ -41,7 +48,8 @@ module.exports = function(app)
         else {
           if(result.length!=1) {
             res.render('problem', {
-              found: 0
+              found: 0,
+              myid: req.user
             });
           }
           else {
@@ -53,7 +61,8 @@ module.exports = function(app)
                 var prob=result[0];
                 res.render('problem-stats', {
                   stats: prob,
-                  id: req.params.id
+                  id: req.params.id,
+                  myid: req.user
                 });
               }
             });
@@ -61,9 +70,15 @@ module.exports = function(app)
         }
       });
     });
+    app.get('/auth/logout', function (req, res){
+      req.session.destroy(function (err) {
+        res.redirect('/'); //Inside a callback… bulletproof!
+      });
+    });
     app.get('/auth/login',function(req,res) {
       res.render('auth/login', {
-        ret: req.query.ret
+        ret: req.query.ret,
+        myid: req.user
       });
     });
     app.post('/auth/login', function(req,res,next) {
@@ -76,7 +91,14 @@ module.exports = function(app)
         if(!user) {
           return res.json({'success': 0,'message': info.message});
         }
-        return res.json({'success': 1});
+        req.login(user, function (err) {
+          if(err) {
+            console.log(err);
+            return res.json({'success': 0,'message': err.message});
+            return;
+          }
+          return res.json({'success': 1});
+        });
       })(req,res,next);
     });
     /*
@@ -98,7 +120,8 @@ module.exports = function(app)
         else {
           if(result.length!=1) {
             res.render('problem', {
-              found: 0
+              found: 0,
+              myid: req.user
             });
           }
           else {
@@ -117,7 +140,8 @@ module.exports = function(app)
               time_limit: prob.time_limit,
               memory_limit: prob.memory_limit,
               sample_input: JSON.parse(prob.sample_input),
-              sample_output: JSON.parse(prob.sample_output)
+              sample_output: JSON.parse(prob.sample_output),
+              myid: req.user
             });
           }
         }
