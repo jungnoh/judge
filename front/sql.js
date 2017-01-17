@@ -7,112 +7,154 @@ var pool = mysql.createPool({
   password : 'asdfasdf',
   database : 'judge'
 });
+//function getPoolConnection: Create and return a connection from mysql pool
+//callback: function(conn,err) //conn null if connection failed
+function getPoolConnection(callback) {
+  pool.getConnection(function(err,conn) {
+    if(err) {
+      logger.logException(err,2);
+      callback(null,err);
+      return;
+    }
+    callback(conn,null);
+  });
+}
 module.exports = {
-  //function userInfo_ID: Retrieve user information with matching id
+  //function userInfo_Username: Retrieve user information with matching id
   //callback: function(err,result)
-  userInfo_ID: function(userID,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,null);
-        return;
-      }
-      conn.query('')
-    });
-  },
+  /*
   userInfo_Username: function(username,callback) {
-
-  },
-  userInfo_Nickname: function(nickname,callback) {
-
-  },
-  problemInfo: function(problem_id,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,[]);
-        return;
-      }
-      conn.query('select * from problems where id='+mysql.escape(problem_id),function(err2,result) {
-        if(err2) {
-          logger.logException(err2,2);
-        }
-        callback(err2,result);
-      });
-    });
-  },
-  problemStats: function(problem_id,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,[]);
-        return;
-      }
-      conn.query('select * from problem_stats where problem_id='+mysql.escape(problem_id),function(err2,result) {
-        if(err2) {
-          logger.logException(err2,2);
-        }
-        callback(err2,result);
-      });
-    });
-  },
-  //function fetchSubmit: Queries and returns information of a submit id
-  //callback: function(err, rows)
-  fetchSubmit: function(submit_id,callback) {
     pool.getConnection(function(err,conn) {
       if(err) {
         logger.logException(err,2);
         callback(err,null);
         return;
       }
-      conn.query('select * from submit_history where submit_id='+mysql.escape(submit_id),function(err2,result) {
-        if(err2) {
-          logger.logException(err2,2);
+      conn.query('select id, ')
+    });
+  }, */
+  //function userLogin_Username: Retrieve id/password of matching id
+  //callback: function(err,result)
+  userLogin_Username: function(username,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
+      conn.query('select id, password from users where id='+mysql.escape(username),
+      function(err, result) {
+        if(err) {
+          logger.logException(err,2);
+          callback(err,null);
+          return;
         }
-        callback(err2,result);
+        callback(null,result);
+      });
+    });
+  },
+  //function userExists_Email: Check if user exists with email
+  //callback: function(err,result)
+  userExists_Email: function(email,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
+      conn.query('select id from users where email='+mysql.escape(email),
+      function(err, result) {
+        if(err) {
+          logger.logException(err,2);
+          callback(err,null);
+          return;
+        }
+        callback(null,result.length==1);
+      });
+    });
+  },
+  //function userExists_Email: Check if user exists with Username
+  //callback: function(err,result)
+  userExists_Username: function(id,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
+      conn.query('select id, password, nickname from users where id='+mysql.escape(username),
+      function(err, result) {
+        if(err) {
+          logger.logException(err,2);
+          callback(err,null);
+          return;
+        }
+        callback(null,result);
+      });
+    });
+  },
+  //function problemInfo: Retrieve problem information
+  //callback: function(err,result)
+  problemInfo: function(problem_id,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
+      conn.query('select * from problems where id='+mysql.escape(problem_id),
+      function(err, result) {
+        if(err) {
+          logger.logException(err,2);
+        }
+        callback(err,result);
+      });
+    });
+  },
+  //function problemStats: Return problem judge result stats
+  //callback: function(err,result)
+  problemStats: function(problem_id,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
+      conn.query('select * from problem_stats where problem_id='+mysql.escape(problem_id),
+      function(err,result) {
+        if(err) {
+          logger.logException(err,2);
+        }
+        callback(err,result);
+      });
+    });
+  },
+  //function fetchSubmit: Submit history of a problem
+  //callback: function(err,result)
+  submitHistory: function(submit_id,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
+      conn.query('select * from submit_history where submit_id='+mysql.escape(submit_id),
+      function(err,result) {
+        if(err) {
+          logger.logException(err,2);
+        }
+        callback(err,result);
       });
     });
   },
   //function updateCompileError: Updates compile error message
   //callback: function(err, rows)
   updateCompileError: function(submit_id,msg,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,null);
-        return;
-      }
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
       conn.query('update submit_history set error_msg='+mysql.escape(msg)+' where submit_id='+mysql.escape(submit_id),
-      function(err2,result) {
-        if(err2) {
-          logger.logException(err2,2);
+      function(err,result) {
+        if(err) {
+          logger.logException(err,2);
         }
-        callback(err2,result);
+        callback(err,result);
       });
     });
   },
   //function updateJudgeResult: Updates judge result
   //callback: function(err, rows)
   updateJudgeResult: function(submit_id,problem_id,result,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,null);
-        return;
-      }
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
       conn.query('update submit_history set result='+mysql.escape(result)+' where submit_id='+mysql.escape(submit_id),
-      function(err2) {
-        if(err2) {
-          logger.logException(err2,2);
-          callback(err2);
+      function(err) {
+        if(err) {
+          logger.logException(err,2);
+          callback(err);
           return;
         }
         var msg=result_codes.intToString(result);
         conn.query('select * from problem_stats where problem_id='+mysql.escape(problem_id),
-        function(err3,result) {
-          if(err3) {
-            logger.logException(err3,2);
-            callback(err3);
+        function(err2,result) {
+          if(err2) {
+            logger.logException(err2,2);
+            callback(err2);
             return;
           }
           if(result.length != 1) {
@@ -121,18 +163,18 @@ module.exports = {
             return;
           }
           conn.query('update problem_stats set '+msg+'_count='+mysql.escape(result[0][msg+'_count']+1)+' where problem_id='+mysql.escape(problem_id),
-          function(err4) {
-            if(err4) {
-              logger.logException(err4,2);
+          function(err3) {
+            if(err3) {
+              logger.logException(err3,2);
             }
-            callback(err4);
+            callback(err3);
           });
         });
       });
     });
   },
-  //function updateJudgeResult: Updates memory, time usage
-  //callback: function(err, rows)
+  //function updateJudgeUsageResult: Updates memory, time usage
+  //callback: function(err,result)
   updateJudgeUsageResult: function(submit_id,time,mem,callback) {
     pool.getConnection(function(err,conn) {
       if(err) {
@@ -153,17 +195,13 @@ module.exports = {
   //function appendSubmitCount: Adds +1 to submit count
   //callback: function(err)
   appendSubmitCount: function(problem_id,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,null);
-        return;
-      }
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
       conn.query('select submit_count from problems where id='+mysql.escape(problem_id),
-      function(err2,result) {
-        if(err2) {
-          logger.logException(err2,2);
-          callback(err2);
+      function(err,result) {
+        if(err) {
+          logger.logException(err,2);
+          callback(err);
         }
         else if(result.length!=1) {
           logger.logMessage('appendSubmitCount: result.length is not 1',2);

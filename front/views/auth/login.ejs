@@ -27,7 +27,7 @@
     <script>
       <% if(ret===undefined) {}
       else {%>
-        var returnUrl=<%=JSON.stringify(ret)%>; 
+        var returnUrl=<%=JSON.stringify(ret)%>;
       <%}%>
     </script>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -56,26 +56,29 @@
     </div>
     <div class="container" id="div-login-container">
       <div class="row" id="div-login">
-        <div class="page-header"><h2>Login</h2></div>
-        <div id='div-auth-input'>
-          <div class="input-group">
-            <span class="input-group-addon glyphicon glyphicon-user"></span>
-            <input type="text" class="form-control" placeholder="ID">
+        <form id="form-login">
+          <!--action="/auth/login" method="post"-->
+          <div class="page-header"><h2>Login</h2></div>
+          <div id='div-auth-input'>
+            <div class="input-group">
+              <span class="input-group-addon glyphicon glyphicon-user"></span>
+              <input type="text" id="input-id" name="id" class="form-control" placeholder="ID">
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon glyphicon glyphicon-lock"></span>
+              <input type="password" id="input-pw" name="password" class="form-control" placeholder="Password">
+            </div>
+            <div id="div-auth-commands">
+              <p>
+                <button type="submit" id="btn-login" class="btn btn-default btn-md">Login</button>
+                <button type="button" id="btn-signup" class="btn btn-info btn-md" href="#">Sign Up</button>
+              </p>
+              <p>
+                <button type="button" id="btn-iforgot" class="btn btn-link btn-md" href="#">Forgot ID/Password?</button>
+              </p>
+            </div>
           </div>
-          <div class="input-group">
-            <span class="input-group-addon glyphicon glyphicon-lock"></span>
-            <input type="text" class="form-control" placeholder="Password">
-          </div>
-        </div>
-        <div id="div-auth-commands">
-          <p>
-            <button type="button" id="btn-login" class="btn btn-default btn-md" href="#">Login</button>
-            <button type="button" id="btn-signup" class="btn btn-info btn-md" href="#">Sign Up</button>
-          </p>
-          <p>
-            <button type="button" id="btn-iforgot" class="btn btn-link btn-md" href="#">Forgot ID/Password?</button>
-          </p>
-        </div>
+        </form>
       </div>
     </div>
   </body>

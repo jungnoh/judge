@@ -1,12 +1,13 @@
 var sql=require('./../sql');
+var passport=require('passport');
 module.exports = function(app)
 {
-     app.get('/',function(req,res){
-        res.render('problem',{
-          title: 'adfdfdsdf'
-        });
-     });
-     app.get('/about',function(req,res){
+    app.get('/',function(req,res){
+      res.render('problem',{
+        found: 0
+      });
+    });
+    app.get('/about',function(req,res){
         res.render('about.html');
     });
     app.get('/users/:id',function(req,res) {
@@ -65,6 +66,30 @@ module.exports = function(app)
         ret: req.query.ret
       });
     });
+    app.post('/auth/login', function(req,res,next) {
+      passport.authenticate('local',
+      { failureFlash: true, passReqToCallback : true },
+      function(err, user, info) {
+        if(err) {
+          return res.json({'success': 0,'message': err.message});
+        }
+        if(!user) {
+          return res.json({'success': 0,'message': info.message});
+        }
+        return res.json({'success': 1});
+      })(req,res,next);
+    });
+    /*
+    app.post('/auth/login', passport.authenticate('local', { failueRedirect: '/auth/login', failureFlash: true, passReqToCallback : true }),
+      function(req, res, next) {
+        console.log('a');
+        //console.log(req);
+        // handle success
+        req.session.save(function(err) {
+          if(err) return next(err);
+          return res.json({id: req.user.id});
+        });
+      }); */
     app.get('/problems/:id',function(req,res) {
       sql.problemInfo(req.params.id, function(err,result) {
         if(err) {
