@@ -8,8 +8,19 @@ var passport          = require('passport');
 var localStrategy     = require('passport-local').Strategy;
 var sql               = require('./sql');
 var MySQLSessionStore = require('express-mysql-session')(session);
+var bcrypt = require('./bcrypt');
 var app = express();
 
+String.prototype.escapeSpecialChars = function() {
+    return this.replace(/\\n/g, "\\n")
+               .replace(/\\'/g, "\\'")
+               .replace(/\\"/g, '\\"')
+               .replace(/\\&/g, "\\&")
+               .replace(/\\r/g, "\\r")
+               .replace(/\\t/g, "\\t")
+               .replace(/\\b/g, "\\b")
+               .replace(/\\f/g, "\\f");
+};
 
 var options = {
     host: 'localhost',
@@ -43,11 +54,14 @@ passport.use(new localStrategy({
       if(result==null||result.length==0) {
         return done(null, false, { message: 'User not found' });
       }
-      if(result[0].password === password) {
-        return done(null,result);
-      }
-
-      return done(null, false, { message: 'Password incorrect'});
+      bcrypt.comparePassword(password,result[0].password,function(err, isPasswordMatch) {
+        if(err) {
+          console.error(err);
+          return done(null, false, { message: 'Server Error' });
+        }
+        if(isPasswordMatch) return done(null,result);
+        else return done(null, false, { message: 'Password incorrect'});
+      });
     });
   }
 ));
@@ -71,4 +85,5 @@ var router_api = require('./routes/api')(app);
 
 var server = app.listen(3000, function() {
   console.log('Express server started on port 3000');
+  //sql.signupUser({id:'admin' , email:'a@a.com' , organization:'' , password:'pwpw' , nickname:'admin' , comment:'hi' }, function(err) {console.log(err)});
 });

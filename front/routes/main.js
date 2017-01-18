@@ -21,6 +21,7 @@ module.exports = function(app)
         console.log('>');
         console.log(JSON.stringify(req.user));
         if(err) {
+          console.log(err);
           res.render('error.html');
         }
         else {
@@ -32,13 +33,26 @@ module.exports = function(app)
           }
           else {
             var prob=result[0];
-            res.render('submit', {
-              id: req.params.id,
-              myid: req.user
-            });
+            sql.getLanguages(function(err2,result) {
+              if(err2) {
+                console.log(err2);
+                res.render('error.html');
+              }
+              res.render('submit', {
+                id: req.params.id,
+                languages: result,
+                myid: req.user,
+              });
+            })
           }
         }
       });
+    });
+    app.post('/problems/:id/submit',function(req,res) {
+      console.log(JSON.stringify(req.body));
+      console.log(req.body.code);
+      console.log(req.body.code.escapeSpecialChars());
+      res.redirect('/');
     });
     app.get('/problems/:id/stats',function(req,res) {
       sql.problemInfo(req.params.id, function(err,result) {

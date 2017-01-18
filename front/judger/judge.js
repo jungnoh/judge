@@ -98,7 +98,10 @@ function judgeProblem(submitID,probInfo,caseNo,culMem,culTime,callback) {
       sql.updateJudgeUsageResult(submitID,time,mem,function(err2) {
         if(err2) {
           console.error(err2);
+          callback();
+          return;
         }
+        //sql.updateUserSolvedCount(,probInfo.id)
         callback();
         return;
       });

@@ -10,9 +10,15 @@
 .div-header {
   padding-left: 20px;
 }
-.div-commands {
-  text-align: center;
-}
 #div-codemetrics {
   padding-top: 20px;
+}
+#select-lang {
+  width: 30%;
+}
+#div-commands {
+  text-align: right;
+}
+#div-lang {
+  text-align: left;
 }

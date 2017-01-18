@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var result_codes = require('./tools/result_codes');
 var logger = require('./tools/logger');
+var bcrypt = require('./bcrypt');
 var pool = mysql.createPool({
   connectionLimit: 30,
   user     : 'root',
@@ -20,15 +21,35 @@ function getPoolConnection(callback) {
   });
 }
 module.exports = {
+  //function signupUser: Create a new user
+  //The following options are MANDATORY: id, email, organization, password, nickname, comment
+  //callback: function(err)
+  //{id: , email: , organization: , password: , nickname: , comment: }
+  signupUser: function(options,callback) {
+    bcrypt.cryptPassword(options.password,function(cryptErr,passHash) {
+      if(cryptErr) {
+        callback(cryptErr);
+        return;
+      }
+      getPoolConnection(function(conn,poolError) {
+        if(!conn) callback(poolError,null);
+        conn.query('INSERT INTO `users` (`id`, `email`, `organization`, `password`, `nickname`, `comment`) VALUES ('+mysql.escape(options.id)+', '+mysql.escape(options.email)+', '+mysql.escape(options.organization)+', '+mysql.escape(passHash)+', '+mysql.escape(options.nickname)+', '+mysql.escape(options.comment)+');',
+        function(err) {
+          if(err) {
+            logger.logException(err,2);
+            callback(err);
+            return;
+          }
+          callback(null);
+        });
+      });
+    });
+  },
   //function userInfo_Username: Retrieve user information with matching id
   //callback: function(err,result)
   userInfo_Username: function(username,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,null);
-        return;
-      }
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) callback(poolError,null);
       conn.query('select * from users where id='+mysql.escape(username),
       function(err, result) {
         if(err) {
@@ -37,7 +58,7 @@ module.exports = {
           return;
         }
         callback(null,result);
-      })
+      });
     });
   },
   //function userLogin_Username: Retrieve id/password of matching id
@@ -203,34 +224,120 @@ module.exports = {
   //callback: function(err)
   appendSubmitCount: function(problem_id,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
-      conn.query('select submit_count from problems where id='+mysql.escape(problem_id),
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      conn.query('update problems set submit_count=submit_count+1 where id='+mysql.escape(problem_id),
+      function(err2,result2) {
+        if(err2) {
+          logger.logException(err2,2);
+          callback(err2);
         }
-        else if(result.length!=1) {
-          logger.logMessage('appendSubmitCount: result.length is not 1',2);
-          callback(0);
-        }
-        else {
-          conn.query('update problems set submit_count='+mysql.escape(result[0].submit_count+1)+' where id='+mysql.escape(problem_id),
+        conn.query('update problem_stats set submit_count=submit_count+1 where problem_id='+mysql.escape(problem_id),
+        function(err3,result3) {
+          if(err3) {
+            logger.logException(err3,2);
+            callback(err3);
+          }
+          callback();
+        });
+      });
+    });
+  },
+  //function updateUserSolvedCount: Check if user has solved a problem before, and +1 to ac_user_count if user hasn't
+  //callback: function(err,result), result is a boolean telling if ac_user_count was updated
+  updateUserSolvedCount: function(userid,problemid,callback) {
+    checkUserSolved(userid,problemid,function(err,result) {
+      if(err) {
+        callback(err,false);
+        return;
+      }
+      if(!result) {
+        getPoolConnection(function(conn,poolError) {
+          if(poolError) {
+            callback(poolError,false);
+          }
+          conn.query('update problem_stats set ac_users_count=ac_users_count+1 where problem_id='+mysql.escape(problemid),
           function(err2,result2) {
             if(err2) {
-              logger.logException(err2,2);
-              callback(err2);
+              callback(err2,false);
             }
-            conn.query('update problem_stats set submit_count='+mysql.escape(result[0].submit_count+1)+' where problem_id='+mysql.escape(problem_id),
+            conn.query('update problems set accept_users=accpet_users+1 where id='+mysql.escape(problemid),
             function(err3,result3) {
               if(err3) {
-                logger.logException(err3,2);
-                callback(err3);
+                callback(err3,false);
               }
-              callback();
+              callback(null,true);
             });
           });
+        });
+      }
+    });
+  },
+  //function getLanguages: returns language list
+  //callback: function(err,result)
+  getLanguages: function(callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      conn.query('select * from `languages`', function(err,result) {
+        if(err) {
+          callback(poolError,null);
+          return;
         }
+        callback(null,result);
+      });
+    })
+  },
+  //function checkUserSolveStatus
+  //callback: function(err,result)
+  //result is 0 if the user hasn't tried yet, 1 if failed, 2 if succeeded
+  checkUserSolveStatus: function(userid,problemid,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      conn.query('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid),
+      function(err,result) {
+        if(err) {
+          console.log(err);
+          callback(err,null);
+          return;
+        }
+        if(result.length==0) {
+          callback(null,0);
+          return;
+        }
+        for(var i=0;i<result.length;i++) {
+          if(result[i].result==10) {
+            callback(null,2);
+            return;
+          }
+        }
+        callback(null,1);
+      });
+    });
+  },
+  //function checkUserSolved: Check if user has solved a problem
+  //callback: function(err,result)
+  checkUserSolved: function(userid,problemid,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      conn.query('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid)+' and `result`=10',
+      function(err,result) {
+        if(err) {
+          console.log(err);
+          callback(err,null);
+          return;
+        }
+        callback(null,result.length>0);
       });
     });
   }

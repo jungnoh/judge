@@ -24,6 +24,7 @@
     <script src="/static/js/submit.js"></script>
   </head>
   <body>
+    <script>var probID = <%=id%></script>
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -53,11 +54,22 @@
         </div>
       </div>
       <div class="row">
-        <div class="div-commands div-header">
-          <button type="button" class="btn btn-default btn-md">Submit</button>
-          <button type="button" class="btn btn-danger btn-md">Clear code</button>
-          <!--<button type="button" class="btn btn-warning btn-md">Retrieve my last submit</button>-->
-        </div>
+        <form id="form-submit">
+          <div class="div-header">
+            <div class="col-md-6" id="div-commands">
+              <button type="button" class="btn btn-default btn-md" id="btn-submit">Submit</button>
+              <button type="button" class="btn btn-danger btn-md">Clear code</button>
+            </div>
+            <div class="col-md-6" id="div-lang">
+              <select id="select-lang" class="form-control">
+                <% for(var i=0;i<languages.length;i++) {%>
+                  <option value="<%= languages[i].codename %>" data-acelang="<%= languages[i].ace_lang %>"><%= languages[i].name %></option>
+                <% } %>
+              </select>
+            </div>
+            <!--<button type="button" class="btn btn-warning btn-md">Retrieve my last submit</button>-->
+          </div>
+        </form>
       </div>
       <div class="row">
         <div class="col-md-12">
