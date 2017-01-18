@@ -25,6 +25,14 @@ module.exports = {
   //The following options are MANDATORY: id, email, organization, password, nickname, comment
   //callback: function(err)
   //{id: , email: , organization: , password: , nickname: , comment: }
+  addSubmit: function(submit_user_id,problem_id,lang) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+    });
+  },
   signupUser: function(options,callback) {
     bcrypt.cryptPassword(options.password,function(cryptErr,passHash) {
       if(cryptErr) {
@@ -32,7 +40,10 @@ module.exports = {
         return;
       }
       getPoolConnection(function(conn,poolError) {
-        if(!conn) callback(poolError,null);
+        if(!conn) {
+          callback(poolError,null);
+          return;
+        }
         conn.query('INSERT INTO `users` (`id`, `email`, `organization`, `password`, `nickname`, `comment`) VALUES ('+mysql.escape(options.id)+', '+mysql.escape(options.email)+', '+mysql.escape(options.organization)+', '+mysql.escape(passHash)+', '+mysql.escape(options.nickname)+', '+mysql.escape(options.comment)+');',
         function(err) {
           if(err) {
@@ -49,7 +60,10 @@ module.exports = {
   //callback: function(err,result)
   userInfo_Username: function(username,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('select * from users where id='+mysql.escape(username),
       function(err, result) {
         if(err) {
@@ -65,7 +79,10 @@ module.exports = {
   //callback: function(err,result)
   userLogin_Username: function(username,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('select id, password from users where id='+mysql.escape(username),
       function(err, result) {
         if(err) {
@@ -81,7 +98,10 @@ module.exports = {
   //callback: function(err,result)
   userExists_Email: function(email,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('select id from users where email='+mysql.escape(email),
       function(err, result) {
         if(err) {
@@ -97,7 +117,10 @@ module.exports = {
   //callback: function(err,result)
   userExists_Username: function(id,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('select id, password, nickname from users where id='+mysql.escape(username),
       function(err, result) {
         if(err) {
@@ -113,7 +136,10 @@ module.exports = {
   //callback: function(err,result)
   problemInfo: function(problem_id,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('select * from problems where id='+mysql.escape(problem_id),
       function(err, result) {
         if(err) {
@@ -127,7 +153,10 @@ module.exports = {
   //callback: function(err,result)
   problemStats: function(problem_id,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('select * from problem_stats where problem_id='+mysql.escape(problem_id),
       function(err,result) {
         if(err) {
@@ -141,7 +170,10 @@ module.exports = {
   //callback: function(err,result)
   submitHistory: function(submit_id,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('select * from submit_history where submit_id='+mysql.escape(submit_id),
       function(err,result) {
         if(err) {
@@ -155,7 +187,10 @@ module.exports = {
   //callback: function(err, rows)
   updateCompileError: function(submit_id,msg,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('update submit_history set error_msg='+mysql.escape(msg)+' where submit_id='+mysql.escape(submit_id),
       function(err,result) {
         if(err) {
@@ -169,7 +204,10 @@ module.exports = {
   //callback: function(err, rows)
   updateJudgeResult: function(submit_id,problem_id,result,callback) {
     getPoolConnection(function(conn,poolError) {
-      if(!conn) callback(poolError,null);
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
       conn.query('update submit_history set result='+mysql.escape(result)+' where submit_id='+mysql.escape(submit_id),
       function(err) {
         if(err) {
@@ -255,8 +293,9 @@ module.exports = {
       }
       if(!result) {
         getPoolConnection(function(conn,poolError) {
-          if(poolError) {
-            callback(poolError,false);
+          if(!conn) {
+            callback(poolError,null);
+            return;
           }
           conn.query('update problem_stats set ac_users_count=ac_users_count+1 where problem_id='+mysql.escape(problemid),
           function(err2,result2) {
