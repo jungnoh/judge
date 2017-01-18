@@ -7,82 +7,111 @@ var compile_info=require('./compile_info');
 var result_codes=require('./../tools/result_codes');
 
 var rootDir = __dirname+'/../..';
-module.exports = {
-  judgeSubmit: function(submitID) {
-    //Fetch submit information
-    sql.fetchSubmit(submitID,function(err,rows) {
-      if(err) {
-        console.error(err.stack);
+//callback: function(err)
+module.exports = function(submitID,userID,callback) {
+  sql.submitHistory(submitID,function(err,rows) {
+    if(err) {
+      console.error(err.stack);
+      callback(err);
+      return;
+    }
+    if(rows.length==0) {
+      console.error('Could not find submit information where ID='+submitID);
+      callback('Could not find submit information');
+      return;
+    }
+    sql.appendSubmitCount(rows[0].problem_id,userID,function(err2) {
+      if(err2) {
+        console.error('Error while appending submit count');
+        console.error(err2);
+        callback(err2);
         return;
       }
-      if(rows.length==0) {
-        console.error('Could not find submit information where ID='+submitID);
-        return;
+      lang=rows[0].lang; problem=rows[0].problem_id;
+      //Prepare judge directory
+      if(!fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID))) {
+        fs.mkdirSync(path.resolve(rootDir+'/judge_tmp/'+submitID),0777);
       }
-      sql.appendSubmitCount(rows[0].problem_id,function(err2) {
-        if(err2) {
-          console.error('Error while appending submit count');
-          console.error(err2);
-          return;
+      fs.chmodSync(path.resolve(rootDir+'/judge_tmp/'+submitID),0777);
+      doCompile(submitID,lang,function(result) {
+        if(result==0) {
+          console.error('Compile failed: '+submitID);
+          sql.updateCompileError(submitID,fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/compile_error.txt')),function(err3,result) {
+            if(err3) {
+              console.error(err3);
+              callback(err3);
+              return;
+            }
+            fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
+            sql.updateJudgeResult(submitID,problem,3,function(err4) {
+              if(err4) {
+                console.error(err4);
+                callback(err4);
+                return;
+              }
+              sql.updateUserJudgeCount(userID,3,function(err5,result) {
+                if(err5) {
+                  console.error(err5);
+                  callback(err5);
+                  return;
+                }
+              });
+            });
+          });
         }
-        lang=rows[0].lang; problem=rows[0].problem_id;
-        //Prepare judge directory
-        if(!fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID))) {
-          fs.mkdirSync(path.resolve(rootDir+'/judge_tmp/'+submitID),0777);
+        else if(result==2) {
+          console.error('Error while starting compile: '+submitID);
+          sql.updateCompileError(submitID,'Error while starting compilation, consult admin',function(err3,result) {
+            if(err3) {
+              console.error(err3);
+              callback(err3);
+              return;
+            }
+            fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
+            sql.updateJudgeResult(submitID,problem,3,function(err4) {
+              if(err4) {
+                console.error(err4);
+                callback(err4);
+                return;
+              }
+              sql.updateUserJudgeCount(userID,9,function(err5,result) {
+                if(err5) {
+                  console.error(err5);
+                  callback(err5);
+                  return;
+                }
+              });
+            });
+          });
         }
-        fs.chmodSync(path.resolve(rootDir+'/judge_tmp/'+submitID),0777);
-        doCompile(submitID,lang,function(result) {
-          if(result==0) {
-            console.error('Compile failed: '+submitID);
-            sql.updateCompileError(submitID,fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/compile_error.txt')),function(err3,result) {
-              if(err3) {
-                console.error(err3);
+        else {
+          sql.problemInfo(rows[0].problem_id,function(err5,result2) {
+            if(err5) {
+              console.error(err5);
+              callback(err5);
+              return;
+            }
+            if(result2.length != 1) {
+              console.error('result2 is not 1');
+              callback('result2 is not 1');
+              return;
+            }
+            judgeProblem(submitID,userID,result2[0],1,0,0,function(err6) {
+              if(err6) {
+                console.error(err6);
+                callback(err6);
+                return;
               }
               fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
-              sql.updateJudgeResult(submitID,problem,3,function(err4) {
-                if(err4) {
-                  console.error(err4);
-                }
-                return;
-              });
+              callback(null);
             });
-          }
-          else if(result==2) {
-            console.error('Error while starting compile: '+submitID);
-            sql.updateCompileError(submitID,'Error while starting compilation, consult admin',function(err3,result) {
-              if(err3) {
-                console.error(err3);
-              }
-              fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
-              sql.updateJudgeResult(submitID,problem,3,function(err4) {
-                if(err4) {
-                  console.error(err4);
-                }
-                return;
-              });
-            });
-          }
-          else {
-            sql.problemInfo(rows[0].problem_id,function(err5,result2) {
-              if(err5) {
-                console.error(err5);
-                return;
-              }
-              if(result2.length != 1) {
-                console.error('result2!=1');
-                return;
-              }
-              judgeProblem(submitID,result2[0],1,0,0,function() {
-                fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
-              });
-            });
-          }
-        });
+          });
+        }
       });
     });
-  }
-};
-function judgeProblem(submitID,probInfo,caseNo,culMem,culTime,callback) {
+  });
+}
+function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
   console.log('['+submitID+'] Testing '+caseNo);
   if(caseNo > probInfo.case_count) {
     console.log('['+submitID+'] Judging Complete without errors');
@@ -91,21 +120,33 @@ function judgeProblem(submitID,probInfo,caseNo,culMem,culTime,callback) {
     sql.updateJudgeResult(submitID,probInfo.id,10,function(err) {
       if(err) {
         console.error(err);
-        callback();
+        callback(err);
         return;
       }
       sql.updateJudgeUsageResult(submitID,time,mem,function(err2) {
         if(err2) {
           console.error(err2);
-          callback();
+          callback(err2);
           return;
         }
         //sql.updateUserSolvedCount(,probInfo.id)
-        callback();
-        return;
+        //function(userid,problemid,callback)
+        sql.updateUserSolvedCount(userID,probInfo.id,function(err3,result) {
+          if(err3) {
+            console.error(err3);
+            callback(err3);
+            return;
+          }
+          sql.updateUserJudgeCount(userID,10,function(err4,result) {
+            if(err4) {
+              console.error(err4);
+            }
+            callback(err4);
+            return;
+          });
+        });
       });
     });
-
   }
   else {
     if(fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'))) {
@@ -130,7 +171,16 @@ function judgeProblem(submitID,probInfo,caseNo,culMem,culTime,callback) {
           function(err) {
             if(err) {
               console.error(err);
+              callback(err);
+              return;
             }
+            sql.updateUserJudgeCount(userID,result_json.res,function(err2,result) {
+              if(err2) {
+                console.error(err2);
+                callback(err2);
+              }
+              return;
+            });
         });
         return;
       }
@@ -146,20 +196,22 @@ function judgeProblem(submitID,probInfo,caseNo,culMem,culTime,callback) {
         sql.updateJudgeResult(submitID,probInfo.id,6,function(err) {
           if(err) {
             console.error(err);
-            callback();
+            callback(err);
             return;
           }
           sql.updateJudgeUsageResult(submitID,time,mem,function(err2) {
             if(err2) {
               console.error(err2);
+              callback(err2);
+              return;
             }
-            callback();
+            callback(null);
             return;
           });
         });
       }
       //Result correct, moving to next case
-      else judgeProblem(submitID,probInfo,caseNo+1,culMem,culTime,callback);
+      else judgeProblem(submitID,userID,probInfo,caseNo+1,culMem,culTime,callback);
     });
   }
 }
@@ -204,6 +256,7 @@ function normalJudge(problemID, caseNo, result) {
   return 1;
 }
 function doCompile(submitID,lang,callback) {
+  console.log('['+submitID+'] Compiling ');
   if(!compile_info.validLanguage(lang)) {
     callback(2);
   }

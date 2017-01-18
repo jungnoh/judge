@@ -175,7 +175,7 @@ module.exports = {
       });
     });
   },
-  //function fetchSubmit: Submit history of a problem
+  //function submitHistory: Submit history of a problem
   //callback: function(err,result)
   submitHistory: function(submit_id,callback) {
     getPoolConnection(function(conn,poolError) {
@@ -269,7 +269,7 @@ module.exports = {
   },
   //function appendSubmitCount: Adds +1 to submit count
   //callback: function(err)
-  appendSubmitCount: function(problem_id,callback) {
+  appendSubmitCount: function(problem_id,user_id,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
@@ -287,31 +287,59 @@ module.exports = {
             logger.logException(err3,2);
             callback(err3);
           }
-          callback();
+          conn.query('update users set submit_count=submit_count+1 where user_id='+mysql.escape(user_id),
+          function(err4, result4) {
+            if(err4) {
+              logger.logException(err4,2);
+            }
+            callback(err4);
+          })
         });
+      });
+    });
+  },
+  //function updateUserJudgeCount: Update User judge result count
+  //callback: function(err,success)
+  updateUserJudgeCount: function(userid,result,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,false);
+        return;
+      }
+      var msg=result_codes.intToString(result);
+      conn.query('update users set '+msg+'_count='+msg+'_count+1 where user_id='+mysql.escape(userid),
+      function(err3) {
+        if(err3) {
+          logger.logException(err3,2);
+          callback(null,false);
+          return;
+        }
+        callback(null,true);
       });
     });
   },
   //function updateUserSolvedCount: Check if user has solved a problem before, and +1 to ac_user_count if user hasn't
   //callback: function(err,result), result is a boolean telling if ac_user_count was updated
   updateUserSolvedCount: function(userid,problemid,callback) {
-    checkUserSolved(userid,problemid,function(err,result) {
-      if(err) {
-        callback(err,false);
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
         return;
       }
-      if(!result) {
-        getPoolConnection(function(conn,poolError) {
-          if(!conn) {
-            callback(poolError,null);
-            return;
-          }
+      conn.query('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid)+' and `result`=10',
+      function(err,result) {
+        if(err) {
+          console.log(err);
+          callback(err,null);
+          return;
+        }
+        if(result.length<2) {
           conn.query('update problem_stats set ac_users_count=ac_users_count+1 where problem_id='+mysql.escape(problemid),
           function(err2,result2) {
             if(err2) {
               callback(err2,false);
             }
-            conn.query('update problems set accept_users=accpet_users+1 where id='+mysql.escape(problemid),
+            conn.query('update problems set accept_users=accept_users+1 where id='+mysql.escape(problemid),
             function(err3,result3) {
               if(err3) {
                 callback(err3,false);
@@ -319,8 +347,8 @@ module.exports = {
               callback(null,true);
             });
           });
-        });
-      }
+        }
+      });
     });
   },
   //function getLanguages: returns language list
