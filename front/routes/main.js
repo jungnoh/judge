@@ -50,10 +50,20 @@ module.exports = function(app)
       });
     });
     app.post('/problems/:id/submit',function(req,res) {
-      console.log(JSON.stringify(req.body));
-      console.log(req.body.code);
-      console.log(req.body.code.escapeSpecialChars());
-      res.json('{success: 0}');
+      console.log(JSON.stringify(req.user));
+      //console.log(req.body.code.escapeSpecialChars());
+      sql.addSubmit(req.user.id,req.params.id,req.body.lang, function(err,result) {
+        if(err) {
+          console.log(err);
+          res.json('{success: 0}');
+          return;
+        }
+        fs.writeFile('./../usercode/'+result, req.body.code.escapeSpecialChars(), function(err) {
+          if(err) throw err;
+          console.log('File write completed');
+          res.json('{success: 1}');
+        });
+      });
     });
     app.get('/problems/:id/stats',function(req,res) {
       sql.problemInfo(req.params.id, function(err,result) {
@@ -87,7 +97,7 @@ module.exports = function(app)
     });
     app.get('/auth/logout', function (req, res){
       req.session.destroy(function (err) {
-        res.redirect('/'); //Inside a callback… bulletproof!
+        res.redirect('/');
       });
     });
     app.get('/auth/login',function(req,res) {

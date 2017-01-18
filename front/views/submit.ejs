@@ -48,40 +48,47 @@
       </div>
     </nav>
     <div class="container" id="div-content">
-      <div class="row">
-        <div class="div-header div-header">
-          <h1 id="title"><%= "Submit for Problem "+id %></h1>
+      <% if(typeof myid=="undefined" || myid==null) {%>
+        <div class="row">
+            <div class="page-header"><h2>You must be logged in to submit.</h2></div>
+            <a class="btn btn-default" href="/auth/login">Login</a>
         </div>
-      </div>
-      <div class="row">
-        <form id="form-submit">
-          <div class="div-header">
-            <div class="col-md-6" id="div-commands">
-              <button type="button" class="btn btn-default btn-md" id="btn-submit">Submit</button>
-              <button type="button" class="btn btn-danger btn-md">Clear code</button>
-            </div>
-            <div class="col-md-6" id="div-lang">
-              <select id="select-lang" class="form-control">
-                <% for(var i=0;i<languages.length;i++) {%>
-                  <option value="<%= languages[i].codename %>" data-acelang="<%= languages[i].ace_lang %>"><%= languages[i].name %></option>
-                <% } %>
-              </select>
-            </div>
-            <!--<button type="button" class="btn btn-warning btn-md">Retrieve my last submit</button>-->
+      <% } else { %>
+        <div class="row">
+          <div class="div-header div-header">
+            <h1 id="title"><%= "Submit for Problem "+id %></h1>
           </div>
-        </form>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div id="div-editor"></div>
         </div>
-      </div>
-      <div class="row" id="div-codemetrics">
-        <div class="col-lg-12">
-          <span id="cursor-loc" class="label label-default">Line 1, Column 1</span>
-          <span id="code-count" class="label label-default">0 characters, 1 lines of code</span>
+        <div class="row">
+          <form id="form-submit">
+            <div class="div-header">
+              <div class="col-md-6" id="div-commands">
+                <button type="button" class="btn btn-default btn-md" id="btn-submit">Submit</button>
+                <button type="button" class="btn btn-danger btn-md">Clear code</button>
+              </div>
+              <div class="col-md-6" id="div-lang">
+                <select id="select-lang" class="form-control">
+                  <% for(var i=0;i<languages.length;i++) {%>
+                    <option value="<%= languages[i].codename %>" data-acelang="<%= languages[i].ace_lang %>"><%= languages[i].name %></option>
+                  <% } %>
+                </select>
+              </div>
+              <!--<button type="button" class="btn btn-warning btn-md">Retrieve my last submit</button>-->
+            </div>
+          </form>
         </div>
-      </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="div-editor"></div>
+          </div>
+        </div>
+        <div class="row" id="div-codemetrics">
+          <div class="col-lg-12">
+            <span id="cursor-loc" class="label label-default">Line 1, Column 1</span>
+            <span id="code-count" class="label label-default">0 characters, 1 lines of code</span>
+          </div>
+        </div>
+      <% } %>
     </div>
   </body>
 </html>

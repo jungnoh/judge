@@ -24,7 +24,7 @@ window.onload = function() {
         alert(data.message);
       }
       else {
-        window.location.href = '/';
+        window.location.href = document.referrer;
       }
     }).fail(function(data) {
       alert('login failed, consult admin');

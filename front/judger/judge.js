@@ -9,7 +9,6 @@ var result_codes=require('./../tools/result_codes');
 var rootDir = __dirname+'/../..';
 module.exports = {
   judgeSubmit: function(submitID) {
-    var lang='cpp',problem=1;
     //Fetch submit information
     sql.fetchSubmit(submitID,function(err,rows) {
       if(err) {

@@ -1,6 +1,6 @@
 #div-content {
   padding-left: 20px;
-  padding-top: 70px; /*navbar 50px+ padding*/
+  padding-top: 70px;
 }
 .limits {
   font-weight: bold;
@@ -24,8 +24,8 @@
   	border:0 #eee solid;
   	border-right-width:4px;
 }
-@media (max-width: 979px) {
-  #sidebar {
+@media screen and (max-width: 979px) {
+  #div-sidebar {
     display: none;
   }
 }

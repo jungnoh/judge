@@ -71,7 +71,7 @@ passport.serializeUser(function(user, done) {
         console.error(err);
         return done(err,null);
       }
-      done(null, {id: user[0].user_id, username: user[0].id,nickname: result[0].nickname});
+      done(null, {id: result[0].user_id, username: user[0].id,nickname: result[0].nickname});
     });
 });
 passport.deserializeUser(function(user, done) {
@@ -85,6 +85,6 @@ var router_api = require('./routes/api')(app);
 
 var server = app.listen(3000, function() {
   console.log('Express server started on port 3000');
-  sql.addSubmit();
+  //sql.addSubmit();
   //sql.signupUser({id:'admin' , email:'a@a.com' , organization:'' , password:'pwpw' , nickname:'admin' , comment:'hi' }, function(err) {console.log(err)});
 });

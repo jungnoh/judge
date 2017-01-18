@@ -25,13 +25,13 @@ module.exports = {
   //The following options are MANDATORY: id, email, organization, password, nickname, comment
   //callback: function(err)
   //{id: , email: , organization: , password: , nickname: , comment: }
-  addSubmit: function(submit_user_id,problem_id,lang) {
+  addSubmit: function(submit_user_id,problem_id,lang,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
         return;
       }
-      conn.query('INSERT INTO `submit_history` (`submit_user_id`, `problem_id`, `lang`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.esacpe(id)+')',
+      conn.query('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(lang)+',\'\')',
       function(err,result) {
         if(err) {
           logger.logException(err,2);
