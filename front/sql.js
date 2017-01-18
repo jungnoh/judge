@@ -31,7 +31,7 @@ module.exports = {
         callback(poolError,null);
         return;
       }
-      conn.query('INSERT INTO `submit_history` (`submit_user_id`, `problem_id`, `lang`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(sumbit_user_id)+','+mysql.esacpe(id)+')',
+      conn.query('INSERT INTO `submit_history` (`submit_user_id`, `problem_id`, `lang`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.esacpe(id)+')',
       function(err,result) {
         if(err) {
           logger.logException(err,2);
