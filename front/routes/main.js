@@ -1,5 +1,6 @@
 var sql=require('./../sql');
 var passport=require('passport');
+var fs=require('fs');
 module.exports = function(app)
 {
     app.get('/',function(req,res){
@@ -52,7 +53,7 @@ module.exports = function(app)
       console.log(JSON.stringify(req.body));
       console.log(req.body.code);
       console.log(req.body.code.escapeSpecialChars());
-      res.redirect('/');
+      res.json('{success: 0}');
     });
     app.get('/problems/:id/stats',function(req,res) {
       sql.problemInfo(req.params.id, function(err,result) {
@@ -115,17 +116,6 @@ module.exports = function(app)
         });
       })(req,res,next);
     });
-    /*
-    app.post('/auth/login', passport.authenticate('local', { failueRedirect: '/auth/login', failureFlash: true, passReqToCallback : true }),
-      function(req, res, next) {
-        console.log('a');
-        //console.log(req);
-        // handle success
-        req.session.save(function(err) {
-          if(err) return next(err);
-          return res.json({id: req.user.id});
-        });
-      }); */
     app.get('/problems/:id',function(req,res) {
       sql.problemInfo(req.params.id, function(err,result) {
         if(err) {
