@@ -50,9 +50,37 @@ module.exports = function(app)
         }
       });
     });
+    app.get('/problems/:id/result', function(req,res) {
+      sql.problemInfo(req.params.id, function(err,result) {
+        if(err) {
+          res.render('error.html');
+        }
+        if(result.length===0) {
+          res.render('problem', {
+            found: 0,
+            myid: req.user
+          });
+        } else {
+          var page=1;
+          if(req.query.page!==undefined) page=req.query.page;
+          sql.submitHistory(req.params.id, {user_id: req.user===undefined?null:req.user.id, limit:25, offset:25*(page-1)},function(err2,result) {
+            if(err2) {
+              console.log(err2);
+              res.render('error.html');
+              return;
+            }
+            res.render('judge-result', {
+              myid: req.user,
+              id: req.params.id,
+              submits: result
+            })
+          });
+        }
+      });
+    });
     app.post('/problems/:id/submit',function(req,res) {
       //console.log(req.body.code.escapeSpecialChars());
-      sql.addSubmit(req.user.id,req.params.id,req.body.lang, function(err,result) {
+      sql.addSubmit(req.user.id,req.user.username,req.params.id,req.body.lang, function(err,result) {
         if(err) {
           console.log(err);
           res.json('{success: 0}');
@@ -64,8 +92,8 @@ module.exports = function(app)
           judge(result,req.user.id,function(err2) {
             console.error(err2);
           });
-          res.json('{success: 1}');
         });
+        res.json('{success: 1}');
       });
     });
     app.get('/problems/:id/stats',function(req,res) {

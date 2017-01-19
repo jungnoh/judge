@@ -15,9 +15,9 @@ function getPoolConnection(callback) {
     if(err) {
       logger.logException(err,2);
       callback(null,err);
-      return;
     }
-    callback(conn,null);
+    else callback(conn,null);
+    conn.release();
   });
 }
 module.exports = {
@@ -25,13 +25,13 @@ module.exports = {
   //The following options are MANDATORY: id, email, organization, password, nickname, comment
   //callback: function(err)
   //{id: , email: , organization: , password: , nickname: , comment: }
-  addSubmit: function(submit_user_id,problem_id,lang,callback) {
+  addSubmit: function(submit_user_id,submit_user_name,problem_id,lang,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
         return;
       }
-      conn.query('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(lang)+',\'\')',
+      conn.query('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `submit_user_name`,`lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(submit_user_name)+','+mysql.escape(lang)+',\'\')',
       function(err,result) {
         if(err) {
           logger.logException(err,2);
@@ -175,15 +175,58 @@ module.exports = {
       });
     });
   },
-  //function submitHistory: Submit history of a problem
-  //callback: function(err,result)
-  submitHistory: function(submit_id,callback) {
+  submitCount: function(problem_id,options,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
         return;
       }
-      conn.query('select * from submit_history where submit_id='+mysql.escape(submit_id),
+      var query='select count(*) from submit_history where problem_id='+mysql.escape(problem_id);
+      if(options!==null) {
+        if(options.user_id!==undefined) {
+          query+=' and submit_user_id='+mysql.escape(options.user_id);
+        }
+        if(options.lang!==undefined) {
+          query+=' and lang='+mysql.escape(options.lang);
+        }
+      }
+      conn.query(query,
+      function(err,result) {
+        if(err) {
+          logger.logException(err,2);
+        }
+        callback(err,result[0]['count(*)']);
+      });
+    });
+  },
+  //function submitHistory: Submit history of a problem
+  //callback: function(err,result)
+  submitHistory: function(problem_id,options,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      var query='select * from submit_history where problem_id='+mysql.escape(problem_id);
+      if(options!==null) {
+        if(options.user_id!==undefined) {
+          query+=' and submit_user_id='+mysql.escape(options.user_id);
+        }
+        if(options.lang!==undefined) {
+          query+=' and lang='+mysql.escape(options.lang);
+        }
+      }
+      query+=' order by submit_id desc';
+      if(options!==null) {
+        if(options.limit!==undefined) {
+          query+=' limit '+options.limit;
+        }
+        if(options.offset!==undefined) {
+          query+=' offset '+options.offset;
+        }
+      }
+      console.log(query);
+      conn.query(query,
       function(err,result) {
         if(err) {
           logger.logException(err,2);
@@ -191,6 +234,22 @@ module.exports = {
         callback(err,result);
       });
     });
+  },
+  submitInfo: function(submit_id,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      conn.query('select * from submit_history where submit_id='+mysql.escape(submit_id), function(err,result) {
+        if(err) {
+          console.error(err);
+          callback(err,null);
+          return;
+        }
+        callback(null,result);
+      });
+    })
   },
   //function updateCompileError: Updates compile error message
   //callback: function(err, rows)

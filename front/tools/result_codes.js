@@ -18,11 +18,11 @@ var valueString=['Queued','Compiling','Judging','Compile Error','Runtime Error',
 
 module.exports = {
   intToString: function(value) {
-    if(val<0||val>10) return null;
+    if(value<0||value>10) return null;
     return valueInt[value];
   },
   intToFullString: function(value) {
-    if(val<0||val>10) return null;
+    if(value<0||value>10) return null;
     return valueString[value];
   },
   stringToInt: function(value) {

@@ -24,7 +24,6 @@
     <script src="/static/js/problem-stats.js"></script>
   </head>
   <body>
-    <script>var stats=<%-JSON.stringify(stats)%>;</script>
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -56,69 +55,33 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4">
-          <table class="table">
-            <thead>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Problem #</th>
+              <th>Name</th>
+              <th>Language</th>
+              <th>Used Time</th>
+              <th>Used Memory</th>
+              <th>Result</th>
+              <th>Submit Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(var i=0;i<submits.length;i++) { %>
               <tr>
-                <th>Result</th>
-                <th>#</th>
+                <td><%=submits[i].submit_id%></td>
+                <td><%=submits[i].problem_id%></td>
+                <td><%=submits[i].submit_user_name%></td>
+                <td><%=submits[i].lang%></td>
+                <td><%=submits[i].used_time%></td>
+                <td><%=submits[i].used_memory%></td>
+                <td><%=submits[i].result%></td>
+                <td><%=submits[i].submit_time%></td>
               </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Total Submissions</td>
-                <td><%=stats.submit_count%></td>
-              </tr>
-              <tr>
-                <td>Accepted</td>
-                <td><%=stats.ac_count%></td>
-              </tr>
-              <tr>
-                <td>Accepted Users</td>
-                <td><%=stats.ac_users_count%></td>
-              </tr>
-              <% if(stats.wa_count>0) { %>
-              <tr>
-                <td>Wrong Answer</td>
-                <td><%=stats.wa_count%></td>
-              </tr>
-              <% } %>
-              <% if(stats.ce_count>0) { %>
-              <tr>
-                <td>Compile Error</td>
-                <td><%=stats.ce_count%></td>
-              </tr>
-              <% } %>
-              <% if(stats.re_count>0) { %>
-              <tr>
-                <td>Runtime Error</td>
-                <td><%=stats.re_count%></td>
-              </tr>
-              <% } %>
-              <% if(stats.tle_count>0) { %>
-              <tr>
-                <td>Time Limit Exceeded</td>
-                <td><%=stats.tle_count%></td>
-              </tr>
-              <% } %>
-              <% if(stats.me_count>0) { %>
-              <tr>
-                <td>Memory Limit Exceeded</td>
-                <td><%=stats.me_count%></td>
-              </tr>
-              <% } %>
-              <% if(stats.ole_count>0) { %>
-              <tr>
-                <td>Output Limit Exceeded</td>
-                <td><%=stats.ole_count%></td>
-              </tr>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-        <div class="col-md-8">
-          <div id="div-stat-donutchart" class="chart"></div>
-        </div>
+            <% } %>
+          </tbody>
       </div>
     </div>
   </body>

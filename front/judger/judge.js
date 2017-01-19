@@ -5,10 +5,10 @@ var sql=require('./../sql');
 var compile_info=require('./compile_info');
 var result_codes=require('./../tools/result_codes');
 
-var rootDir = path.resolve(__dirname,'/../..');
+var rootDir = path.resolve(__dirname,'./../..');
 //callback: function(err)
 module.exports = function(submitID,userID,callback) {
-  sql.submitHistory(submitID,function(err,rows) {
+  sql.submitInfo(submitID,function(err,rows) {
     if(err) {
       console.error(err.stack);
       callback(err);
@@ -28,20 +28,20 @@ module.exports = function(submitID,userID,callback) {
       }
       lang=rows[0].lang; problem=rows[0].problem_id;
       //Prepare judge directory
-      if(!fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID))) {
-        fs.mkdirSync(path.resolve(rootDir+'/judge_tmp/'+submitID),'0777');
+      if(!fs.existsSync(path.resolve(rootDir,'./judge_tmp/'+submitID))) {
+        fs.mkdirSync(path.resolve(rootDir,'./judge_tmp/'+submitID),'0777');
       }
-      fs.chmodSync(path.resolve(rootDir+'/judge_tmp/'+submitID),'0777');
+      fs.chmodSync(path.resolve(rootDir,'./judge_tmp/'+submitID),'0777');
       doCompile(submitID,lang,function(result) {
         if(result===0) {
           console.error('Compile failed: '+submitID);
-          sql.updateCompileError(submitID,fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/compile_error.txt')),function(err3,result) {
+          sql.updateCompileError(submitID,fs.readFileSync(path.resolve(rootDir,'./judge_tmp/'+submitID+'/compile_error.txt')),function(err3,result) {
             if(err3) {
               console.error(err3);
               callback(err3);
               return;
             }
-            fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
+            fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
             sql.updateJudgeResult(submitID,problem,3,function(err4) {
               if(err4) {
                 console.error(err4);
@@ -66,7 +66,7 @@ module.exports = function(submitID,userID,callback) {
               callback(err3);
               return;
             }
-            fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
+            fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
             sql.updateJudgeResult(submitID,problem,3,function(err4) {
               if(err4) {
                 console.error(err4);
@@ -101,7 +101,7 @@ module.exports = function(submitID,userID,callback) {
                 callback(err6);
                 return;
               }
-              fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
+              fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
               callback(null);
               return;
             });
@@ -149,10 +149,10 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
     });
   }
   else {
-    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'));
-    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/out.txt'));
-    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/error.txt'));
-    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/result.json'));
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/data.in'));
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/out.txt'));
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/error.txt'));
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/result.json'));
     fs.copySync(path.resolve(rootDir+'/cases/'+probInfo.id+'/'+caseNo+'.in'),path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'));
     cprocess.execFile('docker',compile_info.getRunArgs('cpp',submitID,probInfo.memory_limit,probInfo.time_limit), function(error,stdout,stderr) {
       console.log(stdout);
@@ -181,7 +181,7 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
       //Code ended properly, update memory, time usage
       culMem += result_json.mem; culTime += result_json.time;
       //Check if answer is correct
-      var res=normalJudge(probInfo.id,caseNo,fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/out.txt'),'utf8'));
+      var res=normalJudge(probInfo.id,caseNo,fs.readFileSync(path.resolve(rootDir,'./judge_tmp/'+submitID+'/out.txt'),'utf8'));
       if(res===0) {
         console.log('Input '+caseNo+' wrong');
         //Result wrong, Set as WA
@@ -214,7 +214,7 @@ function specialJudge(problemID, caseNo, result) {
 } */
 //returns 0 for incorrect, 1 for correct
 function normalJudge(problemID, caseNo, result) {
-  var ansLines=splitText(fs.readFileSync(path.resolve(rootDir+'/cases/'+problemID+'/'+caseNo+'.out'),'utf8'));
+  var ansLines=splitText(fs.readFileSync(path.resolve(rootDir,'./cases/'+problemID+'/'+caseNo+'.out'),'utf8'));
   var inpLines=splitText(result);
   var ansSorted=[],inpSorted=[],i=0,st='';
   for(i=0;i<ansLines.length;i++) {

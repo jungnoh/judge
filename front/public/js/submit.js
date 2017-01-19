@@ -16,10 +16,7 @@ window.onload = function() {
   });
   $('#btn-submit').click(function(e) {
     e.preventDefault();
-    var newForm = $('<form>', {
-      'action': '/problems/'+probID+'/submit',
-      'method': 'POST'
-    }).append($('<input>', {
+    var newForm = $('<form>', {}).append($('<input>', {
       'name' : 'code',
       'value': editor.getValue(),
       'type' : 'hidden'
@@ -29,6 +26,20 @@ window.onload = function() {
       'type' : 'hidden'
     }));
     //jQuery('#myform').append(newForm);
-    newForm.submit();
+    $.ajax({
+       url: '/problems/'+probID+'/submit',
+       type: 'POST',
+       data: $(newForm).serialize()
+    }).done(function(data) {
+      if(data.success===0) {
+        alert(JSON.stringify(data));
+        alert(data.message);
+      }
+      else {
+        window.location.href = '/problems/'+probID+'/result';
+      }
+    }).fail(function(data) {
+      alert('login failed, consult admin');
+    });
   });
 };

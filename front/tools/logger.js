@@ -5,7 +5,9 @@ module.exports = {
     else console.log('[ERR ]'+msg);
   },
   logException: function(err,errorLevel) {
-    logMessage(err,errorLevel);
-    console.log(new Error().stack);
+    if(errorLevel===0) console.log('[LOG ]'+err.message);
+    else if(errorLevel===1) console.log('[WARN]'+err.message);
+    else console.log('[ERR ]'+err.message);
+    console.error(JSON.stringify(err));
   }
 }

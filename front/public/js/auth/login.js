@@ -7,11 +7,11 @@ window.onload = function() {
   };
   $('#form-login').on('submit', function(e) {
     e.preventDefault();
-    if(document.getElementById('input-id').value=='') {
+    if(document.getElementById('input-id').value==='') {
       notifyIDEmpty();
       return;
     }
-    if(document.getElementById('input-pw').value=='') {
+    if(document.getElementById('input-pw').value==='') {
       notifyPWEmpty();
       return;
     }
@@ -20,7 +20,7 @@ window.onload = function() {
        url: "/auth/login",
        data: $('#form-login').serialize(),
     }).done(function(data) {
-      if(data.success==0) {
+      if(data.success===0) {
         alert(data.message);
       }
       else {
