@@ -1,4 +1,3 @@
-var fs=require('fs');
 var cprocess = require('child_process');
 var fs=require('fs-extra');
 var path=require('path');
@@ -6,7 +5,7 @@ var sql=require('./../sql');
 var compile_info=require('./compile_info');
 var result_codes=require('./../tools/result_codes');
 
-var rootDir = __dirname+'/../..';
+var rootDir = path.resolve(__dirname+'/../..');
 //callback: function(err)
 module.exports = function(submitID,userID,callback) {
   sql.submitHistory(submitID,function(err,rows) {
@@ -15,7 +14,7 @@ module.exports = function(submitID,userID,callback) {
       callback(err);
       return;
     }
-    if(rows.length==0) {
+    if(rows.length===0) {
       console.error('Could not find submit information where ID='+submitID);
       callback('Could not find submit information');
       return;
@@ -59,7 +58,7 @@ module.exports = function(submitID,userID,callback) {
             });
           });
         }
-        else if(result==2) {
+        else if(result===2) {
           console.error('Error while starting compile: '+submitID);
           sql.updateCompileError(submitID,'Error while starting compilation, consult admin',function(err3,result) {
             if(err3) {
@@ -91,7 +90,7 @@ module.exports = function(submitID,userID,callback) {
               callback(err5);
               return;
             }
-            if(result2.length != 1) {
+            if(result2.length !== 1) {
               console.error('result2 is not 1');
               callback('result2 is not 1');
               return;
@@ -104,6 +103,7 @@ module.exports = function(submitID,userID,callback) {
               }
               fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID));
               callback(null);
+              return;
             });
           });
         }
@@ -158,7 +158,7 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
       console.log(stdout);
       console.error(stderr);
       var result_json=JSON.parse(fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/result.json'),'utf8'));
-      if(result_json.res!=10) {
+      if(result_json.res!==10) {
         sql.updateJudgeResult(submitID,probInfo.id,result_json.res,
           function(err) {
             if(err) {
@@ -170,7 +170,9 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
               if(err2) {
                 console.error(err2);
                 callback(err2);
+                return;
               }
+              callback();
               return;
             });
         });
@@ -180,7 +182,7 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
       culMem += result_json.mem; culTime += result_json.time;
       //Check if answer is correct
       var res=normalJudge(probInfo.id,caseNo,fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/out.txt'),'utf8'));
-      if(res==0) {
+      if(res===0) {
         console.log('Input '+caseNo+' wrong');
         //Result wrong, Set as WA
         var mem=Math.floor(culMem/caseNo);
@@ -217,18 +219,18 @@ function normalJudge(problemID, caseNo, result) {
   var ansSorted=[],inpSorted=[];
   for(var i=0;i<ansLines.length;i++) {
     var st=ansLines[i].trim();
-    if(st.length!=0) {
+    if(st.length!==0) {
       ansSorted.push(st);
     }
   }
   for(var i=0;i<inpLines.length;i++) {
     var st=inpLines[i].trim();
-    if(st.length!=0) {
+    if(st.length!==0) {
       inpSorted.push(st);
     }
   }
   //console.log(ansSorted); console.log(inpSorted);
-  if(inpSorted.length!=ansSorted.length) {
+  if(inpSorted.length!==ansSorted.length) {
     return 0;
   }
   //console.log('asdf');
@@ -245,6 +247,7 @@ function doCompile(submitID,lang,callback) {
   console.log('['+submitID+'] Compiling ');
   if(!compile_info.validLanguage(lang)) {
     callback(2);
+    return;
   }
   else if(compile_info.needsCompile(lang)) {
     //Prepare compilation
@@ -254,21 +257,30 @@ function doCompile(submitID,lang,callback) {
         console.error("Error occured during compilation ("+submitID+"):");
         console.error(error.stack);
         callback(0);
+        return;
       }
       else if(!fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/compile_result.json'))) {
         console.error('Error while reading compile result: Usually the docker image is missing');
         callback(2);
+        return;
       }
-      else if(parseCompileResult(submitID)==0) callback(0);
+      else if(parseCompileResult(submitID)===0) {
+        callback(0);
+        return;
+      }
       else {
         console.log(stdout);
         console.error(stderr);
         console.log("Compilation complete: "+submitID);
         callback(1);
+        return;
       }
     });
   }
-  else callback(1);
+  else {
+    callback(1);
+    return;
+  }
 }
 function parseCompileResult(submitID) {
   var json=fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/compile_result.json'),'utf8');
