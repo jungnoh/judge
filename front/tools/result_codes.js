@@ -13,58 +13,17 @@ enum resultValues {
     AC = 10   // Accepted
 };
 */
+var valueString=['Queued','Compiling','Judging','Compile Error','Runtime Error','Memory Exceeded','Wrong Answer','Time Limit Exceeded','Output Limit Exceeded','System Error','Accepted'],
+    valueInt=['que','cmp','jud','ce','re','me','wa','tle','ole','se','ac'];
+
 module.exports = {
   intToString: function(value) {
-    switch(value) {
-      case 0:
-        return 'que';
-      case 1:
-        return 'cmp';
-      case 2:
-        return 'jud';
-      case 3:
-        return 'ce';
-      case 4:
-        return 're';
-      case 5:
-        return 'me';
-      case 6:
-        return 'wa';
-      case 7:
-        return 'tle';
-      case 8:
-        return 'ole';
-      case 9:
-        return 'se';
-      case 10:
-        return 'ac';
-    }
+    if(val<0||val>10) return null;
+    return valueInt[value];
   },
   intToFullString: function(value) {
-    switch(value) {
-      case 0:
-        return 'Queued';
-      case 1:
-        return 'Compiling';
-      case 2:
-        return 'Judging';
-      case 3:
-        return 'Compile Error';
-      case 4:
-        return 'Runtime Error';
-      case 5:
-        return 'Memory Exceeded';
-      case 6:
-        return 'Wrong Answer';
-      case 7:
-        return 'Time Limit Exceeded';
-      case 8:
-        return 'Output Limit Exceeded';
-      case 9:
-        return 'System Error';
-      case 10:
-        return 'Accepted';
-    }
+    if(val<0||val>10) return null;
+    return valueString[value];
   },
   stringToInt: function(value) {
     switch(value) {

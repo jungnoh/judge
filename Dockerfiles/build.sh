@@ -22,3 +22,8 @@ for i in *build
 do
   echo "$i: $(cat $i/build_command.txt)"
 done
+echo -e "\033[0m<Run commands>"
+for i in *run
+do
+  echo "$i: $(cat $i/build_command.txt)"
+done

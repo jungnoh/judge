@@ -118,7 +118,7 @@ module.exports = {
           callback(err,null);
           return;
         }
-        callback(null,result.length==1);
+        callback(null,result.length===1);
       });
     });
   },
@@ -232,7 +232,7 @@ module.exports = {
             callback(err2);
             return;
           }
-          if(result.length != 1) {
+          if(result.length !== 1) {
             logger.logMessage('result.length is not 1',2);
             callback(0);
             return;
@@ -280,12 +280,14 @@ module.exports = {
         if(err2) {
           logger.logException(err2,2);
           callback(err2);
+          return;
         }
         conn.query('update problem_stats set submit_count=submit_count+1 where problem_id='+mysql.escape(problem_id),
         function(err3,result3) {
           if(err3) {
             logger.logException(err3,2);
             callback(err3);
+            return;
           }
           conn.query('update users set submit_count=submit_count+1 where user_id='+mysql.escape(user_id),
           function(err4, result4) {
@@ -338,11 +340,13 @@ module.exports = {
           function(err2,result2) {
             if(err2) {
               callback(err2,false);
+              return;
             }
             conn.query('update problems set accept_users=accept_users+1 where id='+mysql.escape(problemid),
             function(err3,result3) {
               if(err3) {
                 callback(err3,false);
+                return;
               }
               callback(null,true);
             });
@@ -384,12 +388,12 @@ module.exports = {
           callback(err,null);
           return;
         }
-        if(result.length==0) {
+        if(result.length===0) {
           callback(null,0);
           return;
         }
         for(var i=0;i<result.length;i++) {
-          if(result[i].result==10) {
+          if(result[i].result===10) {
             callback(null,2);
             return;
           }

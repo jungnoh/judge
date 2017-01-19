@@ -149,18 +149,10 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
     });
   }
   else {
-    if(fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'))) {
-      fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'));
-    }
-    if(fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/out.txt'))) {
-      fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/out.txt'));
-    }
-    if(fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/error.txt'))) {
-      fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/error.txt'));
-    }
-    if(fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/result.json'))) {
-      fs.removeSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/result.json'));
-    }
+    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'));
+    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/out.txt'));
+    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/error.txt'));
+    removeIfExist(path.resolve(rootDir+'/judge_tmp/'+submitID+'/result.json'));
     fs.copySync(path.resolve(rootDir+'/cases/'+probInfo.id+'/'+caseNo+'.in'),path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'));
     cprocess.execFile('docker',compile_info.getRunArgs('cpp',submitID,probInfo.memory_limit,probInfo.time_limit), function(error,stdout,stderr) {
       console.log(stdout);
@@ -290,4 +282,9 @@ function parseCompileResult(submitID) {
 }
 function splitText(text) {
   return text.split(/\r?\n/);
+}
+function removeIfExist(path) {
+  if(fs.existsSync(path)) {
+    fs.removeSync(path);
+  }
 }
