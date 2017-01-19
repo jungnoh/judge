@@ -50,6 +50,7 @@ module.exports = function(app)
         }
       });
     });
+    app.get('')
     app.get('/problems/:id/result', function(req,res) {
       sql.problemInfo(req.params.id, function(err,result) {
         if(err) {

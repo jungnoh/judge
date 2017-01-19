@@ -12,7 +12,7 @@
     </script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/static/css/problem-stats.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/judge-result.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
     integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
     crossorigin="anonymous">
@@ -21,7 +21,7 @@
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
-    <script src="/static/js/problem-stats.js"></script>
+    <script src="/static/js/judge-result.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -69,6 +69,8 @@
             </tr>
           </thead>
           <tbody>
+            <% var messages=['Queued','Compiling','Judging','Compile Error','Runtime Error','Memory Exceeded','Wrong Answer','Time Limit Exceeded','Output Limit Exceeded','System Error','Accepted'],
+                   class_types=['label-default','label-primary','label-primary','label-danger','label-danger','label-danger','label-danger','label-danger','label-danger','label-warning','label-success']%>
             <% for(var i=0;i<submits.length;i++) { %>
               <tr>
                 <td><%=submits[i].submit_id%></td>
@@ -77,7 +79,7 @@
                 <td><%=submits[i].lang%></td>
                 <td><%=submits[i].used_time%></td>
                 <td><%=submits[i].used_memory%></td>
-                <td><%=submits[i].result%></td>
+                <td class="label-result align-middle"><span class="<%="label "+class_types[submits[i].result] %>"><%= messages[submits[i].result] %></span></td>
                 <td><%=submits[i].submit_time%></td>
               </tr>
             <% } %>

@@ -95,7 +95,7 @@ module.exports = function(submitID,userID,callback) {
               callback('result2 is not 1');
               return;
             }
-            judgeProblem(submitID,userID,result2[0],1,0,0,function(err6) {
+            judgeProblem(rows[0],userID,result2[0],1,0,0,function(err6) {
               if(err6) {
                 console.error(err6);
                 callback(err6);
@@ -111,19 +111,17 @@ module.exports = function(submitID,userID,callback) {
     });
   });
 }
-function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
-  console.log('['+submitID+'] Testing '+caseNo);
+function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
+  console.log('['+submitInfo.submit_id+'] Testing '+caseNo);
   if(caseNo > probInfo.case_count) {
-    console.log('['+submitID+'] Judging Complete without errors');
-    var mem=Math.floor(culMem/probInfo.case_count);
-    var time=Math.floor(culTime/probInfo.case_count);
-    sql.updateJudgeResult(submitID,probInfo.id,10,function(err) {
+    console.log('['+submitInfo.submit_id+'] Judging Complete without errors');
+    sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,10,function(err) {
       if(err) {
         console.error(err);
         callback(err);
         return;
       }
-      sql.updateJudgeUsageResult(submitID,time,mem,function(err2) {
+      sql.updateJudgeUsageResult(submitInfo.submit_id,time,mem,function(err2) {
         if(err2) {
           console.error(err2);
           callback(err2);
@@ -149,17 +147,19 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
     });
   }
   else {
-    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/data.in'));
-    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/out.txt'));
-    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/error.txt'));
-    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitID+'/result.json'));
-    fs.copySync(path.resolve(rootDir+'/cases/'+probInfo.id+'/'+caseNo+'.in'),path.resolve(rootDir+'/judge_tmp/'+submitID+'/data.in'));
-    cprocess.execFile('docker',compile_info.getRunArgs('cpp',submitID,probInfo.memory_limit,probInfo.time_limit), function(error,stdout,stderr) {
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/data.in'));
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/out.txt'));
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/error.txt'));
+    removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/result.json'));
+    fs.copySync(path.resolve(rootDir+'/cases/'+probInfo.id+'/'+caseNo+'.in'),path.resolve(rootDir+'/judge_tmp/'+submitInfo.submit_id+'/data.in'));
+    cprocess.execFile('docker',compile_info.getRunArgs(submitInfo.lang,submitInfo.submit_id,probInfo.memory_limit,probInfo.time_limit), function(error,stdout,stderr) {
       console.log(stdout);
       console.error(stderr);
-      var result_json=JSON.parse(fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/result.json'),'utf8'));
+      var result_json=JSON.parse(fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitInfo.submit_id+'/result.json'),'utf8'));
+      //Code ended properly, update memory, time usage
+      if(mem<result_json.mem) mem=result_json.mem; if(time<result_json.time) time=result_json.time;
       if(result_json.res!==10) {
-        sql.updateJudgeResult(submitID,probInfo.id,result_json.res,
+        sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,result_json.res,
           function(err) {
             if(err) {
               console.error(err);
@@ -172,28 +172,30 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
                 callback(err2);
                 return;
               }
-              callback();
-              return;
+              sql.updateJudgeUsageResult(submitInfo.submit_id,time,mem,function(err3) {
+                if(err3) {
+                  console.error(err3);
+                  callback(err3);
+                  return;
+                }
+                callback();
+              });
             });
         });
         return;
       }
-      //Code ended properly, update memory, time usage
-      culMem += result_json.mem; culTime += result_json.time;
       //Check if answer is correct
-      var res=normalJudge(probInfo.id,caseNo,fs.readFileSync(path.resolve(rootDir,'./judge_tmp/'+submitID+'/out.txt'),'utf8'));
+      var res=normalJudge(probInfo.id,caseNo,fs.readFileSync(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/out.txt'),'utf8'));
       if(res===0) {
         console.log('Input '+caseNo+' wrong');
         //Result wrong, Set as WA
-        var mem=Math.floor(culMem/caseNo);
-        var time=Math.floor(culTime/caseNo);
-        sql.updateJudgeResult(submitID,probInfo.id,6,function(err) {
+        sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,6,function(err) {
           if(err) {
             console.error(err);
             callback(err);
             return;
           }
-          sql.updateJudgeUsageResult(submitID,time,mem,function(err2) {
+          sql.updateJudgeUsageResult(submitInfo.submit_id,time,mem,function(err2) {
             if(err2) {
               console.error(err2);
               callback(err2);
@@ -205,7 +207,7 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
         });
       }
       //Result correct, moving to next case
-      else judgeProblem(submitID,userID,probInfo,caseNo+1,culMem,culTime,callback);
+      else judgeProblem(submitInfo,userID,probInfo,caseNo+1,mem,time,callback);
     });
   }
 }
