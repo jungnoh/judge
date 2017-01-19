@@ -1,3 +1,6 @@
 .table>tbody>tr>td.label-result {
   vertical-align: middle;
 }
+#div-content {
+  padding-top: 90px; 
+}

@@ -36,7 +36,7 @@ window.onload = function() {
         alert(data.message);
       }
       else {
-        window.location.href = '/problems/'+probID+'/result';
+        window.location.href = '/result?id='+myid+'&problem='+probID;
       }
     }).fail(function(data) {
       alert('login failed, consult admin');

@@ -51,34 +51,25 @@ module.exports = function(app)
         }
       });
     });
-    app.get('')
-    app.get('/problems/:id/result', function(req,res) {
-      sql.problemInfo(req.params.id, function(err,result) {
-        if(err) {
+    app.get('/result', function(req,res) {
+      var page=1,options={},sort={};
+      if(req.query.page!==undefined) page=req.query.page;
+      sort['page']=page;
+      if(req.query.user!==undefined) options['user_id']=parseInt(req.query.user);
+      if(req.query.problem!==undefined) options['problem']=parseInt(req.query.problem);
+      sort['limit']=25; sort['offset']=25*(page-1);
+      sql.submitHistory(options,sort,function(err2,result) {
+        if(err2) {
+          console.log(err2);
           res.render('error.html');
+          return;
         }
-        if(result.length===0) {
-          res.render('problem', {
-            found: 0,
-            myid: req.user
-          });
-        } else {
-          var page=1;
-          if(req.query.page!==undefined) page=req.query.page;
-          sql.submitHistory(req.params.id, {user_id: req.user===undefined?null:req.user.id, limit:25, offset:25*(page-1)},function(err2,result) {
-            if(err2) {
-              console.log(err2);
-              res.render('error.html');
-              return;
-            }
-            res.render('judge-result', {
-              myid: req.user,
-              lang: languages,
-              id: req.params.id,
-              submits: result
-            })
-          });
-        }
+        res.render('judge-result', {
+          myid: req.user,
+          lang: languages,
+          id: req.params.id,
+          submits: result
+        })
       });
     });
     app.post('/problems/:id/submit',function(req,res) {

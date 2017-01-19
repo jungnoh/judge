@@ -24,7 +24,6 @@
     <script src="/static/js/submit.js"></script>
   </head>
   <body>
-    <script>var probID = <%=id%></script>
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -54,6 +53,7 @@
             <a class="btn btn-default" href="/auth/login">Login</a>
         </div>
       <% } else { %>
+        <script>var probID = <%=id%>,myid=<%=myid.id%></script>
         <div class="row">
           <div class="div-header div-header">
             <h1 id="title"><%= "Submit for Problem "+id %></h1>

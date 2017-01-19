@@ -201,31 +201,40 @@ module.exports = {
   },
   //function submitHistory: Submit history of a problem
   //callback: function(err,result)
-  submitHistory: function(problem_id,options,callback) {
+  submitHistory: function(options,sortOptions,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
         return;
       }
-      var query='select * from submit_history where problem_id='+mysql.escape(problem_id);
-      if(options!==null) {
+      var query='select * from submit_history', queryCount=0;
+      if(options!==null && Object.keys(options).length>0) {
+        query+=' where '
+        if(options.problem!==undefined) {
+          queryCount++;
+          query+='problem_id='+mysql.escape(options.problem);
+        }
         if(options.user_id!==undefined) {
-          query+=' and submit_user_id='+mysql.escape(options.user_id);
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='submit_user_id='+mysql.escape(options.user_id);
         }
         if(options.lang!==undefined) {
-          query+=' and lang='+mysql.escape(options.lang);
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='lang='+mysql.escape(options.lang);
         }
       }
       query+=' order by submit_id desc';
-      if(options!==null) {
-        if(options.limit!==undefined) {
-          query+=' limit '+options.limit;
+      if(sortOptions!==null && Object.keys(sortOptions).length>0) {
+        if(sortOptions.limit!==undefined) {
+          query+=' limit '+sortOptions.limit;
         }
-        if(options.offset!==undefined) {
-          query+=' offset '+options.offset;
+        if(sortOptions.offset!==undefined) {
+          query+=' offset '+sortOptions.offset;
         }
       }
-      console.log(query);
+      //console.log(query);
       conn.query(query,
       function(err,result) {
         if(err) {
