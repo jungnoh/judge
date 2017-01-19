@@ -30,9 +30,9 @@ module.exports = function(submitID,userID,callback) {
       lang=rows[0].lang; problem=rows[0].problem_id;
       //Prepare judge directory
       if(!fs.existsSync(path.resolve(rootDir+'/judge_tmp/'+submitID))) {
-        fs.mkdirSync(path.resolve(rootDir+'/judge_tmp/'+submitID),0777);
+        fs.mkdirSync(path.resolve(rootDir+'/judge_tmp/'+submitID),'0777');
       }
-      fs.chmodSync(path.resolve(rootDir+'/judge_tmp/'+submitID),0777);
+      fs.chmodSync(path.resolve(rootDir+'/judge_tmp/'+submitID),'0777');
       doCompile(submitID,lang,function(result) {
         if(result==0) {
           console.error('Compile failed: '+submitID);
@@ -207,30 +207,24 @@ function judgeProblem(submitID,userID,probInfo,caseNo,culMem,culTime,callback) {
     });
   }
 }
+/*
 function specialJudge(problemID, caseNo, result) {
-  //TODO: Make this
-}
+} */
 //returns 0 for incorrect, 1 for correct
 function normalJudge(problemID, caseNo, result) {
   var ansLines=splitText(fs.readFileSync(path.resolve(rootDir+'/cases/'+problemID+'/'+caseNo+'.out'),'utf8'));
   var inpLines=splitText(result);
   var ansSorted=[],inpSorted=[];
   for(var i=0;i<ansLines.length;i++) {
-    var j=0;
-    for(;j<ansLines[i].length;j++) {
-      if(ansLines[i][j]!=' '&&ansLines[i][j]!='\t') break;
-    }
-    if(j!=ansLines[i].length) {
-      ansSorted.push(ansLines[i].substring(j).trim());
+    var st=ansLines[i].trim();
+    if(st.length!=0) {
+      ansSorted.push(st);
     }
   }
   for(var i=0;i<inpLines.length;i++) {
-    var j=0;
-    for(;j<inpLines[i].length;j++) {
-      if(inpLines[i][j]!=' '&&ansLines[i][j]!='\t') break;
-    }
-    if(j!=inpLines[i].length) {
-      inpSorted.push(inpLines[i].substring(j).trim());
+    var st=inpLines[i].trim();
+    if(st.length!=0) {
+      inpSorted.push(st);
     }
   }
   //console.log(ansSorted); console.log(inpSorted);
