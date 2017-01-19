@@ -83,7 +83,8 @@ passport.deserializeUser(function(user, done) {
 app.engine('html',require('ejs').renderFile);
 
 var router_main = require('./routes/main')(app);
-var router_api = require('./routes/api')(app);
+var router_api = require('./routes/auth')(app);
+var router_api = require('./routes/problems')(app);
 
 var server = app.listen(3000, function() {
   console.log('Express server started on port 3000');
