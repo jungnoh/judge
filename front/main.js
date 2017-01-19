@@ -8,6 +8,7 @@ var passport          = require('passport');
 var localStrategy     = require('passport-local').Strategy;
 var sql               = require('./sql');
 var path              = require('path');
+var languages         = require('./tools/languages');
 var MySQLSessionStore = require('express-mysql-session')(session);
 var bcrypt = require('./bcrypt');
 var app = express();
@@ -86,10 +87,15 @@ var router_api = require('./routes/api')(app);
 
 var server = app.listen(3000, function() {
   console.log('Express server started on port 3000');
-  sql.submitCount(1,null,function(err,result) {
-    console.log(err);
-    console.log(result);
-  });
+  sql.getLanguages(function(err,result) {
+    if(err) {
+      console.error('Failed to get languages');
+      console.error(err)
+    }
+    for(var i=0;i<result.length;i++) {
+      languages[result[i].codename]=result[i];
+    }
+  })
   //sql.addSubmit();
   //sql.signupUser({id:'admin' , email:'a@a.com' , organization:'' , password:'pwpw' , nickname:'admin' , comment:'hi' }, function(err) {console.log(err)});
 });

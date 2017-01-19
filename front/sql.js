@@ -461,6 +461,21 @@ module.exports = {
       });
     });
   },
+  getLanguages: function(callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      conn.query('select * from `languages`', function(err,result) {
+        if(err) {
+          callback(err,null);
+          return;
+        }
+        callback(null,result);
+      })
+    })
+  },
   //function checkUserSolved: Check if user has solved a problem
   //callback: function(err,result)
   checkUserSolved: function(userid,problemid,callback) {

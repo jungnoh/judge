@@ -76,7 +76,7 @@
                 <td><%=submits[i].submit_id%></td>
                 <td><%=submits[i].problem_id%></td>
                 <td><%=submits[i].submit_user_name%></td>
-                <td><%=submits[i].lang%></td>
+                <td><%=lang[submits[i].lang].name%></td>
                 <td><%=submits[i].used_time%></td>
                 <td><%=submits[i].used_memory%></td>
                 <td class="label-result align-middle"><span class="<%="label "+class_types[submits[i].result] %>"><%= messages[submits[i].result] %></span></td>

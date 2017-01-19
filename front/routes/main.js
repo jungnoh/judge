@@ -2,6 +2,7 @@ var sql=require('./../sql');
 var passport=require('passport');
 var fs=require('fs');
 var judge=require('./../judger/judge');
+var languages=require('./../tools/languages');
 module.exports = function(app)
 {
     app.get('/',function(req,res){
@@ -72,6 +73,7 @@ module.exports = function(app)
             }
             res.render('judge-result', {
               myid: req.user,
+              lang: languages,
               id: req.params.id,
               submits: result
             })
