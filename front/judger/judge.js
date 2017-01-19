@@ -5,7 +5,7 @@ var sql=require('./../sql');
 var compile_info=require('./compile_info');
 var result_codes=require('./../tools/result_codes');
 
-var rootDir = path.resolve(__dirname+'/../..');
+var rootDir = path.resolve(__dirname,'/../..');
 //callback: function(err)
 module.exports = function(submitID,userID,callback) {
   sql.submitHistory(submitID,function(err,rows) {
@@ -33,7 +33,7 @@ module.exports = function(submitID,userID,callback) {
       }
       fs.chmodSync(path.resolve(rootDir+'/judge_tmp/'+submitID),'0777');
       doCompile(submitID,lang,function(result) {
-        if(result==0) {
+        if(result===0) {
           console.error('Compile failed: '+submitID);
           sql.updateCompileError(submitID,fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitID+'/compile_error.txt')),function(err3,result) {
             if(err3) {
@@ -216,15 +216,15 @@ function specialJudge(problemID, caseNo, result) {
 function normalJudge(problemID, caseNo, result) {
   var ansLines=splitText(fs.readFileSync(path.resolve(rootDir+'/cases/'+problemID+'/'+caseNo+'.out'),'utf8'));
   var inpLines=splitText(result);
-  var ansSorted=[],inpSorted=[];
-  for(var i=0;i<ansLines.length;i++) {
-    var st=ansLines[i].trim();
+  var ansSorted=[],inpSorted=[],i=0,st='';
+  for(i=0;i<ansLines.length;i++) {
+    st=ansLines[i].trim();
     if(st.length!==0) {
       ansSorted.push(st);
     }
   }
-  for(var i=0;i<inpLines.length;i++) {
-    var st=inpLines[i].trim();
+  for(i=0;i<inpLines.length;i++) {
+    st=inpLines[i].trim();
     if(st.length!==0) {
       inpSorted.push(st);
     }
@@ -234,7 +234,7 @@ function normalJudge(problemID, caseNo, result) {
     return 0;
   }
   //console.log('asdf');
-  for(var i=0;i<inpSorted.length;i++) {
+  for(i=0;i<inpSorted.length;i++) {
     //console.log('>'+ansSorted[i]+' >'+inpSorted[i]);
     if(inpSorted[i]===ansSorted[i]) {
       continue;
