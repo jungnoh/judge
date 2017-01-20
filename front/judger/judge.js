@@ -139,6 +139,7 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
             if(err4) {
               console.error(err4);
             }
+            console.log('asdfasdf');
             callback(err4);
             return;
           });

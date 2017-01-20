@@ -330,8 +330,21 @@ module.exports = {
           function(err3) {
             if(err3) {
               logger.logException(err3,2);
+              callback(err3);
+              return;
             }
-            callback(err3);
+            if(result===10) {
+              conn.query('update problems set accept_count=accept_count+1 where problem_id='+mysql.escape(problem_id),
+              function(err4) {
+                if(err4) {
+                  logger.logException(err4,2);
+                  callback(err4);
+                  return;
+                }
+                console.log('all done!');
+                callback(null);
+              });
+            }
           });
         });
       });
