@@ -175,27 +175,43 @@ module.exports = {
       });
     });
   },
-  submitCount: function(problem_id,options,callback) {
+  submitCount: function(options,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
         return;
       }
-      var query='select count(*) from submit_history where problem_id='+mysql.escape(problem_id);
-      if(options!==null) {
+      var query='select count(*) from submit_history', queryCount=0;
+      if(options!==null && Object.keys(options).length>0) {
+        query+=' where '
+        if(options.problem!==undefined) {
+          queryCount++;
+          query+='problem_id='+mysql.escape(options.problem);
+        }
         if(options.user_id!==undefined) {
-          query+=' and submit_user_id='+mysql.escape(options.user_id);
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='submit_user_id='+mysql.escape(options.user_id);
         }
         if(options.lang!==undefined) {
-          query+=' and lang='+mysql.escape(options.lang);
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='lang='+mysql.escape(options.lang);
+        }
+        if(options.username!==undefined) {
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='submit_user_name='+mysql.escape(options.username);
         }
       }
+      console.log(query);
       conn.query(query,
       function(err,result) {
         if(err) {
           logger.logException(err,2);
+          callback(err,null);
         }
-        callback(err,result[0]['count(*)']);
+        callback(null,result[0]['count(*)']);
       });
     });
   },
@@ -223,6 +239,11 @@ module.exports = {
           if(queryCount>0) query+=' and ';
           queryCount++;
           query+='lang='+mysql.escape(options.lang);
+        }
+        if(options.username!==undefined) {
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='submit_user_name='+mysql.escape(options.username);
         }
       }
       query+=' order by submit_id desc';

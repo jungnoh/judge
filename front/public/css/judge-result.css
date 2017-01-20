@@ -2,5 +2,9 @@
   vertical-align: middle;
 }
 #div-content {
-  padding-top: 90px; 
+  padding-top: 90px;
+}
+#div-pages {
+  text-align: center;
+  padding-bottom: 50px;
 }

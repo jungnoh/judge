@@ -24,6 +24,7 @@
     <script src="/static/js/judge-result.js"></script>
   </head>
   <body>
+    <script>var page=<%=page%></script>
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -48,8 +49,6 @@
     </nav>
     <div class="container" id="div-content">
       <div class="row">
-      </div>
-      <div class="row">
         <table class="table">
           <thead>
             <tr>
@@ -65,7 +64,7 @@
           </thead>
           <tbody>
             <% var messages=['Queued','Compiling','Judging','Compile Error','Runtime Error','Memory Exceeded','Wrong Answer','Time Limit Exceeded','Output Limit Exceeded','System Error','Accepted'],
-                   class_types=['label-default','label-primary','label-primary','label-danger','label-danger','label-danger','label-danger','label-danger','label-danger','label-warning','label-success']%>
+                   class_types=['label-default','label-primary','label-primary','label-danger','label-danger','label-danger','label-danger','label-danger','label-danger','label-warning','label-success'];%>
             <% for(var i=0;i<submits.length;i++) { %>
               <tr>
                 <td><%=submits[i].submit_id%></td>
@@ -79,6 +78,14 @@
               </tr>
             <% } %>
           </tbody>
+        </table>
+      </div>
+      <div id="div-pages" class="row">
+        <div class="btn-group" role="group" aria-label="...">
+          <button type="button" class="btn btn-default" id="btn-prevpage">Left</button>
+          <button type="button" class="btn btn-default"><%='Page '+page%></button>
+          <button type="button" class="btn btn-default" id="btn-nextpage">Right</button>
+        </div>
       </div>
     </div>
   </body>
