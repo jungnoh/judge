@@ -3,7 +3,10 @@ window.onload = function() {
     //var newUrl = location.href.replace("page="+page, "page="+(page-1));
     //alert(newUrl);
     var search = location.search.substring(1);
-    var res = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    var res = {};
+    if(search!=='') {
+      res = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    }
     res['page']=(page===1?1:page-1);
     console.log(res);
     window.location.href='/result?'+$.param(res);
@@ -12,7 +15,10 @@ window.onload = function() {
     //var newUrl = location.href.replace("page="+page, "page="+(page-1));
     //alert(newUrl);
     var search = location.search.substring(1);
-    var res = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    var res = {};
+    if(search!=='') {
+      res = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    }
     res['page']=page+1;
     console.log(res);
     window.location.href='/result?'+$.param(res);
