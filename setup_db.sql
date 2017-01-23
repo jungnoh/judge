@@ -1,13 +1,13 @@
-REATE DATABASE `judge`;
+CREATE DATABASE `judge`;
 CREATE TABLE `judge`.`languages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `codename` varchar(30) NOT NULL,
   `ace_lang` varchar(100) NOT NULL,
   `run_command` varchar(1000) NOT NULL,
-  `compile_command` varchar(1000) NOT NULL
+  `compile_command` varchar(1000) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 CREATE TABLE `judge`.`problems` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(200) NOT NULL,
@@ -72,14 +72,13 @@ CREATE TABLE `judge`.`users` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 INSERT INTO `judge`.`languages` (`id`, `name`, `codename`, `ace_lang`, `run_command`, `compile_command`) VALUES
-(1, 'C++', 'cpp', 'ace/mode/c_cpp','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'cpprun\',\'/workspace/runner\',{2},{3},\'-m\']','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'cppbuild\',\'/workspace/runner\']'),
-(2, 'C++11', 'cpp11', 'ace/mode/c_cpp','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'cpp11run\',\'/workspace/runner\',{2},{3},\'-m\']','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'cpp11build\',\'/workspace/runner\']'),
-(3, 'C++14', 'cpp14', 'ace/mode/c_cpp','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'cpp14run\',\'/workspace/runner\',{2},{3},\'-m\']','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'cpp14build\',\'/workspace/runner\']'),
-(4, 'C99', 'c99', 'ace/mode/c_cpp','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'c99run\',\'/workspace/runner\',{2},{3},\'-m\']','[\'run\',\'-m=2G\',\'--network=none\',\'-v={0}/judge_tmp/{1}:/judgeData\',\'c99build\',\'/workspace/runner\']');
+(1, 'C++', 'cpp', 'ace/mode/c_cpp','["run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpprun\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cppbuild\",\"/workspace/runner\"]'),
+(2, 'C++11', 'cpp11', 'ace/mode/c_cpp','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11build\",\"/workspace/runner\"]'),
+(3, 'C++14', 'cpp14', 'ace/mode/c_cpp','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14build\",\"/workspace/runner\"]'),
+(4, 'C99', 'c99', 'ace/mode/c_cpp','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"c99run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"c99build\",\"/workspace/runner\"]');
 INSERT INTO `judge`.`problems` (`id`, `title`, `submit_count`, `accept_count`, `accept_users`, `description`, `hint`, `case_count`, `added_date`, `source`, `time_limit`, `memory_limit`, `sample_input`, `sample_output`) VALUES
 (1, 'Test Problem', 0, 0, 0, 'Print the sum of the given integer a, b.', '#include &lt;stdio.h&gt;<br/> int main() {<br/> int a,b;<br/> scanf(&quot;%d %d&quot;,&amp;a,&amp;b);<br/> printf(&quot;%d&quot;,a+b);<br/> }', 3, CURRENT_TIMESTAMP, 'studioh', 1, 256, '[ \"1 1\", \"3 5\" ]', '[ \"2\", \"8\" ]');
 INSERT INTO `judge`.`problem_stats` (`problem_id`, `submit_count`, `ac_count`, `ac_users_count`, `ce_count`, `re_count`, `me_count`, `wa_count`, `tle_count`, `ole_count`) VALUES
 (1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO `judge`.`users` (`user_id`, `id`, `email`, `organization`, `password`, `nickname`, `comment`, `submit_count`, `ac_count`, `ce_count`, `re_count`, `me_count`, `wa_count`, `tle_count`, `ole_count`, `last_login`, `permissions`) VALUES
 (3, 'asdf', 'nope', 'admins', '$2a$10$s5PrwyVVnA.ycScb1EaG3.JpMjcqMWBZqBnTpFRR0fUK4chBlHdQK', 'admin', 'hi', 0, 0, 0, 0, 0, 0, 0, 0, CURRENT_TIMESTAMP, 1);
-

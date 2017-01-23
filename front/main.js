@@ -82,7 +82,7 @@ passport.deserializeUser(function(user, done) {
 
 app.engine('html',require('ejs').renderFile);
 
-var router_main = require('./routes/main')(app);  
+var router_main = require('./routes/main')(app);
 var router_api = require('./routes/auth')(app);
 var router_api = require('./routes/problems')(app);
 

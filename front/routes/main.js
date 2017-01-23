@@ -18,6 +18,11 @@ module.exports = function(app)
     app.get('/users/:id',function(req,res) {
 
     });
+    app.get('/problems',function(req,res) {
+      res.render('problem-list', {
+        myid: req.user
+      });
+    });
     app.get('/result', function(req,res) {
       var page=-1,options={},sort={};
       if(req.query.page!==undefined) {

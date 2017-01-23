@@ -53,7 +53,7 @@ int getMem(int proc) {
 }*/
 int main(int argc, const char * argv[]) {
     const char *runCmd = "g++";
-    system("cp /judgeData/source.cpp source.cpp");
+    system("cp /judgeData/source.c source.c");
     //int memLimit=1024<<10, timeLimit=60;
     int pid = fork();
     if(pid==0) {

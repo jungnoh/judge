@@ -73,7 +73,11 @@
             </div>
             <p id="div-problem-info">
               <h4>
-                <span class="label label-warning label-limit-info"><%= "Accept Count: "+accept_count+" / Submit Count: "+submit_count+" ("+((accept_count*100)/submit_count).toFixed(0)+"%)" %></span>
+                <span class="label label-warning label-limit-info"><%= "Accept Count: "+accept_count+" / Submit Count: "+submit_count%>
+                  <%if(submit_count>0) {%>
+                     <%=" ("+((accept_count*100)/submit_count).toFixed(0)+"%)" %>
+                  <%}%>
+                </span>&nbsp;
                 <span class="label label-success label-limit-info"><%= "Time limit : "+time_limit+" sec" %></span>
                 <span class="label label-success label-limit-info"><%= "Memory limit : "+memory_limit+" MB" %></span>
               </h4>

@@ -77,7 +77,7 @@ int main(int argc, const char * argv[]) {
         //setrlimit(RLIMIT_CPU,&lim);
         //alarm(0);
         //alarm(timeLimit+1);
-        execlp(runCmd,runCmd,"source.cpp","-o","run","-std==c+=14","-O2","--static","-Wall");
+        execlp(runCmd,runCmd,"source.cpp","-o","run","-std==c++14","-O2","--static","-Wall");
         exit(0);
     }
     else {

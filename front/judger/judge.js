@@ -254,8 +254,10 @@ function doCompile(submitID,lang,callback) {
   }
   else if(compile_info.needsCompile(lang)) {
     //Prepare compilation
-    fs.copySync(path.resolve(rootDir+'/usercode/'+submitID),path.resolve(rootDir+'/judge_tmp/'+submitID+'/source.cpp'));
+    fs.copySync(path.resolve(rootDir+'/usercode/'+submitID),path.resolve(rootDir+'/judge_tmp/'+submitID+'/'+compile_info.getSourceName(lang)));
     cprocess.execFile('docker',compile_info.getCompileArgs(lang,submitID), function(error,stdout,stderr) {
+      console.log(stdout);
+      console.error(stderr);
       if(error) {
         console.error("Error occured during compilation ("+submitID+"):");
         console.error(error.stack);
