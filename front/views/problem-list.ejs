@@ -31,21 +31,23 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Judge</a>
+          <a class="navbar-brand" href="/">Judge</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
             <li class="active"><a href="/problems">Problems</a></li>
+            <li><a href="/result">Submits</a></li>
             <li><a href="/rank">User Rank</a></li>
-            <li><a href="/contest">Contests</a></li>
+            <li><a href="#">Contests</a></li>
           </ul>
           <%- include topbar-right.ejs %>
         </div>
       </div>
     </nav>
     <div class="container" id="div-content">
-      <!--Storing sample data for copying-->
+      <script>
+        var page=<%= page %>, startid=<%= startid %>;
+      </script>
       <div class="row">
         <div class="col-md-3">
           <div class="list-group" id="div-sidebar" data-spy="affix">
@@ -68,8 +70,28 @@
               </tr>
             </thead>
             <tbody>
+              <% for(var i=0;i<problems.length;i++) { %>
+                <tr>
+                  <td><%=problems[i].id%></td>
+                  <td><a href=<%= "/problems/"+problems[i].id %>><%=problems[i].title%></a></td>
+                  <td><%=problems[i].accept_count%></td>
+                  <td><%=problems[i].submit_count%></td>
+                  <td>
+                    <%if(problems[i].submit_count>0) {%>
+                       <%=((problems[i].accept_count*100)/problems[i].submit_count).toFixed(0)+"%" %>
+                    <%}%>
+                  </td>
+                </tr>
+              <% } %>
             </tbody>
           </table>
+          <div id="div-pages" class="row">
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-default" id="btn-prevpage">Left</button>
+              <button type="button" class="btn btn-default"><%='Page '+page%></button>
+              <button type="button" class="btn btn-default" id="btn-nextpage">Right</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

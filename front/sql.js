@@ -175,6 +175,26 @@ module.exports = {
       });
     });
   },
+  problemList: function(page,numberStart,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      offset=0;
+      if(page!==null) {
+        offset=(page-1)*25;
+      }
+      conn.query('select id, title, submit_count, accept_count from problems where id>='+mysql.escape(numberStart)+' order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
+        if(err) {
+          callback(err,null);
+          return;
+        }
+        callback(null,result);
+        return;
+      });
+    })
+  },
   submitCount: function(options,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
@@ -300,20 +320,20 @@ module.exports = {
   },
   //function updateJudgeResult: Updates judge result
   //callback: function(err, rows)
-  updateJudgeResult: function(submit_id,problem_id,result,callback) {
+  updateJudgeResult: function(submit_id,problem_id,resultCode,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
         return;
       }
-      conn.query('update submit_history set result='+mysql.escape(result)+' where submit_id='+mysql.escape(submit_id),
+      conn.query('update submit_history set result='+mysql.escape(resultCode)+' where submit_id='+mysql.escape(submit_id),
       function(err) {
         if(err) {
           logger.logException(err,2);
           callback(err);
           return;
         }
-        var msg=result_codes.intToString(result);
+        var msg=result_codes.intToString(resultCode);
         conn.query('select * from problem_stats where problem_id='+mysql.escape(problem_id),
         function(err2,result) {
           if(err2) {
@@ -333,18 +353,18 @@ module.exports = {
               callback(err3);
               return;
             }
-            if(result===10) {
-              conn.query('update problems set accept_count=accept_count+1 where problem_id='+mysql.escape(problem_id),
+            if(resultCode===10) {
+              conn.query('update problems set accept_count=accept_count+1 where id='+mysql.escape(problem_id),
               function(err4) {
                 if(err4) {
                   logger.logException(err4,2);
                   callback(err4);
                   return;
                 }
-                console.log('all done!');
                 callback(null);
               });
             }
+            else callback(null);
           });
         });
       });

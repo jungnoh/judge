@@ -7,8 +7,7 @@ let intMax=2147483647;
 module.exports = function(app)
 {
     app.get('/',function(req,res){
-      res.render('problem',{
-        found: 0,
+      res.render('/',{
         myid: req.user
       });
     });
@@ -19,9 +18,37 @@ module.exports = function(app)
 
     });
     app.get('/problems',function(req,res) {
-      res.render('problem-list', {
-        myid: req.user
-      });
+      var page=1,startid=0;
+      if(req.query.page!==undefined) {
+        if(!isNaN(req.query.page)) {
+          page=parseInt(req.query.page);
+          if(page<=0||page>intMax) page=1;
+        }
+      }
+      if(req.query.startid!==undefined) {
+        if(!isNaN(req.query.startid)) {
+          startid=parseInt(req.query.startid);
+          if(startid<0||startid>intMax) startid=0;
+        }
+      }
+      sql.problemList(page,startid,function(err,result) {
+        if(err) {
+          res.render('error.html');
+          return;
+        }
+        if(result.length===0 && page>1) {
+          var re_url='/problems?page='+(page-1);
+          if(startid!=0) re_url+=('&startid='+startid);
+          res.redirect(re_url);
+          return;
+        }
+        else res.render('problem-list', {
+          myid: req.user,
+          problems: result,
+          page: page,
+          startid: startid
+        });
+      })
     });
     app.get('/result', function(req,res) {
       var page=-1,options={},sort={};
