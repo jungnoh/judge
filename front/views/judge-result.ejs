@@ -57,22 +57,22 @@
               <th>Used Time</th>
               <th>Used Memory</th>
               <th>Result</th>
-              <th>Submit Time</th>
+              <th class="col-time">Submit Time</th>
             </tr>
           </thead>
           <tbody>
             <% var messages=['Queued','Compiling','Judging','Compile Error','Runtime Error','Memory Exceeded','Wrong Answer','Time Limit Exceeded','Output Limit Exceeded','System Error','Accepted'],
-                   class_types=['label-default','label-primary','label-primary','label-danger','label-danger','label-danger','label-danger','label-danger','label-danger','label-warning','label-success'];%>
+                   class_types=['label-default','label-primary','label-primary','label-warning','label-warning','label-warning','label-danger','label-danger','label-danger','label-warning','label-success'];%>
             <% for(var i=0;i<submits.length;i++) { %>
               <tr>
                 <td><%=submits[i].submit_id%></td>
-                <td><%=submits[i].problem_id%></td>
+                <td><a href=<%="/problems/"+submits[i].problem_id%>><%=submits[i].problem_id%></a></td>
                 <td><%=submits[i].submit_user_name%></td>
                 <td><%=lang[submits[i].lang].name%></td>
                 <td><%=submits[i].used_time%></td>
                 <td><%=submits[i].used_memory%></td>
-                <td class="label-result align-middle"><span class="<%="label "+class_types[submits[i].result] %>"><%= messages[submits[i].result] %></span></td>
-                <td><%=submits[i].submit_time%></td>
+                <td class="label-result align-middle"><a style="text-decoration: none" href=<%="/result/detail/"+submits[i].submit_id%> class="<%="label "+class_types[submits[i].result]%>"><%= messages[submits[i].result] %></a></td>
+                <td class="col-time" data-toggle="tooltip" data-placement="left" title="<%=submits[i].submit_time%>"><%=submits[i].submit_time_text%></td>
               </tr>
             <% } %>
           </tbody>

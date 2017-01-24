@@ -24,3 +24,6 @@ window.onload = function() {
     window.location.href='/result?'+$.param(res);
   });
 }
+$(document).ready(function() {
+    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+});
