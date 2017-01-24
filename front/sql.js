@@ -84,6 +84,23 @@ module.exports = {
       });
     });
   },
+  userInfo_Userid: function(userid,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      conn.query('select * from users where user_id='+mysql.escape(userid),
+      function(err, result) {
+        if(err) {
+          logger.logException(err,2);
+          callback(err,null);
+          return;
+        }
+        callback(null,result);
+      });
+    });
+  },
   //function userLogin_Username: Retrieve id/password of matching id
   //callback: function(err,result)
   userLogin_Username: function(username,callback) {

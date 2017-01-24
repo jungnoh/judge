@@ -12,10 +12,24 @@ module.exports = function(app)
       });
     });
     app.get('/about',function(req,res){
+
         res.render('about.html');
     });
-    app.get('/users/:id',function(req,res) {
-
+    app.get('/user/:id',function(req,res) {
+      if(isNaN(req.params.id)) {
+        res.render('error.html');
+        return;
+      }
+      if(req.params.id<0||req.params.id>intMax) {
+        res.render('error.html');
+        return;
+      }
+      sql.userInfo_Userid(req.params.id,function(err,result) {
+        res.render('user-info',{
+          myid: req.user,
+          stats: result[0]
+        });
+      })
     });
     app.get('/problems',function(req,res) {
       var page=1,startid=0;
