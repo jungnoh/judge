@@ -396,7 +396,6 @@ module.exports = {
         callback(err,null);
         return;
       }
-      console.log(mem); console.log(time); console.log(submit_id);
       conn.query('update submit_history set used_memory='+mysql.escape(mem)+',used_time='+mysql.escape(time)+' where submit_id='+mysql.escape(submit_id),
       function(err2,result) {
         if(err2) {
@@ -490,6 +489,9 @@ module.exports = {
               callback(null,true);
             });
           });
+        }
+        else {
+          callback(null,false);
         }
       });
     });
