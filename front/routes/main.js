@@ -18,6 +18,7 @@ module.exports = function(app)
         res.render('about.html');
     });
     app.get('/user/:id',function(req,res) {
+      var options={},sort={};
       if(isNaN(req.params.id)) {
         res.render('error.html');
         return;
@@ -26,12 +27,22 @@ module.exports = function(app)
         res.render('error.html');
         return;
       }
-      sql.userInfo_Userid(req.params.id,function(err,result) {
-        res.render('user-info',{
-          myid: req.user,
-          stats: result[0]
+      options['user_id']=req.params.id;
+      sort['limit']=100; sort['offset']=0;
+      sql.submitHistory(options,sort,function(err,submitHistory) {
+        sql.userInfo_Userid(req.params.id,function(err2,result) {
+          var times={};
+          for(var i=0;i<submitHistory.length;i++) {
+            times[new Date(submitHistory[i].submit_time).getTime()/1000]=1;
+          }
+          console.log(JSON.stringify(times));
+          res.render('user-info',{
+            myid: req.user,
+            stats: result[0],
+            results: JSON.stringify(times)
+          });
         });
-      })
+      });
     });
     app.get('/problems',function(req,res) {
       var page=1,startid=0;

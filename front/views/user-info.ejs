@@ -19,6 +19,9 @@
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
+    <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
     <script src="/static/js/user-info.js"></script>
   </head>
   <body>
@@ -52,7 +55,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <table class="table">
             <thead>
               <tr>
@@ -108,9 +111,26 @@
             </tbody>
           </table>
         </div>
-        <div class="col-md-8">
-          <div id="div-stat-donutchart" class="chart"></div>
+        <div class="col-md-9">
+          <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Submit Stats</h3></div>
+            <div class="panel-body panel-stat">
+              <div id="div-stat-donutchart" class="chart"></div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title"><%=stats.submit_count%> Submits so far</h3></div>
+            <div class="panel-body panel-stat">
+              <div id="cal-heatmap"></div>
+              <script type="text/javascript">
+                var cal = new CalHeatMap();
+                cal.init({domain: "day", subDomain: "hour", data: <%-results%>,dataType: "json"});
+              </script>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="row">
       </div>
     </div>
   </body>
