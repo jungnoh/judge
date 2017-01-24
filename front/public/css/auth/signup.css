@@ -4,17 +4,10 @@
 #div-spacer-top {
   height: 10%;
 }
-#div-login-container {
+#div-signup-container {
   width: 30%;
   text-align: center;
   vertical-align: top;
-}
-@media screen and (max-width: 979px) {
-  #div-login-container {
-    width: 60%;
-    text-align: center;
-    vertical-align: top;
-  }
 }
 #div-login {
   text-align: left;

@@ -7,12 +7,11 @@ let intMax=2147483647;
 module.exports = function(app)
 {
     app.get('/',function(req,res){
-      res.render('/',{
+      res.render('index',{
         myid: req.user
       });
     });
     app.get('/about',function(req,res){
-
         res.render('about.html');
     });
     app.get('/user/:id',function(req,res) {

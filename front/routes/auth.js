@@ -36,4 +36,10 @@ module.exports = function(app)
       });
     })(req,res,next);
   });
+  app.get('/auth/signup',function(req,res) {
+    res.render('auth/signup', {
+      ret: req.query.ret,
+      myid: req.user
+    });
+  });
 };

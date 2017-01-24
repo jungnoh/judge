@@ -10,18 +10,18 @@
 		  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
 		  crossorigin="anonymous">
     </script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/static/css/judge-result.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-    crossorigin="anonymous">
     <script
       src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
-    <script src="/static/js/judge-result.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
+    <script src="/static/js/ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/auth/signup.css">
+    <script src="/static/js/auth/signup.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -42,9 +42,25 @@
             <li><a href="/rank">User Rank</a></li>
             <li><a href="#">Contests</a></li>
           </ul>
-          <%- include topbar-right.ejs %>
+          <%- include ./../topbar-right.ejs %>
         </div>
       </div>
     </nav>
+    <div class="container" id="div-content">
+      <div class="row" id="div-spacer-top">
+
+      </div>
+    </div>
+    <% if(typeof myid=="undefined" || myid==null) { %>
+      <div class="container" id="div-signup-container">
+
+      </div>
+    <% } else { %>
+      <div class="container" id="div-signup-container">
+        <div class="row" id="div-login">
+          <div class="page-header"><h2>Already logged in!</h2></div>
+        </div>
+      </div>
+    <% } %>
   </body>
 </html>
