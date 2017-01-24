@@ -33,9 +33,13 @@ module.exports = function(app)
         sql.userInfo_Userid(req.params.id,function(err2,result) {
           var times={};
           for(var i=0;i<submitHistory.length;i++) {
-            times[new Date(submitHistory[i].submit_time).getTime()/1000]=1;
+            var val=new Date(submitHistory[i].submit_time).getTime()/1000;
+            val = Math.floor((new Date(submitHistory[i].submit_time).getTime()/1000)/3600)*3600;
+            if(times.hasOwnProperty(val)) {
+              times[val]=times[val]+1;
+            }
+            else times[val]=1;
           }
-          console.log(JSON.stringify(times));
           res.render('user-info',{
             myid: req.user,
             stats: result[0],
