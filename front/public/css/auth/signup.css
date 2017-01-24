@@ -6,13 +6,26 @@
 }
 #div-signup-container {
   width: 30%;
-  text-align: center;
   vertical-align: top;
 }
+  #div-signup-container {
+    width: 60%;
+    vertical-align: top;
+  }
 #div-login {
   text-align: left;
 }
 #div-auth-commands {
   padding-top: 10px;
+  text-align: center;
+}
+#panel-tos {
+  text-align:justify;
+}
+.input-signup {
+  padding-bottom: 10px;
+}
+#div-btn-submit {
+  padding-top: 15px;
   text-align: center;
 }

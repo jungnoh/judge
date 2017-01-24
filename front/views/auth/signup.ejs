@@ -15,16 +15,14 @@
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-    crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
     <script src="/static/js/ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/auth/signup.css">
     <script src="/static/js/auth/signup.js"></script>
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -53,7 +51,47 @@
     </div>
     <% if(typeof myid=="undefined" || myid==null) { %>
       <div class="container" id="div-signup-container">
-
+        <div class="row">
+          <div class="panel panel-default" id="panel-tos">
+            <div class="panel-heading">
+              <h3 class="panel-title">Terms of Use</h3>
+            </div>
+            <div class="panel-body">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ultricies, arcu id vestibulum feugiat, libero augue gravida lorem, feugiat dictum arcu augue at ante. Praesent ultricies est metus, id rutrum neque porttitor ut. Phasellus ut urna et diam blandit tincidunt nec ut purus. Integer nec efficitur velit. Vivamus elementum est sed velit pretium consectetur. Nunc luctus, dolor a aliquam fermentum, nibh diam vestibulum nibh, ac maximus ex tortor hendrerit felis. Nunc vitae sagittis ligula, ut blandit odio. Sed ante massa, ultricies ut augue mollis, laoreet sodales leo.
+            </div>
+          </div>
+            <input id="input-tos-agree" type="checkbox" name="tos_agree" value="1"> I agree to the Terms of Use<br>
+        </div>
+        <div class="row">
+          <div style="padding-top: 15px; padding-bottom: 15px;">Items marked in <span class="text-info">Blue</span> are mandatory.</div>
+          <div class="input-group input-signup">
+            <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-user text-info"></span></span>
+            <input type="text" class="form-control" placeholder="ID" aria-describedby="sizing-addon2" id="input-id">
+          </div>
+          <div class="input-group input-signup">
+            <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-lock text-info"></span></span>
+            <input type="text" class="form-control" placeholder="Password" aria-describedby="sizing-addon2" id="input-pw">
+          </div>
+          <div class="input-group input-signup">
+            <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-lock text-info"></span></span>
+            <input type="text" class="form-control" placeholder="Password again" aria-describedby="sizing-addon2" id="input-pwagain">
+          </div>
+          <div class="input-group input-signup">
+            <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-envelope text-info"></span></span>
+            <input type="text" class="form-control" placeholder="Email" aria-describedby="sizing-addon2" id="input-email">
+          </div>
+          <div class="input-group input-signup">
+            <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-star"></span></span>
+            <input type="text" class="form-control" placeholder="Nickname (This will be same as your username by default)" aria-describedby="sizing-addon2" id="input-nickname">
+          </div>
+          <div class="input-group input-signup">
+            <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-tree-deciduous"></span></span>
+            <input type="text" class="form-control" placeholder="School" aria-describedby="sizing-addon2" id="input-nickname">
+          </div>
+        </div>
+        <div class="row" id="div-btn-submit">
+          <button type="button" class="btn btn-success" id="btn-submit">Submit</button>
+        </div>
       </div>
     <% } else { %>
       <div class="container" id="div-signup-container">

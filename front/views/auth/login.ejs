@@ -15,9 +15,7 @@
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
     </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-    crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
     <script src="/static/js/ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/auth/login.css">
@@ -30,7 +28,7 @@
         var returnUrl=<%=JSON.stringify(ret)%>;
       <%}%>
     </script>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -54,10 +52,6 @@
     </nav>
     <div class="container" id="div-content">
       <div class="row" id="div-spacer-top">
-        <div class="alert alert-success alert-dismissable">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-          <strong>Success!</strong> Indicates a successful or positive action.
-        </div>
       </div>
     </div>
     <% if(typeof myid=="undefined" || myid==null) { %>
