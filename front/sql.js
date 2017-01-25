@@ -252,8 +252,10 @@ module.exports = {
         if(err) {
           logger.logException(err,2);
           callback(err,null);
+          return;
         }
         callback(null,result[0]['count(*)']);
+        return;
       });
     });
   },

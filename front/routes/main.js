@@ -30,6 +30,10 @@ module.exports = function(app)
       options['user_id']=req.params.id;
       sort['limit']=100; sort['offset']=0;
       sql.submitHistory(options,sort,function(err,submitHistory) {
+        if(err) {
+          res.render('error.html');
+          return;
+        }
         sql.userInfo_Userid(req.params.id,function(err2,result) {
           var times={};
           for(var i=0;i<submitHistory.length;i++) {
