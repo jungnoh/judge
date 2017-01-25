@@ -1,0 +1,37 @@
+.table>tbody>tr>td.label-result {
+  vertical-align: middle;
+}
+#div-content {
+  padding-top: 90px;
+}
+#div-pages {
+  text-align: center;
+  padding-bottom: 50px;
+}
+.limits {
+  font-weight: bold;
+  color: red;
+}
+#div-problem-info {
+  align-content: center;
+}
+#div-sidebar.affix-top {
+    position: static;
+    margin-top:30px;
+    width:228px;
+  }
+
+#div-sidebar.affix {
+  position: fixed;
+  top:70px;
+  width:228px;
+}
+#div-sidebar li.active {
+  	border:0 #eee solid;
+  	border-right-width:4px;
+}
+@media screen and (max-width: 979px) {
+  #div-sidebar {
+    display: none;
+  }
+}

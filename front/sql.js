@@ -309,6 +309,71 @@ module.exports = {
       });
     });
   },
+  submitHistory: function(options,sortOptions,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      var query='select * from submit_history', queryCount=0;
+      if(options!==null && Object.keys(options).length>0) {
+        query+=' where '
+        if(options.problem!==undefined) {
+          queryCount++;
+          query+='problem_id='+mysql.escape(options.problem);
+        }
+        if(options.user_id!==undefined) {
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='submit_user_id='+mysql.escape(options.user_id);
+        }
+        if(options.lang!==undefined) {
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='lang='+mysql.escape(options.lang);
+        }
+        if(options.username!==undefined) {
+          if(queryCount>0) query+=' and ';
+          queryCount++;
+          query+='submit_user_name='+mysql.escape(options.username);
+        }
+      }
+      query+=' order by submit_id desc';
+      if(sortOptions!==null && Object.keys(sortOptions).length>0) {
+        if(sortOptions.limit!==undefined) {
+          query+=' limit '+sortOptions.limit;
+        }
+        if(sortOptions.offset!==undefined) {
+          query+=' offset '+sortOptions.offset;
+        }
+      }
+      //console.log(query);
+      conn.query(query,
+      function(err,result) {
+        if(err) {
+          logger.logException(err,2);
+        }
+        callback(err,result);
+      });
+    });
+  },
+  userRank: function(page,callback) {
+    getPoolConnection(function(conn,poolError) {
+      if(!conn) {
+        callback(poolError,null);
+        return;
+      }
+      var query='select user_id,id, nickname, submit_count, ac_count from users order by ac_count desc, submit_count asc limit 25 offset '+mysql.escape(25*(page-1));
+      //console.log(query);
+      conn.query(query,
+      function(err,result) {
+        if(err) {
+          logger.logException(err,2);
+        }
+        callback(err,result);
+      });
+    });
+  },
   submitInfo: function(submit_id,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {

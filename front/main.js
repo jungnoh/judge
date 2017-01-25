@@ -96,7 +96,7 @@ var server = app.listen(3000, function() {
     for(var i=0;i<result.length;i++) {
       languages[result[i].codename]=result[i];
     }
-  })
+  });
   //sql.addSubmit();
   //sql.signupUser({id:'admin' , email:'a@a.com' , organization:'' , password:'pwpw' , nickname:'admin' , comment:'hi' }, function(err) {console.log(err)});
 });

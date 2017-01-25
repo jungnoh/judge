@@ -14,6 +14,31 @@ module.exports = function(app)
         myid: req.user
       });
     });
+    app.get('/rank',function(req,res) {
+      var page=1;
+      if(req.query.page!==undefined) {
+        if(!isNaN(req.query.page)) {
+          page=parseInt(req.query.page,10);
+          if(page<=0||page>intMax) page=1;
+        }
+      }
+      sql.userRank(page,function(err,result) {
+        if(err) {
+          res.render('error.html');
+          return;
+        }
+        if(result.length===0 && page>1) {
+          var re_url='/rank?page='+(page-1);
+          res.redirect(re_url);
+          return;
+        }
+        else res.render('rank', {
+          myid: req.user,
+          users: result,
+          page: page
+        });
+      });
+    });
     app.get('/about',function(req,res){
         res.render('about.html');
     });
@@ -83,7 +108,7 @@ module.exports = function(app)
           page: page,
           startid: startid
         });
-      })
+      });
     });
     app.get('/result', function(req,res) {
       var page=-1,options={},sort={};
