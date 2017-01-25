@@ -52,13 +52,13 @@ module.exports = function(app)
       var page=1,startid=0;
       if(req.query.page!==undefined) {
         if(!isNaN(req.query.page)) {
-          page=parseInt(req.query.page);
+          page=parseInt(req.query.page,10);
           if(page<=0||page>intMax) page=1;
         }
       }
       if(req.query.startid!==undefined) {
         if(!isNaN(req.query.startid)) {
-          startid=parseInt(req.query.startid);
+          startid=parseInt(req.query.startid,10);
           if(startid<0||startid>intMax) startid=0;
         }
       }
@@ -69,7 +69,7 @@ module.exports = function(app)
         }
         if(result.length===0 && page>1) {
           var re_url='/problems?page='+(page-1);
-          if(startid!=0) re_url+=('&startid='+startid);
+          if(startid!==0) re_url+=('&startid='+startid);
           res.redirect(re_url);
           return;
         }
@@ -94,13 +94,13 @@ module.exports = function(app)
       if(req.query.username!==undefined) options['username']=req.query.username;
       if(req.query.user!==undefined) {
         if(!isNaN(req.query.user)) {
-          options['user_id']=parseInt(req.query.user);
+          options['user_id']=parseInt(req.query.user,10);
           if(options['user_id']<0||options['user_id']>intMax) options['user_id']=undefined;
         }
       }
       if(req.query.problem!==undefined) {
         if(!isNaN(req.query.problem)) {
-          options['problem']=parseInt(req.query.problem);
+          options['problem']=parseInt(req.query.problem,10);
           if(options['problem']<0||options['problem']>intMax) options['problem']=undefined;
         }
       }
@@ -125,7 +125,7 @@ module.exports = function(app)
               res.render('error.html');
               return;
             }
-            if(count==1) page=1;
+            if(count===1) page=1;
             else page=Math.ceil(count/25);
             query+='page='+(page).toString();
             res.redirect(query);

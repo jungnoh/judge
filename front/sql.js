@@ -14,10 +14,15 @@ function getPoolConnection(callback) {
   pool.getConnection(function(err,conn) {
     if(err) {
       logger.logException(err,2);
+      conn.release();
       callback(null,err);
+      return;
     }
-    else callback(conn,null);
-    conn.release();
+    else {
+      conn.release();
+      callback(conn,null);
+      return;
+    }
   });
 }
 module.exports = {
@@ -374,9 +379,13 @@ module.exports = {
                   return;
                 }
                 callback(null);
+                return;
               });
             }
-            else callback(null);
+            else {
+              callback(null);
+              return;
+            }
           });
         });
       });
@@ -397,6 +406,7 @@ module.exports = {
           logger.logException(err2,2);
         }
         callback(err,result);
+        return;
       });
     });
   },
@@ -428,6 +438,7 @@ module.exports = {
               logger.logException(err4,2);
             }
             callback(err4);
+            return;
           })
         });
       });
@@ -482,11 +493,13 @@ module.exports = {
                 return;
               }
               callback(null,true);
+              return;
             });
           });
         }
         else {
           callback(null,false);
+          return;
         }
       });
     });
@@ -537,21 +550,6 @@ module.exports = {
         callback(null,1);
       });
     });
-  },
-  getLanguages: function(callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from `languages`', function(err,result) {
-        if(err) {
-          callback(err,null);
-          return;
-        }
-        callback(null,result);
-      })
-    })
   },
   //function checkUserSolved: Check if user has solved a problem
   //callback: function(err,result)
