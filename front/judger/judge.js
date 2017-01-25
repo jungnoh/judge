@@ -42,19 +42,14 @@ module.exports = function(submitID,userID,callback) {
               return;
             }
             fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
-            sql.updateJudgeResult(submitID,problem,3,function(err4) {
+            sql.updateJudgeResult(submitID,problem,userID,3,function(err4) {
               if(err4) {
                 console.error(err4);
                 callback(err4);
                 return;
               }
-              sql.updateUserJudgeCount(userID,3,function(err5,result) {
-                if(err5) {
-                  console.error(err5);
-                  callback(err5);
-                  return;
-                }
-              });
+              callback(null);
+              return;
             });
           });
         }
@@ -67,7 +62,7 @@ module.exports = function(submitID,userID,callback) {
               return;
             }
             fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
-            sql.updateJudgeResult(submitID,problem,3,function(err4) {
+            sql.updateJudgeResult(submitID,problem,userID,3,function(err4) {
               if(err4) {
                 console.error(err4);
                 callback(err4);
@@ -115,7 +110,7 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
   console.log('['+submitInfo.submit_id+'] Testing '+caseNo);
   if(caseNo > probInfo.case_count) {
     console.log('['+submitInfo.submit_id+'] Judging Complete without errors');
-    sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,10,function(err) {
+    sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,userID,10,function(err) {
       if(err) {
         console.error(err);
         callback(err);
@@ -135,13 +130,8 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
             callback(err3);
             return;
           }
-          sql.updateUserJudgeCount(userID,10,function(err4,result) {
-            if(err4) {
-              console.error(err4);
-            }
-            callback(err4);
-            return;
-          });
+          callback(null);
+          return;
         });
       });
     });
@@ -159,27 +149,20 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
       //Code ended properly, update memory, time usage
       if(mem<result_json.mem) mem=result_json.mem; if(time<result_json.time) time=result_json.time;
       if(result_json.res!==10) {
-        sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,result_json.res,
+        sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,userID,result_json.res,
           function(err) {
             if(err) {
               console.error(err);
               callback(err);
               return;
             }
-            sql.updateUserJudgeCount(userID,result_json.res,function(err2,result) {
-              if(err2) {
-                console.error(err2);
-                callback(err2);
+            sql.updateJudgeUsageResult(submitInfo.submit_id,time,mem,function(err3) {
+              if(err3) {
+                console.error(err3);
+                callback(err3);
                 return;
               }
-              sql.updateJudgeUsageResult(submitInfo.submit_id,time,mem,function(err3) {
-                if(err3) {
-                  console.error(err3);
-                  callback(err3);
-                  return;
-                }
-                callback();
-              });
+              callback();
             });
         });
         return;
@@ -189,7 +172,7 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
       if(res===0) {
         console.log('Input '+caseNo+' wrong');
         //Result wrong, Set as WA
-        sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,6,function(err) {
+        sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,userID,6,function(err) {
           if(err) {
             console.error(err);
             callback(err);

@@ -337,7 +337,7 @@ module.exports = {
   },
   //function updateJudgeResult: Updates judge result
   //callback: function(err, rows)
-  updateJudgeResult: function(submit_id,problem_id,resultCode,callback) {
+  updateJudgeResult: function(submit_id,problem_id,user_id,resultCode,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
@@ -351,19 +351,14 @@ module.exports = {
           return;
         }
         var msg=result_codes.intToString(resultCode);
-        conn.query('select * from problem_stats where problem_id='+mysql.escape(problem_id),
-        function(err2,result) {
+        conn.query('update problem_stats set '+msg+'_count='+msg+'_count+1 where problem_id='+mysql.escape(problem_id),
+        function(err2) {
           if(err2) {
             logger.logException(err2,2);
             callback(err2);
             return;
           }
-          if(result.length !== 1) {
-            logger.logMessage('result.length is not 1',2);
-            callback(0);
-            return;
-          }
-          conn.query('update problem_stats set '+msg+'_count='+mysql.escape(result[0][msg+'_count']+1)+' where problem_id='+mysql.escape(problem_id),
+          conn.query('update users set '+msg+'_count='+msg+'_count+1 where user_id='+mysql.escape(user_id),
           function(err3) {
             if(err3) {
               logger.logException(err3,2);

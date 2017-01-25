@@ -59,6 +59,10 @@
           <table class="table">
             <thead>
               <tr>
+                <th>Rank</th>
+                <th>1</th>
+              </tr>
+              <tr>
                 <th>Result</th>
                 <th>#</th>
               </tr>
@@ -121,17 +125,19 @@
           <div class="panel panel-default">
             <div class="panel-heading"><h3 class="panel-title">Recent Submission Map - <%=stats.submit_count%> Submits so far</h3></div>
             <div class="panel-body panel-stat">
-              <div id="cal-heatmap"></div>
+              <div id="cal-heatmap">
+              </div>
               <script type="text/javascript">
                 var cal = new CalHeatMap();
                 cal.init({domain: "day",
-                start: new Date(Date.now() - 10*24*60*60*1000),
-                minDate: new Date(Date.now() - 10*24*60*60*1000),
+                start: new Date(Date.now() - 6*24*60*60*1000),
+                minDate: new Date(Date.now() - 6*24*60*60*1000),
                 maxDate: new Date(Date.now()),
                 subDomain: "hour",
                 data: <%-results%>,
                 dataType: "json",
                 legend: [2, 4, 6, 8],
+                range: 7,
                 legendCellSize: 12,
                 cellSize: 12
               });

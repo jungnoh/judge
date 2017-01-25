@@ -15,7 +15,7 @@ function drawChart() {
   ]);
 
   var options = {
-    title: 'Judge Stats'
+    title: ''
   };
   var chart = new google.visualization.PieChart(document.getElementById('div-stat-donutchart'));
   chart.draw(data, options);

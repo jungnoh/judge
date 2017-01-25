@@ -11,3 +11,9 @@
 .panel-stat {
   text-align: center;
 }
+#cal-heatmap {
+  margin: 0 auto;
+}
+.cal-heatmap-container {
+  margin: 0 auto;
+}
