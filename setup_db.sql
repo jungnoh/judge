@@ -6,7 +6,7 @@ CREATE TABLE `judge`.`languages` (
   `compile` int(1) NOT NULL DEFAULT 1,
   `ace_lang` varchar(100) NOT NULL,
   `run_command` varchar(1000) NOT NULL,
-  `compile_command` varchar(1000) NOT NULL
+  `compile_command` varchar(1000) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 CREATE TABLE `judge`.`problems` (
