@@ -4,7 +4,7 @@ var fs=require('fs');
 var judge=require('./../judger/judge');
 var languages=require('./../tools/languages');
 var moment = require('moment');
-let intMax=2147483647;
+var intMax=2147483647;
 
 
 module.exports = function(app)
