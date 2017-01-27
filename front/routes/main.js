@@ -39,6 +39,11 @@ module.exports = function(app)
         });
       });
     });
+    app.get('/result/detail/:id',function(req,res) {
+      res.render('result-detail', {
+        myid: req.user
+      });
+    });
     app.get('/about',function(req,res){
         res.render('about.html');
     });
