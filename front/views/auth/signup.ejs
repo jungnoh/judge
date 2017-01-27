@@ -46,7 +46,6 @@
     </nav>
     <div class="container" id="div-content">
       <div class="row" id="div-spacer-top">
-
       </div>
     </div>
     <% if(typeof myid=="undefined" || myid==null) { %>
@@ -61,6 +60,7 @@
             </div>
           </div>
             <input id="input-tos-agree" type="checkbox" name="tos_agree" value="1"> I agree to the Terms of Use<br>
+            <p class="p-error text-danger" id="p-error-tos"></p>
         </div>
         <div class="row">
           <div style="padding-top: 15px; padding-bottom: 15px;">Items marked in <span class="text-info">Blue</span> are mandatory.</div>
@@ -68,26 +68,35 @@
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-user text-info"></span></span>
             <input type="text" class="form-control" placeholder="ID" aria-describedby="sizing-addon2" id="input-id">
           </div>
+          Maximum 20 characters of alphanumeric text.
+          <p class="p-error text-danger" id="p-error-id">This field is mandatory.</p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-lock text-info"></span></span>
-            <input type="text" class="form-control" placeholder="Password" aria-describedby="sizing-addon2" id="input-pw">
+            <input type="password" class="form-control" placeholder="Password" aria-describedby="sizing-addon2" id="input-pw">
           </div>
+          Use at least 8 characters.
+          <p class="p-error text-danger" id="p-error-pw"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-lock text-info"></span></span>
-            <input type="text" class="form-control" placeholder="Password again" aria-describedby="sizing-addon2" id="input-pwagain">
+            <input type="password" class="form-control" placeholder="Password again" aria-describedby="sizing-addon2" id="input-pwagain">
           </div>
+          <p class="p-error text-danger" id="p-error-pwagain"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-envelope text-info"></span></span>
             <input type="text" class="form-control" placeholder="Email" aria-describedby="sizing-addon2" id="input-email">
           </div>
+          <p class="p-error text-danger" id="p-error-email"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-star"></span></span>
             <input type="text" class="form-control" placeholder="Nickname (This will be same as your username by default)" aria-describedby="sizing-addon2" id="input-nickname">
           </div>
+          You can change this after signing up.
+          <p class="p-error text-danger" id="p-error-nickname"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-tree-deciduous"></span></span>
-            <input type="text" class="form-control" placeholder="School" aria-describedby="sizing-addon2" id="input-nickname">
+            <input type="text" class="form-control" placeholder="Organization" aria-describedby="sizing-addon2" id="input-org">
           </div>
+          <p class="p-error text-danger" id="p-error-org"></p>
         </div>
         <div class="row" id="div-btn-submit">
           <button type="button" class="btn btn-success" id="btn-submit">Submit</button>

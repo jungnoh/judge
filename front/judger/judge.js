@@ -107,7 +107,6 @@ module.exports = function(submitID,userID,callback) {
   });
 }
 function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
-  console.log('['+submitInfo.submit_id+'] Testing '+caseNo);
   if(caseNo > probInfo.case_count) {
     console.log('['+submitInfo.submit_id+'] Judging Complete without errors');
     sql.updateJudgeResult(submitInfo.submit_id,probInfo.id,userID,10,function(err) {
@@ -137,6 +136,7 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
     });
   }
   else {
+    console.log('['+submitInfo.submit_id+'] Testing '+caseNo);
     removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/data.in'));
     removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/out.txt'));
     removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/error.txt'));

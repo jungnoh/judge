@@ -48,7 +48,7 @@ module.exports = {
     });
   },
   signupUser: function(options,callback) {
-    bcrypt.cryptPassword(options.password,function(cryptErr,passHash) {
+    bcrypt.cryptPassword(options.pw,function(cryptErr,passHash) {
       if(cryptErr) {
         callback(cryptErr);
         return;
@@ -58,7 +58,7 @@ module.exports = {
           callback(poolError,null);
           return;
         }
-        conn.query('INSERT INTO `users` (`id`, `email`, `organization`, `password`, `nickname`, `comment`) VALUES ('+mysql.escape(options.id)+', '+mysql.escape(options.email)+', '+mysql.escape(options.organization)+', '+mysql.escape(passHash)+', '+mysql.escape(options.nickname)+', '+mysql.escape(options.comment)+');',
+        conn.query('INSERT INTO `users` (`id`, `email`, `organization`, `password`, `nickname`, `comment`) VALUES ('+mysql.escape(options.id)+', '+mysql.escape(options.email)+', '+mysql.escape(options.organization)+', '+mysql.escape(passHash)+', '+mysql.escape(options.nickname)+', '+mysql.escape('')+');',
         function(err) {
           if(err) {
             logger.logException(err,2);
@@ -127,13 +127,13 @@ module.exports = {
   },
   //function userExists_Email: Check if user exists with email
   //callback: function(err,result)
-  userExists_Email: function(email,callback) {
+  userExists: function(id,email,callback) {
     getPoolConnection(function(conn,poolError) {
       if(!conn) {
         callback(poolError,null);
         return;
       }
-      conn.query('select id from users where email='+mysql.escape(email),
+      conn.query('select id from users where email='+mysql.escape(email)+' or id='+mysql.escape(id),
       function(err, result) {
         if(err) {
           logger.logException(err,2);
@@ -141,25 +141,6 @@ module.exports = {
           return;
         }
         callback(null,result.length===1);
-      });
-    });
-  },
-  //function userExists_Email: Check if user exists with Username
-  //callback: function(err,result)
-  userExists_Username: function(id,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select id, password, nickname from users where id='+mysql.escape(username),
-      function(err, result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err,null);
-          return;
-        }
-        callback(null,result);
       });
     });
   },
