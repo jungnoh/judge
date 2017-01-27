@@ -72,7 +72,7 @@ CREATE TABLE `judge`.`users` (
   `permissions` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-INSERT INTO `judge`.`languages` (`id`, `name`, `codename`, `compile`, `ace_lang`, `run_command`, `compile_command`) VALUES
+INSERT INTO `judge`.`languages` (`id`, `name`, `codename`, `ace_lang`, `compile`, `run_command`, `compile_command`) VALUES
 (1, 'C++', 'cpp', 'ace/mode/c_cpp',1,'["run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpprun\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cppbuild\",\"/workspace/runner\"]'),
 (2, 'C++11', 'cpp11', 'ace/mode/c_cpp',1,'[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11build\",\"/workspace/runner\"]'),
 (3, 'C++14', 'cpp14', 'ace/mode/c_cpp',1,'[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14build\",\"/workspace/runner\"]'),
