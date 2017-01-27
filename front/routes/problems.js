@@ -1,11 +1,11 @@
-var sql=require('./../sql');
-var passport=require('passport');
-var fs=require('fs');
-var judge=require('./../judger/judge');
-var languages=require('./../tools/languages');
+var sql       = require('./../sql');
+var passport  = require('passport');
+var fs        = require('fs');
+var judge     = require('./../judger/judge');
+var languages = require('./../tools/languages');
+
 module.exports = function(app) {
   app.post('/problems/:id/submit',function(req,res) {
-    //console.log(req.body.code.escapeSpecialChars());
     sql.addSubmit(req.user.id,req.user.username,req.params.id,req.body.lang, function(err,result) {
       if(err) {
         console.log(err);
@@ -14,7 +14,6 @@ module.exports = function(app) {
       }
       fs.writeFile('./../usercode/'+result, req.body.code.escapeSpecialChars(), function(err) {
         if(err) throw err;
-        console.log('File write completed');
         judge(result,req.user.id,function(err2) {
           console.error(err2);
         });
@@ -89,10 +88,6 @@ module.exports = function(app) {
   });
   app.get('/problems/:id/submit',function(req,res) {
     sql.problemInfo(req.params.id, function(err,result) {
-      console.log(req.session);
-      console.log(req.user);
-      console.log('>');
-      console.log(JSON.stringify(req.user));
       if(err) {
         console.log(err);
         res.render('error.html');
