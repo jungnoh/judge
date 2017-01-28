@@ -53,53 +53,53 @@
         <div class="row">
           <div class="panel panel-default" id="panel-tos">
             <div class="panel-heading">
-              <h3 class="panel-title">Terms of Use</h3>
+              <h3 class="panel-title"><%=__("tos")%></h3>
             </div>
             <div class="panel-body">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ultricies, arcu id vestibulum feugiat, libero augue gravida lorem, feugiat dictum arcu augue at ante. Praesent ultricies est metus, id rutrum neque porttitor ut. Phasellus ut urna et diam blandit tincidunt nec ut purus. Integer nec efficitur velit. Vivamus elementum est sed velit pretium consectetur. Nunc luctus, dolor a aliquam fermentum, nibh diam vestibulum nibh, ac maximus ex tortor hendrerit felis. Nunc vitae sagittis ligula, ut blandit odio. Sed ante massa, ultricies ut augue mollis, laoreet sodales leo.
             </div>
           </div>
-            <input id="input-tos-agree" type="checkbox" name="tos_agree" value="1"> I agree to the Terms of Use<br>
+            <input id="input-tos-agree" type="checkbox" name="tos_agree" value="1"><%=__("agreeTOS")%><br>
             <p class="p-error text-danger" id="p-error-tos"></p>
         </div>
         <div class="row">
-          <div style="padding-top: 15px; padding-bottom: 15px;">Items marked in <span class="text-info">Blue</span> are mandatory.</div>
+          <div style="padding-top: 15px; padding-bottom: 15px;"><%-__("mandatoryNoti")%></div>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-user text-info"></span></span>
-            <input type="text" class="form-control" placeholder="ID" aria-describedby="sizing-addon2" id="input-id">
+            <input type="text" class="form-control" placeholder="<%=__("username")%>" aria-describedby="sizing-addon2" id="input-id">
           </div>
-          Maximum 20 characters of alphanumeric text.
-          <p class="p-error text-danger" id="p-error-id">This field is mandatory.</p>
+          <%=__("signupIDLimits")%>
+          <p class="p-error text-danger" id="p-error-id"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-lock text-info"></span></span>
-            <input type="password" class="form-control" placeholder="Password" aria-describedby="sizing-addon2" id="input-pw">
+            <input type="password" class="form-control" placeholder="<%=__("password")%>" aria-describedby="sizing-addon2" id="input-pw">
           </div>
-          Use at least 8 characters.
+          <%=__("signupPWLimits")%>
           <p class="p-error text-danger" id="p-error-pw"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-lock text-info"></span></span>
-            <input type="password" class="form-control" placeholder="Password again" aria-describedby="sizing-addon2" id="input-pwagain">
+            <input type="password" class="form-control" placeholder="<%=__("passwordAgain")%>" aria-describedby="sizing-addon2" id="input-pwagain">
           </div>
           <p class="p-error text-danger" id="p-error-pwagain"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-envelope text-info"></span></span>
-            <input type="text" class="form-control" placeholder="Email" aria-describedby="sizing-addon2" id="input-email">
+            <input type="text" class="form-control" placeholder="<%=__("email")%>" aria-describedby="sizing-addon2" id="input-email">
           </div>
           <p class="p-error text-danger" id="p-error-email"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-star"></span></span>
-            <input type="text" class="form-control" placeholder="Nickname (This will be same as your username by default)" aria-describedby="sizing-addon2" id="input-nickname">
+            <input type="text" class="form-control" placeholder="<%=__("nickSameAsUsername")%>" aria-describedby="sizing-addon2" id="input-nickname">
           </div>
-          You can change this after signing up.
+          <%=__("canChangeAfterSignUp")%>
           <p class="p-error text-danger" id="p-error-nickname"></p>
           <div class="input-group input-signup">
             <span class="input-group-addon" id="sizing-addon"><span class="glyphicon glyphicon-tree-deciduous"></span></span>
-            <input type="text" class="form-control" placeholder="Organization" aria-describedby="sizing-addon2" id="input-org">
+            <input type="text" class="form-control" placeholder="<%=__("org")%>" aria-describedby="sizing-addon2" id="input-org">
           </div>
           <p class="p-error text-danger" id="p-error-org"></p>
         </div>
         <div class="row" id="div-btn-submit">
-          <button type="button" class="btn btn-success" id="btn-submit">Submit</button>
+          <button type="button" class="btn btn-success" id="btn-submit"><%=__("submit")%></button>
         </div>
       </div>
     <% } else { %>

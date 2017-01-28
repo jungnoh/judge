@@ -41,10 +41,10 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/problems">Problems</a></li>
-            <li><a href="/result">Submits</a></li>
-            <li><a href="/rank">User Rank</a></li>
-            <li><a href="#">Contests</a></li>
+            <li><a href="/problems"><%=__("problems")%></a></li>
+            <li><a href="/result"><%=__("submits")%></a></li>
+            <li><a href="/rank"><%=__("rank")%></a></li>
+            <li><a href="#"><%=__("contests")%></a></li>
           </ul>
           <%- include ./../topbar-right.ejs %>
         </div>
@@ -59,7 +59,7 @@
         <div class="row" id="div-login">
           <form id="form-login">
             <!--action="/auth/login" method="post"-->
-            <div class="page-header"><h2>Login</h2></div>
+            <div class="page-header"><h2><%=__("login")%></h2></div>
             <div id='div-auth-input'>
               <div class="input-group">
                 <span class="input-group-addon glyphicon glyphicon-user"></span>
@@ -71,11 +71,11 @@
               </div>
               <div id="div-auth-commands">
                 <p>
-                  <button type="submit" id="btn-login" class="btn btn-default btn-md">Login</button>
-                  <button type="button" id="btn-signup" class="btn btn-info btn-md" href="#">Sign Up</button>
+                  <button type="submit" id="btn-login" class="btn btn-default btn-md"><%=__("login")%></button>
+                  <button type="button" id="btn-signup" class="btn btn-info btn-md" href="#"><%=__("signup")%></button>
                 </p>
                 <p>
-                  <button type="button" id="btn-iforgot" class="btn btn-link btn-md" href="#">Forgot ID/Password?</button>
+                  <button type="button" id="btn-iforgot" class="btn btn-link btn-md" href="#"><%=__("iforgot")%></button>
                 </p>
               </div>
             </div>

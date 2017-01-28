@@ -10,6 +10,7 @@ var sql               = require('./sql');
 var path              = require('path');
 var languages         = require('./tools/languages');
 var MySQLSessionStore = require('express-mysql-session')(session);
+var i18n              = require('i18n');
 var bcrypt = require('./bcrypt');
 var app = express();
 
@@ -33,10 +34,36 @@ var options = {
 };
 
 const cookieKey='@ruby';
+console.log(__dirname + '/locales');
 app.set('views',path.resolve(__dirname,'views'));
 app.set('view engine','ejs');
 app.use('/static',express.static('public'));
 app.use(logger('dev'));
+app.use(cookieParser());
+app.use(i18n.init);
+
+i18n.configure({
+  locales: ['en', 'ko'],
+  cookie: 'lang',
+  directory: __dirname + '/locales',
+  defaultLocale: 'en',
+  queryParameter: 'lang',
+  logDebugFn: function (msg) {
+        console.log('debug', msg);
+    },
+
+    // setting of log level WARN - default to require('debug')('i18n:warn')
+    logWarnFn: function (msg) {
+        console.log('warn', msg);
+    },
+
+    // setting of log level ERROR - default to require('debug')('i18n:error')
+    logErrorFn: function (msg) {
+        console.log('error', msg);
+    }
+});
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(session({ secret: cookieKey, resave: true, saveUninitialized: true }));

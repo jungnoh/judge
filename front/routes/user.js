@@ -3,6 +3,7 @@ var passport  = require('passport');
 var fs        = require('fs');
 var judge     = require('./../judger/judge');
 var languages = require('./../tools/languages');
+var i18n      = require('i18n');
 const intMax  = 2147483647;
 
 module.exports = function(app)
@@ -20,15 +21,15 @@ module.exports = function(app)
     function(errAuth, user, info) {
       if(errAuth) {
         console.log(errAuth);
-        return res.json({'success': 0, 'message': 'Error while logging in.'});
+        return res.json({'success': 0, 'message': res.__('loginProcessError')});
       }
       if(!user) {
-        return res.json({'success': 0, 'message': 'Error while logging in.'});
+        return res.json({'success': 0, 'message': res.__('loginProcessError')});
       }
       req.login(user, function (errLogin) {
         if(errLogin) {
           console.log(errLogin);
-          return res.json({'success': 0, 'message': 'Error while logging in.'});
+          return res.json({'success': 0, 'message': res.__('loginProcessError')});
         }
         return res.json({'success': 1});
       });
@@ -52,11 +53,11 @@ module.exports = function(app)
       sql.userExists(req.body.id,req.body.email,function(userExistErr,result) {
         if(userExistErr) {
           console.log(userExistErr);
-          return res.json({'success': 0,'message': 'Error while signing up.'});
+          return res.json({'success': 0,'message': res.__('signupProcessError')});
           return;
         }
         else if(result) {
-          return res.json({'success': 0,'message': 'User already exists.'});
+          return res.json({'success': 0,'message': res.__('userAlreadyExists')});
           return;
         }
         else {
@@ -76,7 +77,7 @@ module.exports = function(app)
       });
     }
     else {
-      return res.json({'success': 0,'message': 'Invalid request.'});
+      return res.json({'success': 0,'message': res.__('invalidRequest')});
     }
   });
   //GET /auth/logout
