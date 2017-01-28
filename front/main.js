@@ -37,7 +37,6 @@ app.set('views',path.resolve(__dirname,'views'));
 app.set('view engine','ejs');
 app.use('/static',express.static('public'));
 app.use(logger('dev'));
-//app.use(cookieParser(cookieKey));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(session({ secret: cookieKey, resave: true, saveUninitialized: true }));
@@ -84,8 +83,8 @@ passport.deserializeUser(function(user, done) {
 app.engine('html',require('ejs').renderFile);
 
 var router_main = require('./routes/main')(app);
-var router_api = require('./routes/auth')(app);
-var router_api = require('./routes/problems')(app);
+var router_user = require('./routes/user')(app);
+var router_prob = require('./routes/problems')(app);
 
 var server = app.listen(3000, function() {
   console.log('Express server started on port 3000');
@@ -98,6 +97,4 @@ var server = app.listen(3000, function() {
       languages[result[i].codename]=result[i];
     }
   });
-  //sql.addSubmit();
-  //sql.signupUser({id:'admin' , email:'a@a.com' , organization:'' , password:'pwpw' , nickname:'admin' , comment:'hi' }, function(err) {console.log(err)});
 });

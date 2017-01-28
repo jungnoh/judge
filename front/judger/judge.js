@@ -1,107 +1,108 @@
-var cprocess = require('child_process');
-var fs=require('fs-extra');
-var path=require('path');
-var sql=require('./../sql');
-var compile_info=require('./compile_info');
-var result_codes=require('./../tools/result_codes');
+var cprocess     = require('child_process');
+var fs           = require('fs-extra');
+var path         = require('path');
+var sql          = require('./../sql');
+var compile_info = require('./compile_info');
+var result_codes = require('./../tools/result_codes');
+var winston      = require('winston');
+var rootDir      = path.resolve(__dirname,'./../..');
 
-var rootDir = path.resolve(__dirname,'./../..');
 //callback: function(err)
 module.exports = function(submitID,userID,callback) {
-  sql.submitInfo(submitID,function(err,rows) {
-    if(err) {
-      console.error(err.stack);
-      callback(err);
+  //Fetch Problem, Submit Information
+  sql.submitInfo(submitID,function(submitInfoErr,submitResult) {
+    if(submitInfoErr) {
+      winston.warning(submitInfoErr);
+      callback(submitInfoErr);
       return;
     }
-    if(rows.length===0) {
-      console.error('Could not find submit information where ID='+submitID);
-      callback('Could not find submit information');
-      return;
-    }
-    sql.appendSubmitCount(rows[0].problem_id,userID,function(err2) {
-      if(err2) {
-        console.error('Error while appending submit count');
-        console.error(err2);
-        callback(err2);
+    var submitInfo = submitResult[0];
+    sql.problemInfo(submitInfo.problem_id,function(problemInfoErr,problemResult) {
+      if(problemInfoErr) {
+        winston.warning(problemInfoErr);
+        callback(problemInfoErr);
         return;
       }
-      lang=rows[0].lang; problem=rows[0].problem_id;
-      //Prepare judge directory
-      if(!fs.existsSync(path.resolve(rootDir,'./judge_tmp/'+submitID))) {
-        fs.mkdirSync(path.resolve(rootDir,'./judge_tmp/'+submitID),'0777');
-      }
-      fs.chmodSync(path.resolve(rootDir,'./judge_tmp/'+submitID),'0777');
-      doCompile(submitID,lang,function(result) {
-        if(result===0) {
-          console.error('Compile failed: '+submitID);
-          sql.updateCompileError(submitID,fs.readFileSync(path.resolve(rootDir,'./judge_tmp/'+submitID+'/compile_error.txt')),function(err3,result) {
-            if(err3) {
-              console.error(err3);
-              callback(err3);
-              return;
-            }
-            fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
-            sql.updateJudgeResult(submitID,problem,userID,3,function(err4) {
-              if(err4) {
-                console.error(err4);
-                callback(err4);
-                return;
-              }
-              callback(null);
-              return;
-            });
-          });
+      var problemInfo = problemResult[0];
+      sql.appendSubmitCount(submitInfo.problem_id,userID,function(appendSubmitErr) {
+        if(appendSubmitErr) {
+          winston.warning('Error while appending submit count');
+          winston.warning(appendSubmitErr);
+          callback(appendSubmitErr);
+          return;
         }
-        else if(result===2) {
-          console.error('Error while starting compile: '+submitID);
-          sql.updateCompileError(submitID,'Error while starting compilation, consult admin',function(err3,result) {
-            if(err3) {
-              console.error(err3);
-              callback(err3);
-              return;
-            }
-            fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
-            sql.updateJudgeResult(submitID,problem,userID,3,function(err4) {
-              if(err4) {
-                console.error(err4);
-                callback(err4);
-                return;
-              }
-              sql.updateUserJudgeCount(userID,9,function(err5,result) {
-                if(err5) {
-                  console.error(err5);
-                  callback(err5);
+        if(!fs.existsSync(path.resolve(rootDir,'./judge_tmp/'+submitID))) {
+          fs.mkdirSync(path.resolve(rootDir,'./judge_tmp/'+submitID),'0777');
+        }
+        fs.chmodSync(path.resolve(rootDir,'./judge_tmp/'+submitID),'0777');
+        sql.updateJudgeResult(submitID,problemInfo.problem_id,userID,1,function(updateCompileErr) {
+          if(updateCompileErr) {
+            console.log(updateCompileErr);
+            callback(updateCompileErr);
+            return;
+          }
+          doCompile(submitID,submitInfo.lang,function(compileResult) {
+            if(compileResult===0) {
+              winston.info('['+submitID+'] Compile Failed');
+              var errorMessage=fs.readFileSync(path.resolve(rootDir,'./judge_tmp/'+submitID+'/compile_error.txt'));
+              fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
+              sql.updateCompileError(submitID,errorMessage,function(updateCompileErr,updateCompileResult) {
+                if(updateCompileErr) {
+                  winston.info(updateCompileErr);
+                  callback(updateCompileErr);
                   return;
                 }
+                sql.updateJudgeResult(submitID,problemInfo.problem_id,userID,3,function(updateJudgeError) {
+                  if(updateJudgeErr) {
+                    winston.info(updateJudgeErr);
+                    callback(updateJudgeErr);
+                    return;
+                  }
+                  callback(null);
+                  return;
+                });
               });
-            });
-          });
-        }
-        else {
-          sql.problemInfo(rows[0].problem_id,function(err5,result2) {
-            if(err5) {
-              console.error(err5);
-              callback(err5);
-              return;
             }
-            if(result2.length !== 1) {
-              console.error('result2 is not 1');
-              callback('result2 is not 1');
-              return;
+            else if(compileResult===2) {
+              winston.error('['+submitID+'] Error while starting compile docker container');
+              sql.updateCompileError(submitID,'Error while starting compile docker container, contact admin.',function(updateCompileErr,updateCompileResult) {
+                if(updateCompileErr) {
+                  winston.info(updateCompileErr);
+                  callback(updateCompileErr);
+                  return;
+                }
+                sql.updateJudgeResult(submitID,problemInfo.problem_id,userID,9,function(updateJudgeError) {
+                  if(updateJudgeErr) {
+                    winston.info(updateJudgeErr);
+                    callback(updateJudgeErr);
+                    return;
+                  }
+                  callback(null);
+                  return;
+                });
+              });
             }
-            judgeProblem(rows[0],userID,result2[0],1,0,0,function(err6) {
-              if(err6) {
-                console.error(err6);
-                callback(err6);
-                return;
-              }
-              fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
-              callback(null);
-              return;
-            });
+            else {
+              sql.updateJudgeResult(submitID,problemInfo.problem_id,userID,2,function(updateJudgeErr) {
+                if(updateJudgeErr) {
+                  console.log(updateJudgeErr);
+                  callback(updateJudgeErr);
+                  return;
+                }
+                judgeProblem(submitInfo,userID,problemInfo,1,0,0,function(judgeErr) {
+                  if(judgeErr) {
+                    winston.error(judgeErr);
+                    callback(judgeErr);
+                    return;
+                  }
+                  fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
+                  callback(null);
+                  return;
+                });
+              });
+            }
           });
-        }
+        });
       });
     });
   });
@@ -121,8 +122,6 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
           callback(err2);
           return;
         }
-        //sql.updateUserSolvedCount(,probInfo.id)
-        //function(userid,problemid,callback)
         sql.updateUserSolvedCount(userID,probInfo.id,function(err3,result) {
           if(err3) {
             console.error(err3);
@@ -235,7 +234,6 @@ function doCompile(submitID,lang,callback) {
     return;
   }
   else if(compile_info.needsCompile(lang)) {
-    //Prepare compilation
     fs.copySync(path.resolve(rootDir+'/usercode/'+submitID),path.resolve(rootDir+'/judge_tmp/'+submitID+'/'+compile_info.getSourceName(lang)));
     cprocess.execFile('docker',compile_info.getCompileArgs(lang,submitID), function(error,stdout,stderr) {
       console.log(stdout);

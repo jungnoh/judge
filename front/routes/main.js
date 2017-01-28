@@ -47,41 +47,6 @@ module.exports = function(app)
     app.get('/about',function(req,res){
         res.render('about.html');
     });
-    app.get('/user/:id',function(req,res) {
-      var options={},sort={};
-      if(isNaN(req.params.id)) {
-        res.render('error.html');
-        return;
-      }
-      if(req.params.id<0||req.params.id>intMax) {
-        res.render('error.html');
-        return;
-      }
-      options['user_id']=req.params.id;
-      sort['limit']=100; sort['offset']=0;
-      sql.submitHistory(options,sort,function(err,submitHistory) {
-        if(err) {
-          res.render('error.html');
-          return;
-        }
-        sql.userInfo_Userid(req.params.id,function(err2,result) {
-          var times={};
-          for(var i=0;i<submitHistory.length;i++) {
-            var val=new Date(submitHistory[i].submit_time).getTime()/1000;
-            val = Math.floor((new Date(submitHistory[i].submit_time).getTime()/1000)/3600)*3600;
-            if(times.hasOwnProperty(val)) {
-              times[val]=times[val]+1;
-            }
-            else times[val]=1;
-          }
-          res.render('user-info',{
-            myid: req.user,
-            stats: result[0],
-            results: JSON.stringify(times)
-          });
-        });
-      });
-    });
     app.get('/problems',function(req,res) {
       var page=1,startid=0;
       if(req.query.page!==undefined) {

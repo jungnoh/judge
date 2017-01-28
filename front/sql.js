@@ -1,6 +1,5 @@
 var mysql        = require('mysql');
 var result_codes = require('./tools/result_codes');
-var logger       = require('./tools/logger');
 var bcrypt       = require('./bcrypt');
 var winston      = require('winston');
 var pool = mysql.createPool({
@@ -72,7 +71,7 @@ module.exports = {
     });
   },
   userInfo_Userid: function(userid,callback) {
-    singleQuery('select * from users where user_id='+mysql.escape(username), function(err,result) {
+    singleQuery('select * from users where user_id='+mysql.escape(userid), function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);
     });
@@ -249,39 +248,45 @@ module.exports = {
           callback(err);
           return;
         }
-        var msg=result_codes.intToString(resultCode);
-        conn.query('update problem_stats set '+msg+'_count='+msg+'_count+1 where problem_id='+mysql.escape(problem_id),
-        function(err2) {
-          if(err2) {
-            winston.error(err2);
-            callback(err2);
-            return;
-          }
-          conn.query('update users set '+msg+'_count='+msg+'_count+1 where user_id='+mysql.escape(user_id),
-          function(err3) {
-            if(err3) {
-              winston.error(err3);
-              callback(err3);
+        if(resultCode>2) {
+          var msg=result_codes.intToString(resultCode);
+          conn.query('update problem_stats set '+msg+'_count='+msg+'_count+1 where problem_id='+mysql.escape(problem_id),
+          function(err2) {
+            if(err2) {
+              winston.error(err2);
+              callback(err2);
               return;
             }
-            if(resultCode===10) {
-              conn.query('update problems set accept_count=accept_count+1 where id='+mysql.escape(problem_id),
-              function(err4) {
-                if(err4) {
-                  winston.error(err4);
-                  callback(err4);
+            conn.query('update users set '+msg+'_count='+msg+'_count+1 where user_id='+mysql.escape(user_id),
+            function(err3) {
+              if(err3) {
+                winston.error(err3);
+                callback(err3);
+                return;
+              }
+              if(resultCode===10) {
+                conn.query('update problems set accept_count=accept_count+1 where id='+mysql.escape(problem_id),
+                function(err4) {
+                  if(err4) {
+                    winston.error(err4);
+                    callback(err4);
+                    return;
+                  }
+                  callback(null);
                   return;
-                }
+                });
+              }
+              else {
                 callback(null);
                 return;
-              });
-            }
-            else {
-              callback(null);
-              return;
-            }
+              }
+            });
           });
-        });
+        }
+        else {
+          callback(null);
+          return;
+        }
       });
     });
   },
