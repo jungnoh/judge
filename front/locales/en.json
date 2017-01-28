@@ -80,5 +80,6 @@
 	"problemStatsFor": "Stats for Problem %s",
 	"acceptUsers": "Accepted Users",
 	"recentSubmissionMap": "Recent Submission Map",
-	"submitsSoFar": "%s Submits so far"
+	"submitsSoFar": "%s Submits so far",
+	"logout": "Log Out"
 }

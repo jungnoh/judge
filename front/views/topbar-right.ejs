@@ -1,11 +1,11 @@
 <% if(typeof myid=="undefined" || myid==null) {%>
   <ul id="navbar-login" class="nav navbar-nav navbar-right">
-    <li><a href="/auth/login" id="navbar-login-btn"><span class="glyphicon glyphicon-user"></span> Login</a></li>
-    <li><a href="/auth/signup" id="navbar-signup-btn"><span class="glyphicon glyphicon-file"></span> Sign Up</a></li>
+    <li><a href="/auth/login" id="navbar-login-btn"><span class="glyphicon glyphicon-user"></span> <%=__("login")%></a></li>
+    <li><a href="/auth/signup" id="navbar-signup-btn"><span class="glyphicon glyphicon-file"></span> <%=__("signup")%></a></li>
   </ul>
 <% } else { %>
   <ul id="navbar-userinfo" class="nav navbar-nav navbar-right">
     <li><a href=<%="/user/"+myid.id%> id="navbar-me-btn"><span class="glyphicon glyphicon-heart"></span> <%= myid.nickname %></a></li>
-    <li><a href="/auth/logout" id="navbar-logout-btn"><span class="glyphicon glyphicon-off"></span> Log Out</a></li>
+    <li><a href="/auth/logout" id="navbar-logout-btn"><span class="glyphicon glyphicon-off"></span> <%=__("logout")%></a></li>
   </ul>
 <% } %>
