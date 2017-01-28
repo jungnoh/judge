@@ -40,13 +40,20 @@ app.set('view engine','ejs');
 app.use('/static',express.static('public'));
 app.use(logger('dev'));
 app.use(cookieParser());
+app.use(function(req,res,next) {
+  if(req.query.hasOwnProperty('lang')) {
+    res.cookie('lang', req.query.lang, { maxAge: 900000, httpOnly: true });
+  } else {
+    res.cookie('lang', 'ko', { maxAge: 900000, httpOnly: true });
+  }
+  next();
+});
 app.use(i18n.init);
-
 i18n.configure({
-  locales: ['en', 'ko'],
+  locales: ['ko','en'],
+  defaultLocale: 'ko',
   cookie: 'lang',
   directory: __dirname + '/locales',
-  defaultLocale: 'ko',
   queryParameter: 'lang',
   logDebugFn: function (msg) {
         console.log('debug', msg);
@@ -62,8 +69,6 @@ i18n.configure({
         console.log('error', msg);
     }
 });
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(session({ secret: cookieKey, resave: true, saveUninitialized: true }));
