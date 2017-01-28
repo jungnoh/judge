@@ -46,10 +46,10 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Problem Name</th>
-                <th>Accept #</th>
-                <th>Submit #</th>
-                <th>AC Rate</th>
+                <th>><%=__("problemName")%></th>
+                <th>><%=__("acceptCount")%></th>
+                <th>><%=__("submitCount")%></th>
+                <th>><%=__("acRate")%></th>
               </tr>
             </thead>
             <tbody>
@@ -72,9 +72,9 @@
           </table>
           <div id="div-pages" class="row">
             <div class="btn-group" role="group" aria-label="...">
-              <button type="button" class="btn btn-default" id="btn-prevpage">Left</button>
-              <button type="button" class="btn btn-default"><%='Page '+page%></button>
-              <button type="button" class="btn btn-default" id="btn-nextpage">Right</button>
+              <button type="button" class="btn btn-default" id="btn-prevpage">><%=__("prev")%></button>
+              <button type="button" class="btn btn-default">><%=__("pageText",page)%></button>
+              <button type="button" class="btn btn-default" id="btn-nextpage">><%=__("next")%></button>
             </div>
           </div>
         </div>

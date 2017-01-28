@@ -46,7 +46,7 @@ i18n.configure({
   locales: ['en', 'ko'],
   cookie: 'lang',
   directory: __dirname + '/locales',
-  defaultLocale: 'en',
+  defaultLocale: 'ko',
   queryParameter: 'lang',
   logDebugFn: function (msg) {
         console.log('debug', msg);

@@ -39,6 +39,7 @@
   "passwordAgain": "Password again",
   "prev": "Previous",
   "problem": "Problem",
+  "problemID": "Problem #",
   "problemName": "Problem Name",
   "problemText": "Problem %s",
   "problems": "Problems",
@@ -70,5 +71,6 @@
   "usedTime": "Used Time",
   "userAlreadyExists": "This user already exists.",
   "username": "Username",
-  "wrongAnswer": "Wrong Answer"
+  "wrongAnswer": "Wrong Answer",
+  "num": "#"
 }
