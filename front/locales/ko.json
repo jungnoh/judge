@@ -80,5 +80,6 @@
 	"acceptUsers": "맞은 사람수",
 	"recentSubmissionMap": "최근 제출 그래프",
 	"submitsSoFar": "지금까지 %s번 제출함",
-	"logout": "로그아웃"
+	"logout": "로그아웃",
+	"submitHistory": "제출 통계"
 }
