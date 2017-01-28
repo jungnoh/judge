@@ -19,12 +19,12 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/problems">Problems</a></li>
-            <li><a href="/result">Submits</a></li>
-            <li><a href="/rank">User Rank</a></li>
-            <li><a href="#">Contests</a></li>
+            <li class="active"><a href="/problems"><%=__("problems")%></a></li>
+            <li><a href="/result"><%=__("submits")%></a></li>
+            <li><a href="/rank"><%=__("rank")%></a></li>
+            <li><a href="#"><%=__("contests")%></a></li>
           </ul>
-          <%- include topbar-right.ejs %>
+          <%- include ./../topbar-right.ejs %>
         </div>
       </div>
     </nav>
@@ -38,17 +38,17 @@
         <div class="row">
           <div class="col-md-3">
             <div class="list-group" id="div-sidebar" data-spy="affix">
-              <a class="list-group-item active" href="#">Problem <%= id+": "+title %></a>
-              <a class="list-group-item" href="#div-sample-data">Sample Data</a>
+              <a class="list-group-item active" href="#"><%=__("problemText",id)%></a>
+              <a class="list-group-item" href="#div-sample-data"><%=__("sample")%></a>
               <% if(hint!=null) {%>
-                <a class="list-group-item" href="#div-hint">Hint</a>
+                <a class="list-group-item" href="#div-hint"><%=__("hint")%></a>
               <% } %>
               <% if(source!=null) {%>
-                <a class="list-group-item" href="#div-source">Source</a>
+                <a class="list-group-item" href="#div-source"><%=__("source")%></a>
               <% } %>
-              <a class="list-group-item" href="<%= "/problems/"+id+"/submit" %>">Submit</a>
-              <a class="list-group-item" href="<%= "/problems/"+id+"/stats" %>">Stats</a>
-              <a class="list-group-item" href="#source">Forum</a>
+              <a class="list-group-item" href="<%= "/problems/"+id+"/submit" %>"><%=__("submit")%></a>
+              <a class="list-group-item" href="<%= "/problems/"+id+"/stats" %>"><%=__("stats")%></a>
+              <a class="list-group-item" href="#source"><%=__("forum")%></a>
           	</div>
       		</div>
           <div class="col-md-9">
@@ -57,18 +57,18 @@
             </div>
             <p id="div-problem-info">
               <h4>
-                <span class="label label-warning label-limit-info"><%= "Accept Count: "+accept_count+" / Submit Count: "+submit_count%>
+                <span class="label label-warning label-limit-info"><%= __("acceptCount")+": "+accept_count+" / "+__("submitCount")+": "+submit_count%>
                   <%if(submit_count>0) {%>
                      <%=" ("+((accept_count*100)/submit_count).toFixed(0)+"%)" %>
                   <%}%>
                 </span>&nbsp;
-                <span class="label label-success label-limit-info"><%= "Time limit : "+time_limit+" sec" %></span>
-                <span class="label label-success label-limit-info"><%= "Memory limit : "+memory_limit+" MB" %></span>
+                <span class="label label-success label-limit-info"><%= __("timeLimit")+" : "+time_limit+" sec" %></span>
+                <span class="label label-success label-limit-info"><%=  __("memoryLimit")+" : "+memory_limit+" MB" %></span>
               </h4>
             </p>
             <div id="div-problem" class="panel panel-info">
               <div class="panel-heading">
-                <h3 class="panel-title">Problem</h3>
+                <h3 class="panel-title"><%=__("description")%></h3>
               </div>
               <div class="panel-body">
                 <p id="desc"><%= description %></p>
@@ -76,13 +76,13 @@
             </div>
             <div id="div-sample-data" class="panel panel-info">
               <div class="panel-heading">
-                <h3 class="panel-title">Sample Data</h3>
+                <h3 class="panel-title"><%=__("sample")%></h3>
               </div>
               <div class="panel-body">
                 <% for(var i=0;i<sample_input.length;i++) { %>
-                  <h2>Sample Data <%= i+1 %></h2>
+                  <h2><%=__("sample")+" "+(i+1)%></h2>
                   <h3>
-                    Input <% i+1 %>
+                    <%=__("input")%>
                     <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-in-"+i %>>
                       Copy
                     </button>
@@ -91,7 +91,7 @@
                     <p id=<%= "p-in-"+i %>><%- sample_input[i].trim() %></p>
                   </div>
                   <h3>
-                    Output <% i+1 %>
+                    <%=__("output")%>
                     <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-out-"+i %>>
                       Copy
                     </button>
@@ -105,7 +105,7 @@
             <% if(hint!=null) {%>
               <div id="div-hint" class="panel panel-info">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Hint</h3>
+                  <h3 class="panel-title"><%=__("hint")%></h3>
                 </div>
                 <div class="panel-body">
                   <p><%- hint %></p>
@@ -115,7 +115,7 @@
             <% if(source!=null) { %>
               <div id="div-source" class="panel panel-info">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Source</h3>
+                  <h3 class="panel-title"><%=__("sourcre")%></h3>
                 </div>
                 <div class="panel-body">
                   <p><%= source %></p>
@@ -125,12 +125,12 @@
             <div id="div-bottom-actions">
               <a href=<%=id+"/submit"%>>
                 <button type="Button" class="btn btn-md btn-default btn-copy">
-                  Submit
+                  <%=__("submit")%>
                 </button>
               </a>
               <a href=<%=id+"/stats"%>>
                 <button type="Button" class="btn btn-md btn-default btn-copy">
-                  Stats
+                  <%=__("stats")%>
                 </button>
               </a>
             </div>
