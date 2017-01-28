@@ -43,8 +43,6 @@ app.use(cookieParser());
 app.use(function(req,res,next) {
   if(req.query.hasOwnProperty('lang')) {
     res.cookie('lang', req.query.lang, { maxAge: 900000, httpOnly: true });
-  } else {
-    res.cookie('lang', 'ko', { maxAge: 900000, httpOnly: true });
   }
   next();
 });
