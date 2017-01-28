@@ -82,5 +82,7 @@
 	"submitsSoFar": "지금까지 %s번 제출함",
 	"logout": "로그아웃",
 	"submitHistory": "제출 통계",
-	"problemID": "problemID"
+	"problemID": "문제 번호",
+	"outputdesc": "출력 데이터 형식",
+	"inputdesc": "입력 데이터 형식"
 }

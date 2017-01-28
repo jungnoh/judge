@@ -82,5 +82,7 @@
 	"recentSubmissionMap": "Recent Submission Map",
 	"submitsSoFar": "%s Submits so far",
 	"logout": "Log Out",
-	"submitHistory": "Submit History"
+	"submitHistory": "Submit History",
+	"inputdesc": "Input Description",
+	"outputdesc": "Output Description"
 }
