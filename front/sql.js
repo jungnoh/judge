@@ -1,397 +1,243 @@
-var mysql = require('mysql');
+var mysql        = require('mysql');
 var result_codes = require('./tools/result_codes');
-var logger = require('./tools/logger');
-var bcrypt = require('./bcrypt');
+var logger       = require('./tools/logger');
+var bcrypt       = require('./bcrypt');
+var winston      = require('winston');
 var pool = mysql.createPool({
   connectionLimit: 30,
   user     : 'root',
   password : 'asdfasdf',
   database : 'judge'
 });
-//function getPoolConnection: Create and return a connection from mysql pool
-//callback: function(conn,err) //conn null if connection failed
+
 function getPoolConnection(callback) {
   pool.getConnection(function(err,conn) {
     if(err) {
-      logger.logException(err,2);
+      winston.error(err);
+      callback(err,null);
       conn.release();
-      callback(null,err);
-      return;
     }
     else {
+      callback(null,conn);
       conn.release();
-      callback(conn,null);
-      return;
     }
   });
 }
-module.exports = {
-  //function signupUser: Create a new user
-  //The following options are MANDATORY: id, email, organization, password, nickname, comment
-  //callback: function(err)
-  //{id: , email: , organization: , password: , nickname: , comment: }
-  addSubmit: function(submit_user_id,submit_user_name,problem_id,lang,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
+function singleQuery(query, callback) {
+  getPoolConnection(function(poolError,conn) {
+    if(poolError) {
+      callback(poolError,null);
+      return;
+    }
+    else conn.query(query, function(queryError,result) {
+      if(queryError) {
+        winston.error(queryError);
+        callback(queryError,null);
       }
-      conn.query('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `submit_user_name`,`lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(submit_user_name)+','+mysql.escape(lang)+',\'\')',
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err,null);
-          return;
-        }
-        callback(null,result.insertId);
-      });
+      else callback(null,result);
+    });
+  });
+}
+
+module.exports = {
+  addSubmit: function(submit_user_id,submit_user_name,problem_id,lang,callback) {
+    singleQuery('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `submit_user_name`,`lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(submit_user_name)+','+mysql.escape(lang)+',\'\')',
+    function(err,result) {
+      if(err) {
+        callback(err,null);
+      }
+      else callback(null,result.insertId);
     });
   },
   signupUser: function(options,callback) {
     bcrypt.cryptPassword(options.pw,function(cryptErr,passHash) {
       if(cryptErr) {
+        winston.error(cryptErr);
         callback(cryptErr);
         return;
       }
-      getPoolConnection(function(conn,poolError) {
-        if(!conn) {
-          callback(poolError,null);
-          return;
+      singleQuery('INSERT INTO `users` (`id`, `email`, `organization`, `password`, `nickname`, `comment`) VALUES ('+mysql.escape(options.id)+', '+mysql.escape(options.email)+', '+mysql.escape(options.organization)+', '+mysql.escape(passHash)+', '+mysql.escape(options.nickname)+', '+mysql.escape('')+');',
+      function(err,result) {
+        if(err) {
+          callback(err,null);
         }
-        conn.query('INSERT INTO `users` (`id`, `email`, `organization`, `password`, `nickname`, `comment`) VALUES ('+mysql.escape(options.id)+', '+mysql.escape(options.email)+', '+mysql.escape(options.organization)+', '+mysql.escape(passHash)+', '+mysql.escape(options.nickname)+', '+mysql.escape('')+');',
-        function(err) {
-          if(err) {
-            logger.logException(err,2);
-            callback(err);
-            return;
-          }
-          callback(null);
-        });
+        else callback(null,result.insertId);
       });
     });
   },
-  //function userInfo_Username: Retrieve user information with matching id
-  //callback: function(err,result)
   userInfo_Username: function(username,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from users where id='+mysql.escape(username),
-      function(err, result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err,null);
-          return;
-        }
-        callback(null,result);
-      });
+    singleQuery('select * from users where id='+mysql.escape(username), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
   userInfo_Userid: function(userid,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from users where user_id='+mysql.escape(userid),
-      function(err, result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err,null);
-          return;
-        }
-        callback(null,result);
-      });
+    singleQuery('select * from users where user_id='+mysql.escape(username), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
-  //function userLogin_Username: Retrieve id/password of matching id
-  //callback: function(err,result)
   userLogin_Username: function(username,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select id, password from users where id='+mysql.escape(username),
-      function(err, result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err,null);
-          return;
-        }
-        callback(null,result);
-      });
+    singleQuery('select id, password from users where id='+mysql.escape(username), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
-  //function userExists_Email: Check if user exists with email
-  //callback: function(err,result)
   userExists: function(id,email,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select id from users where email='+mysql.escape(email)+' or id='+mysql.escape(id),
-      function(err, result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err,null);
-          return;
-        }
-        callback(null,result.length===1);
-      });
+    singleQuery('select id from users where email='+mysql.escape(email)+' or id='+mysql.escape(id), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result.length===1);
     });
   },
-  //function problemInfo: Retrieve problem information
-  //callback: function(err,result)
   problemInfo: function(problem_id,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from problems where id='+mysql.escape(problem_id),
-      function(err, result) {
-        if(err) {
-          logger.logException(err,2);
-        }
-        callback(err,result);
-      });
+    singleQuery('select * from problems where id='+mysql.escape(problem_id), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
-  //function problemStats: Return problem judge result stats
-  //callback: function(err,result)
   problemStats: function(problem_id,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from problem_stats where problem_id='+mysql.escape(problem_id),
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-        }
-        callback(err,result);
-      });
+    singleQuery('select * from problem_stats where problem_id='+mysql.escape(problem_id), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
   problemList: function(page,numberStart,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      offset=0;
-      if(page!==null) {
-        offset=(page-1)*25;
-      }
-      conn.query('select id, title, submit_count, accept_count from problems where id>='+mysql.escape(numberStart)+' order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
-        if(err) {
-          callback(err,null);
-          return;
-        }
-        callback(null,result);
-        return;
-      });
-    })
+    var offset=0;
+    if(page!==null) {
+      offset=(page-1)*25;
+    }
+    singleQuery('select id, title, submit_count, accept_count from problems where id>='+mysql.escape(numberStart)+' order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
+    });
   },
   submitCount: function(options,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
+    var query='select count(*) from submit_history', queryCount=0;
+    if(options!==null && Object.keys(options).length>0) {
+      query+=' where '
+      if(options.problem!==undefined) {
+        queryCount++;
+        query+='problem_id='+mysql.escape(options.problem);
       }
-      var query='select count(*) from submit_history', queryCount=0;
-      if(options!==null && Object.keys(options).length>0) {
-        query+=' where '
-        if(options.problem!==undefined) {
-          queryCount++;
-          query+='problem_id='+mysql.escape(options.problem);
-        }
-        if(options.user_id!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='submit_user_id='+mysql.escape(options.user_id);
-        }
-        if(options.lang!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='lang='+mysql.escape(options.lang);
-        }
-        if(options.username!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='submit_user_name='+mysql.escape(options.username);
-        }
+      if(options.user_id!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='submit_user_id='+mysql.escape(options.user_id);
       }
-      console.log(query);
-      conn.query(query,
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-          callback(err,null);
-          return;
-        }
-        callback(null,result[0]['count(*)']);
-        return;
-      });
-    });
-  },
-  //function submitHistory: Submit history of a problem
-  //callback: function(err,result)
-  submitHistory: function(options,sortOptions,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
+      if(options.lang!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='lang='+mysql.escape(options.lang);
       }
-      var query='select * from submit_history', queryCount=0;
-      if(options!==null && Object.keys(options).length>0) {
-        query+=' where '
-        if(options.problem!==undefined) {
-          queryCount++;
-          query+='problem_id='+mysql.escape(options.problem);
-        }
-        if(options.user_id!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='submit_user_id='+mysql.escape(options.user_id);
-        }
-        if(options.lang!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='lang='+mysql.escape(options.lang);
-        }
-        if(options.username!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='submit_user_name='+mysql.escape(options.username);
-        }
+      if(options.username!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='submit_user_name='+mysql.escape(options.username);
       }
-      query+=' order by submit_id desc';
-      if(sortOptions!==null && Object.keys(sortOptions).length>0) {
-        if(sortOptions.limit!==undefined) {
-          query+=' limit '+sortOptions.limit;
-        }
-        if(sortOptions.offset!==undefined) {
-          query+=' offset '+sortOptions.offset;
-        }
-      }
-      //console.log(query);
-      conn.query(query,
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-        }
-        callback(err,result);
-      });
+    }
+    singleQuery(query, function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result[0]['count(*)']);
     });
   },
   submitHistory: function(options,sortOptions,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
+    var query='select * from submit_history', queryCount=0;
+    if(options!==null && Object.keys(options).length>0) {
+      query+=' where '
+      if(options.problem!==undefined) {
+        queryCount++;
+        query+='problem_id='+mysql.escape(options.problem);
       }
-      var query='select * from submit_history', queryCount=0;
-      if(options!==null && Object.keys(options).length>0) {
-        query+=' where '
-        if(options.problem!==undefined) {
-          queryCount++;
-          query+='problem_id='+mysql.escape(options.problem);
-        }
-        if(options.user_id!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='submit_user_id='+mysql.escape(options.user_id);
-        }
-        if(options.lang!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='lang='+mysql.escape(options.lang);
-        }
-        if(options.username!==undefined) {
-          if(queryCount>0) query+=' and ';
-          queryCount++;
-          query+='submit_user_name='+mysql.escape(options.username);
-        }
+      if(options.user_id!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='submit_user_id='+mysql.escape(options.user_id);
       }
-      query+=' order by submit_id desc';
-      if(sortOptions!==null && Object.keys(sortOptions).length>0) {
-        if(sortOptions.limit!==undefined) {
-          query+=' limit '+sortOptions.limit;
-        }
-        if(sortOptions.offset!==undefined) {
-          query+=' offset '+sortOptions.offset;
-        }
+      if(options.lang!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='lang='+mysql.escape(options.lang);
       }
-      //console.log(query);
-      conn.query(query,
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-        }
-        callback(err,result);
-      });
+      if(options.username!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='submit_user_name='+mysql.escape(options.username);
+      }
+    }
+    query+=' order by submit_id desc';
+    if(sortOptions!==null && Object.keys(sortOptions).length>0) {
+      if(sortOptions.limit!==undefined) {
+        query+=' limit '+sortOptions.limit;
+      }
+      if(sortOptions.offset!==undefined) {
+        query+=' offset '+sortOptions.offset;
+      }
+    }
+    singleQuery(query, function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
+    });
+  },
+  submitHistory: function(options,sortOptions,callback) {
+    var query='select * from submit_history', queryCount=0;
+    if(options!==null && Object.keys(options).length>0) {
+      query+=' where '
+      if(options.problem!==undefined) {
+        queryCount++;
+        query+='problem_id='+mysql.escape(options.problem);
+      }
+      if(options.user_id!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='submit_user_id='+mysql.escape(options.user_id);
+      }
+      if(options.lang!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='lang='+mysql.escape(options.lang);
+      }
+      if(options.username!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='submit_user_name='+mysql.escape(options.username);
+      }
+    }
+    query+=' order by submit_id desc';
+    if(sortOptions!==null && Object.keys(sortOptions).length>0) {
+      if(sortOptions.limit!==undefined) {
+        query+=' limit '+sortOptions.limit;
+      }
+      if(sortOptions.offset!==undefined) {
+        query+=' offset '+sortOptions.offset;
+      }
+    }
+    singleQuery(query, function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
   userRank: function(page,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      var query='select user_id,id, nickname, submit_count, ac_count from users order by ac_count desc, submit_count asc limit 25 offset '+mysql.escape(25*(page-1));
-      //console.log(query);
-      conn.query(query,
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-        }
-        callback(err,result);
-      });
+    singleQuery('select user_id,id, nickname, submit_count, ac_count from users order by ac_count desc, submit_count asc limit 25 offset '+mysql.escape(25*(page-1)), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
   submitInfo: function(submit_id,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from submit_history where submit_id='+mysql.escape(submit_id), function(err,result) {
-        if(err) {
-          console.error(err);
-          callback(err,null);
-          return;
-        }
-        callback(null,result);
-      });
-    })
+    singleQuery('select * from submit_history where submit_id='+mysql.escape(submit_id), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
+    });
   },
-  //function updateCompileError: Updates compile error message
-  //callback: function(err, rows)
   updateCompileError: function(submit_id,msg,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('update submit_history set error_msg='+mysql.escape(msg)+' where submit_id='+mysql.escape(submit_id),
-      function(err,result) {
-        if(err) {
-          logger.logException(err,2);
-        }
-        callback(err,result);
-      });
+    singleQuery('update submit_history set error_msg='+mysql.escape(msg)+' where submit_id='+mysql.escape(submit_id), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
   //function updateJudgeResult: Updates judge result
   //callback: function(err, rows)
   updateJudgeResult: function(submit_id,problem_id,user_id,resultCode,callback) {
-    getPoolConnection(function(conn,poolError) {
+    getPoolConnection(function(poolError,conn) {
       if(!conn) {
         callback(poolError,null);
         return;
@@ -399,7 +245,7 @@ module.exports = {
       conn.query('update submit_history set result='+mysql.escape(resultCode)+' where submit_id='+mysql.escape(submit_id),
       function(err) {
         if(err) {
-          logger.logException(err,2);
+          winston.error(err);
           callback(err);
           return;
         }
@@ -407,14 +253,14 @@ module.exports = {
         conn.query('update problem_stats set '+msg+'_count='+msg+'_count+1 where problem_id='+mysql.escape(problem_id),
         function(err2) {
           if(err2) {
-            logger.logException(err2,2);
+            winston.error(err2);
             callback(err2);
             return;
           }
           conn.query('update users set '+msg+'_count='+msg+'_count+1 where user_id='+mysql.escape(user_id),
           function(err3) {
             if(err3) {
-              logger.logException(err3,2);
+              winston.error(err3);
               callback(err3);
               return;
             }
@@ -422,7 +268,7 @@ module.exports = {
               conn.query('update problems set accept_count=accept_count+1 where id='+mysql.escape(problem_id),
               function(err4) {
                 if(err4) {
-                  logger.logException(err4,2);
+                  winston.error(err4);
                   callback(err4);
                   return;
                 }
@@ -442,26 +288,15 @@ module.exports = {
   //function updateJudgeUsageResult: Updates memory, time usage
   //callback: function(err,result)
   updateJudgeUsageResult: function(submit_id,time,mem,callback) {
-    pool.getConnection(function(err,conn) {
-      if(err) {
-        logger.logException(err,2);
-        callback(err,null);
-        return;
-      }
-      conn.query('update submit_history set used_memory='+mysql.escape(mem)+',used_time='+mysql.escape(time)+' where submit_id='+mysql.escape(submit_id),
-      function(err2,result) {
-        if(err2) {
-          logger.logException(err2,2);
-        }
-        callback(err,result);
-        return;
-      });
+    singleQuery('update submit_history set used_memory='+mysql.escape(mem)+',used_time='+mysql.escape(time)+' where submit_id='+mysql.escape(submit_id), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
     });
   },
   //function appendSubmitCount: Adds +1 to submit count
   //callback: function(err)
   appendSubmitCount: function(problem_id,user_id,callback) {
-    getPoolConnection(function(conn,poolError) {
+    getPoolConnection(function(poolError,conn) {
       if(!conn) {
         callback(poolError,null);
         return;
@@ -469,21 +304,21 @@ module.exports = {
       conn.query('update problems set submit_count=submit_count+1 where id='+mysql.escape(problem_id),
       function(err2,result2) {
         if(err2) {
-          logger.logException(err2,2);
+          winston.error(err2);
           callback(err2);
           return;
         }
         conn.query('update problem_stats set submit_count=submit_count+1 where problem_id='+mysql.escape(problem_id),
         function(err3,result3) {
           if(err3) {
-            logger.logException(err3,2);
+            winston.error(err3);
             callback(err3);
             return;
           }
           conn.query('update users set submit_count=submit_count+1 where user_id='+mysql.escape(user_id),
           function(err4, result4) {
             if(err4) {
-              logger.logException(err4,2);
+              winston.error(err4);
             }
             callback(err4);
             return;
@@ -495,27 +330,16 @@ module.exports = {
   //function updateUserJudgeCount: Update User judge result count
   //callback: function(err,success)
   updateUserJudgeCount: function(userid,result,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,false);
-        return;
-      }
-      var msg=result_codes.intToString(result);
-      conn.query('update users set '+msg+'_count='+msg+'_count+1 where user_id='+mysql.escape(userid),
-      function(err3) {
-        if(err3) {
-          logger.logException(err3,2);
-          callback(null,false);
-          return;
-        }
-        callback(null,true);
-      });
+    var msg=result_codes.intToString(result);
+    singleQuery('update users set '+msg+'_count='+msg+'_count+1 where user_id='+mysql.escape(userid),function(err) {
+      if(err) callback(err,false);
+      else callback(null,true);
     });
   },
   //function updateUserSolvedCount: Check if user has solved a problem before, and +1 to ac_user_count if user hasn't
   //callback: function(err,result), result is a boolean telling if ac_user_count was updated
   updateUserSolvedCount: function(userid,problemid,callback) {
-    getPoolConnection(function(conn,poolError) {
+    getPoolConnection(function(poolError,conn) {
       if(!conn) {
         callback(poolError,null);
         return;
@@ -523,7 +347,7 @@ module.exports = {
       conn.query('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid)+' and `result`=10',
       function(err,result) {
         if(err) {
-          console.log(err);
+          winston.error(err);
           callback(err,null);
           return;
         }
@@ -531,13 +355,13 @@ module.exports = {
           conn.query('update problem_stats set ac_users_count=ac_users_count+1 where problem_id='+mysql.escape(problemid),
           function(err2,result2) {
             if(err2) {
-              callback(err2,false);
+              winston.error(err2);
               return;
             }
             conn.query('update problems set accept_users=accept_users+1 where id='+mysql.escape(problemid),
             function(err3,result3) {
               if(err3) {
-                callback(err3,false);
+                winston.error(err3);
                 return;
               }
               callback(null,true);
@@ -555,36 +379,18 @@ module.exports = {
   //function getLanguages: returns language list
   //callback: function(err,result)
   getLanguages: function(callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from `languages`', function(err,result) {
-        if(err) {
-          callback(poolError,null);
-          return;
-        }
-        callback(null,result);
-      });
-    })
+    singleQuery('select * from `languages`',function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
+    });
   },
   //function checkUserSolveStatus
   //callback: function(err,result)
   //result is 0 if the user hasn't tried yet, 1 if failed, 2 if succeeded
   checkUserSolveStatus: function(userid,problemid,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid),
-      function(err,result) {
-        if(err) {
-          console.log(err);
-          callback(err,null);
-          return;
-        }
+    singleQuery('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid), function(err,result) {
+      if(err) callback(err,null);
+      else {
         if(result.length===0) {
           callback(null,0);
           return;
@@ -596,26 +402,13 @@ module.exports = {
           }
         }
         callback(null,1);
-      });
+      };
     });
   },
-  //function checkUserSolved: Check if user has solved a problem
-  //callback: function(err,result)
   checkUserSolved: function(userid,problemid,callback) {
-    getPoolConnection(function(conn,poolError) {
-      if(!conn) {
-        callback(poolError,null);
-        return;
-      }
-      conn.query('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid)+' and `result`=10',
-      function(err,result) {
-        if(err) {
-          console.log(err);
-          callback(err,null);
-          return;
-        }
-        callback(null,result.length>0);
-      });
+    singleQuery('select * from `submit_history` where `submit_user_id`='+mysql.escape(userid)+' and `problem_id`='+mysql.escape(problemid)+' and `result`=10', function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result.length>0);
     });
   }
 };

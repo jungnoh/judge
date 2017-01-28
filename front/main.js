@@ -13,6 +13,17 @@ var MySQLSessionStore = require('express-mysql-session')(session);
 var bcrypt = require('./bcrypt');
 var app = express();
 
+String.prototype.escapeSpecialChars = function() {
+     return this.replace(/\\n/g, "\\n")
+                .replace(/\\'/g, "\\'")
+                .replace(/\\"/g, '\\"')
+                .replace(/\\&/g, "\\&")
+                .replace(/\\r/g, "\\r")
+                .replace(/\\t/g, "\\t")
+                .replace(/\\b/g, "\\b")
+                .replace(/\\f/g, "\\f");
+};
+
 var options = {
     host: 'localhost',
     port: 3306,
@@ -20,6 +31,7 @@ var options = {
     password: 'asdfasdf',
     database: 'sessions'
 };
+
 const cookieKey='@ruby';
 app.set('views',path.resolve(__dirname,'views'));
 app.set('view engine','ejs');
