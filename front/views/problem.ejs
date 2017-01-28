@@ -71,7 +71,23 @@
                 <h3 class="panel-title"><%=__("description")%></h3>
               </div>
               <div class="panel-body">
-                <p id="desc"><%= description %></p>
+                <p id="desc"><%- description %></p>
+              </div>
+            </div>
+            <div id="div-inputdesc" class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title"><%=__("inputdesc")%></h3>
+              </div>
+              <div class="panel-body">
+                <p id="desc"><%- input_desc %></p>
+              </div>
+            </div>
+            <div id="div-outputdesc" class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title"><%=__("outputdesc")%></h3>
+              </div>
+              <div class="panel-body">
+                <p id="desc"><%- output_desc %></p>
               </div>
             </div>
             <div id="div-sample-data" class="panel panel-info">
@@ -138,5 +154,6 @@
         </div>
       </div>
     </div>
+    <%- include footer.ejs %>
   </body>
 </html>

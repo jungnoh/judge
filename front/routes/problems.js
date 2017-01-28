@@ -69,6 +69,8 @@ module.exports = function(app) {
             found: 1,
             id: req.params.id,
             title: prob.title,
+            input_desc: prob.input_desc,
+            output_desc: prob.output_desc,
             submit_count: prob.submit_count,
             accept_count: prob.accept_count,
             accept_users: prob.accept_users,
