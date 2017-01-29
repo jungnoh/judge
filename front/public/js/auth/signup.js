@@ -56,6 +56,14 @@ window.onload = function() {
       notifyField('p-error-email','Invalid email address.');
       return;
     }
+    if(nickname.length<21) {
+      notifyField('p-error-nickname','Nickname is too long.');
+      return;
+    }
+    if(org.length<21) {
+      notifyField('p-error-org','Nickname is too long.');
+      return;
+    }
     var newForm = $('<form>', {}).append($('<input>', {
       'name' : 'id',
       'value': id,

@@ -12,7 +12,11 @@ module.exports = function(app) {
         res.json('{success: 0}');
         return;
       }
-      fs.writeFile('./../usercode/'+result, req.body.code.escapeSpecialChars(), function(err) {
+      var code = req.body.code.escapeSpecialChars();
+      console.log(code);
+      code = code.replace(/\r\n/g, "\n");
+      console.log(code);
+      fs.writeFile('./../usercode/'+result, code, function(err) {
         if(err) throw err;
         judge(result,req.user.id,function(err2) {
           console.error(err2);
