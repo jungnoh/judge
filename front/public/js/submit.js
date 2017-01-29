@@ -18,7 +18,7 @@ window.onload = function() {
     e.preventDefault();
     var newForm = $('<form>', {}).append($('<input>', {
       'name' : 'code',
-      'value': editor.getValue(),
+      'value': JSON.stringify(editor.getSession().getDocument().$lines),
       'type' : 'hidden'
     })).append($('<input>', {
       'name' : 'lang',

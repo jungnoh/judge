@@ -12,10 +12,11 @@ module.exports = function(app) {
         res.json('{success: 0}');
         return;
       }
-      var code = req.body.code.escapeSpecialChars();
-      console.log(code);
-      code = code.replace(/\r\n/g, "\n");
-      console.log(code);
+      var lines = JSON.parse(req.body.code.escapeSpecialChars());
+      var code='';
+      for(var i=0;i<lines.length;i++) {
+        code += (lines[i]+'\n');
+      }
       fs.writeFile('./../usercode/'+result, code, function(err) {
         if(err) throw err;
         judge(result,req.user.id,function(err2) {
