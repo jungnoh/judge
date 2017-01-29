@@ -56,12 +56,12 @@ window.onload = function() {
       notifyField('p-error-email','Invalid email address.');
       return;
     }
-    if(nickname.length<21) {
+    if(nickname.length>20) {
       notifyField('p-error-nickname','Nickname is too long.');
       return;
     }
-    if(org.length<21) {
-      notifyField('p-error-org','Nickname is too long.');
+    if(org.length>20) {
+      notifyField('p-error-org','organization is too long.');
       return;
     }
     var newForm = $('<form>', {}).append($('<input>', {
