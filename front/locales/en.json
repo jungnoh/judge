@@ -84,5 +84,18 @@
 	"logout": "Log Out",
 	"submitHistory": "Submit History",
 	"inputdesc": "Input Description",
-	"outputdesc": "Output Description"
+	"outputdesc": "Output Description",
+	"resultMsgQueued": "Queued: This submit has not been judged yet.",
+	"resultMsgCompiling": "Compiling: The code is being compiled for the judge to run.",
+	"resultMsgJudging": "Judging: The submit is being judged.",
+	"resultMsgCompileError": "Compile Error: There was something wrong with your code.",
+	"resultMsgRuntimeError": "Runtime Error: Your code malfunctioned and crashed.",
+	"resultMsgMemoryExceeded": "Memory Exceeded: The code used more memory than the limit given in the problem.",
+	"resultMsgWrongAnswer": "Wrong Answer: The result returned by the code was wrong.",
+	"resultMsgTimeExceeded": "Time Exceeded: The code ran longer than the limit given in the problem.",
+	"resultMsgOutputExceeded": "Output Exceeded: The code produced too much output.",
+	"resultMsgSystemError": "System Error: Something went wrong in the server.",
+	"resultMsgAccepted": "Accepted! This code returned the correct value for all inputs.",
+	"submitInfoTitle": "Submit detail for submit %s",
+	"resultCompileMessage": "Error returned by compiler"
 }

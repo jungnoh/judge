@@ -2,6 +2,7 @@
   <head>
     <title>Problem Information</title>
     <%- include head.ejs %>
+    <script src="/static/js/ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/result-detail.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/result-detail.css">
   </head>
@@ -29,7 +30,78 @@
       </div>
     </nav>
     <div class="container" id="div-content">
-
+      <% var messages=[__("queued"),__("compiling"),__("judging"),__("compileError"),__("runtimeError"),__("memoryExceeded"),__("wrongAnswer"),__("timeExceeded"),__("outputExceeded"),__("systemError"),__("accepted")],
+             class_types=['default','primary','primary','warning','warning','warning','danger','danger','danger','warning','success'];%>
+      <% if(found===0) { %>
+        Not found
+      <% } else { %>
+        <div class="row">
+          <div class="div-header div-header">
+            <h3 id="title"><%=__("submitInfoTitle",submitInfo.submit_id)%></h1>
+          </div>
+        </div>
+        <script>var code=JSON.parse("<%-code%>"), submitInfo=JSON.parse("<%-JSON.stringify(submitInfo).replace(/\"/g,'\\x22')%>"), language="<%=lang[submitInfo.lang].ace_lang%>"</script>
+        <%if(submitInfo.result===0) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgQueued")%></div>
+        <%} else if(submitInfo.result===1) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgCompiling")%></div>
+        <%} else if(submitInfo.result===2) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgJudging")%></div>
+        <%} else if(submitInfo.result===3) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgCompileError")%></div>
+        <%} else if(submitInfo.result===4) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgRuntimeError")%></div>
+        <%} else if(submitInfo.result===5) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgMemoryExceeded")%></div>
+        <%} else if(submitInfo.result===6) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgWrongAnswer")%></div>
+        <%} else if(submitInfo.result===7) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgTimeExceeded")%></div>
+        <%} else if(submitInfo.result===8) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgOutputExceeded")%></div>
+        <%} else if(submitInfo.result===9) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgSystemError")%></div>
+        <%} else if(submitInfo.result===10) {%>
+          <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgAccepted")%></div>
+        <%}%>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="div-editor"></div>
+          </div>
+        </div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th><%=__("num")%></th>
+              <th><%=__("problemID")%></th>
+              <th><%=__("name")%></th>
+              <th><%=__("language")%></th>
+              <th><%=__("usedTime")%></th>
+              <th><%=__("usedMem")%></th>
+              <th><%=__("result")%></th>
+              <th class="col-time"><%=__("submitCount")%></th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td><%=submitInfo.submit_id%></td>
+                <td><a href=<%="/problems/"+submitInfo.problem_id%>><%=submitInfo.problem_id%></a></td>
+                <td><%=submitInfo.submit_user_name%></td>
+                <td><%=lang[submitInfo.lang].name%></td>
+                <td><%=submitInfo.used_time%></td>
+                <td><%=submitInfo.used_memory%></td>
+                <td class="result align-middle"><span class="<%="label label-"+class_types[submitInfo.result]%>"><%= messages[submitInfo.result] %></a></td>
+                <td class="col-time" data-toggle="tooltip" data-placement="left" title="<%=submitInfo.submit_time%>"><%=submitInfo.submit_time_text%></td>
+              </tr>
+          </tbody>
+        </table>
+        <% if(submitInfo.result===3) { %>
+          <div class="alert alert-danger" role="alert">
+            <h4><%=__("resultCompileMessage")%></h4>
+            <%=submitInfo.error_msg%>
+          </div>
+        <% } %>
+      <% } %>
     </div>
     <%- include footer.ejs %>
   </body>

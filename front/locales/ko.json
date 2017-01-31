@@ -84,5 +84,7 @@
 	"submitHistory": "제출 통계",
 	"problemID": "문제 번호",
 	"outputdesc": "출력 데이터 형식",
-	"inputdesc": "입력 데이터 형식"
+	"inputdesc": "입력 데이터 형식",
+	"resultMsgAccepted": "resultMsgAccepted",
+	"submitInfoTitle": "submitInfoTitle"
 }

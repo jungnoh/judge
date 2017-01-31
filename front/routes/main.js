@@ -1,9 +1,12 @@
 var sql=require('./../sql');
 var passport=require('passport');
-var fs=require('fs');
+var fs=require('fs-extra');
 var judge=require('./../judger/judge');
 var languages=require('./../tools/languages');
 var moment = require('moment');
+var winston = require('winston');
+var path         = require('path');
+var escape = require('escape-html');
 var intMax=2147483647;
 
 
@@ -40,9 +43,60 @@ module.exports = function(app)
       });
     });
     app.get('/result/detail/:id',function(req,res) {
-      res.render('result-detail', {
-        myid: req.user
-      });
+      var submitID=0;
+      if(!isNaN(req.params.id)) {
+        submitID=parseInt(req.params.id,10);
+        if(submitID<=0||submitID>intMax) {
+          res.render('result-detail', {
+            myid: req.user,
+            found: 0
+          });
+        }
+        sql.submitInfo(submitID, function(err,result) {
+          if(err) {
+            winston.error(err);
+            res.render('error.html');
+            return;
+          }
+          else if(result.length==0) {
+            res.render('result-detail', {
+              myid: req.user,
+              found: 0
+            });
+            return;
+          }
+          fs.readFile(path.resolve(__dirname,'./../../usercode/'+submitID.toString()),function(readErr,data) {
+            if(readErr) {
+              winston.error(readErr);
+              res.render('error.html');
+              return;
+            }
+            var codeArray = data.toString().split("\n");
+            var codeArrayString="[";
+            for(var i=0;i<codeArray.length;i++) {
+              codeArrayString+=("\\x22"+escape(codeArray[i])+"\\x22");
+              if(i<codeArray.length-1) codeArrayString+=", ";
+            }
+            codeArrayString+=']'
+            var now = moment(result[0].submit_time).utcOffset("+09:00");
+            result[0].submit_time_text=now.fromNow();
+            result[0].submit_time=now.format("YYYY.MM.DD A hh:mm:ss");
+            res.render('result-detail', {
+              myid: req.user,
+              found: 1,
+              submitInfo: result[0],
+              code: codeArrayString,
+              lang: languages
+            });
+          });
+        });
+      }
+      else {
+        res.render('result-detail', {
+          myid: req.user,
+          found: 0
+        });
+      }
     });
     app.get('/about',function(req,res){
         res.render('about.html');
