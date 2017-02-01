@@ -65,7 +65,6 @@ CREATE TABLE `users` (
  `comment` text NOT NULL,
  `submit_count` int(11) NOT NULL DEFAULT '0',
  `ac_count` int(11) NOT NULL DEFAULT '0',
- `ac_problem_count` int(11) NOT NULL DEFAULT '0',
  `ce_count` int(11) NOT NULL DEFAULT '0',
  `re_count` int(11) NOT NULL DEFAULT '0',
  `me_count` int(11) NOT NULL DEFAULT '0',
@@ -74,7 +73,7 @@ CREATE TABLE `users` (
  `ole_count` int(11) NOT NULL DEFAULT '0',
  `last_login` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
  `permissions` int(11) NOT NULL DEFAULT '1',
- `ac_rate` double GENERATED ALWAYS AS (((`ac_count` * 100) / `submit_count`)) VIRTUAL,
+ `ac_rate` double GENERATED ALWAYS AS IF(`submit_count`==0,0,(((`ac_count` * 100) / `submit_count`))) VIRTUAL,
  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 INSERT INTO `judge`.`languages` (`id`, `name`, `codename`, `ace_lang`, `compile`, `run_command`, `compile_command`, `source_name`) VALUES
