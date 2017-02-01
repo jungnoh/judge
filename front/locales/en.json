@@ -97,5 +97,6 @@
 	"resultMsgSystemError": "System Error: Something went wrong in the server.",
 	"resultMsgAccepted": "Accepted! This code returned the correct value for all inputs.",
 	"submitInfoTitle": "Submit detail for submit %s",
-	"resultCompileMessage": "Error returned by compiler"
+	"resultCompileMessage": "Error returned by compiler",
+	"acceptProblemCount": "AC Problem #"
 }

@@ -47,6 +47,7 @@
                 <th><%=__("rank")%></th>
                 <th><%=__("username")%></th>
                 <th><%=__("submitCount")%></th>
+                <th><%=__("acceptProblemCount")%></th>
                 <th><%=__("acceptCount")%></th>
                 <th><%=__("acRate")%></th>
               </tr>
@@ -57,10 +58,11 @@
                   <td><%=(page-1)*25+i+1%></td>
                   <td><a href=<%= "/user/"+users[i].user_id %>><%=users[i].nickname%></a></td>
                   <td><%=users[i].submit_count%></td>
-                  <td><%=users[i].ac_count%></td>
+                  <td><%=users[i].ac_problem_count%></td>
+                  <td><%=users[i].acr_count%></td>
                   <td>
                     <%if(users[i].submit_count>0) {%>
-                       <%=((users[i].ac_count*100)/users[i].submit_count).toFixed(0)+"%" %>
+                       <%=(users[i].ac_rate).toFixed(2)+"%" %>
                     <%} else {%>
                       0%
                     <%}%>

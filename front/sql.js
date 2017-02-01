@@ -216,7 +216,7 @@ module.exports = {
     });
   },
   userRank: function(page,callback) {
-    singleQuery('select user_id,id, nickname, submit_count, ac_count from users order by ac_count desc, submit_count asc limit 25 offset '+mysql.escape(25*(page-1)), function(err,result) {
+    singleQuery('select user_id,id, nickname, submit_count, ac_count, ac_problem_count, ac_rate from users order by ac_problem_count desc, ac_rate desc limit 25 offset '+mysql.escape(25*(page-1)), function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);
     });
@@ -358,19 +358,26 @@ module.exports = {
         }
         if(result.length<2) {
           conn.query('update problem_stats set ac_users_count=ac_users_count+1 where problem_id='+mysql.escape(problemid),
-          function(err2,result2) {
+          function(err2) {
             if(err2) {
               winston.error(err2);
               return;
             }
             conn.query('update problems set accept_users=accept_users+1 where id='+mysql.escape(problemid),
-            function(err3,result3) {
+            function(err3) {
               if(err3) {
                 winston.error(err3);
                 return;
               }
-              callback(null,true);
-              return;
+              conn.query('update users set ac_problem_count=ac_problem_count+1 where user_id='+mysql.escape(userid),
+              function(err4) {
+                if(err4) {
+                  winston.error(err4);
+                  return;
+                }
+                callback(null,true);
+                return;
+              })
             });
           });
         }
