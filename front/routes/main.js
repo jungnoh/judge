@@ -74,7 +74,7 @@ module.exports = function(app)
             var codeArray = data.toString().split("\n");
             var codeArrayString="[";
             for(var i=0;i<codeArray.length;i++) {
-              codeArrayString+=("\\x22"+escape(codeArray[i])+"\\x22");
+              codeArrayString+=("\\x22"+escape(codeArray[i]).replace(/\t/,"\\t")+"\\x22");
               if(i<codeArray.length-1) codeArrayString+=", ";
             }
             codeArrayString+=']'
