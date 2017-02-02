@@ -98,5 +98,6 @@
 	"resultMsgAccepted": "정답! 모든 입력에 대해 정답을 반환했습니다.",
 	"submitInfoTitle": "%s번 제출 정보",
 	"resultCompileMessage": "컴파일러 오류",
-	"acceptProblemCount": "맞춘 문제수"
+	"acceptProblemCount": "맞춘 문제수",
+	"judgeTitle": "mitsuha.co"
 }
