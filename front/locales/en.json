@@ -99,5 +99,12 @@
 	"submitInfoTitle": "Submit detail for submit %s",
 	"resultCompileMessage": "Error returned by compiler",
 	"acceptProblemCount": "AC Problem #",
-	"judgeTitle": "mistuha.co"
+	"judgeTitle": "mistuha.co",
+	"returnMain": "returnMain",
+	"menuSudoMain": "menuSudoMain",
+	"menuSudoProblems": "menuSudoProblems",
+	"sudoActions": "sudoActions",
+	"sudoProblemEdit": "Edit",
+	"sudoProblemViewCases": "Cases",
+	"sudoProblemDelete": "Delete"
 }

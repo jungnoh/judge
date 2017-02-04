@@ -39,6 +39,49 @@ function singleQuery(query, callback) {
 }
 
 module.exports = {
+  editProblem: function(id,data,callback) {
+    var query='UPDATE `problems` SET `title` = '+mysql.escape(data.title)
+    +', `description` = '+mysql.escape(data.description)
+    +', `input_desc` = '+mysql.escape(data.input_desc)
+    +', `output_desc` = '+mysql.escape(data.output_desc)
+    +', `hint` = '+mysql.escape(data.hint)
+    +', `time_limit` = '+mysql.escape(data.time_limit)
+    +', `memory_limit` = '+mysql.escape(data.memory_limit)
+    +', `sample_input` = '+mysql.escape(data.sample_input)
+    +', `sample_output` = '+mysql.escape(data.sample_output)
+    +', `source` = '+mysql.escape(data.source)
+    +' WHERE `problems`.`id` = '+id;
+    singleQuery(query,
+    function(err) {
+      if(err) callback(err);
+      else callback(null);
+    });
+  },
+  addProblem: function(data,callback) {
+    var query='insert into `problems` (`title`, `description`, `input_desc`, `output_desc`, `hint`, `time_limit`, `memory_limit`, `sample_input`, `sample_output`, `source`) values ('
+    +mysql.escape(data.title)
+    +', '+mysql.escape(data.description)
+    +', '+mysql.escape(data.input_desc)
+    +', '+mysql.escape(data.output_desc)
+    +', '+mysql.escape(data.hint)
+    +', '+mysql.escape(data.time_limit)
+    +', '+mysql.escape(data.memory_limit)
+    +', '+mysql.escape(data.sample_input)
+    +', '+mysql.escape(data.sample_output)
+    +', '+mysql.escape(data.source)
+    +')';
+    console.log(query);
+    singleQuery(query,
+    function(err,result) {
+      if(err) callback(err);
+      else {
+        singleQuery('INSERT INTO `problem_stats` (`problem_id`) VALUES ('+mysql.escape(result.insertId)+')',function(err2) {
+          if(err2) callback(err2);
+          else callback(null);
+        });
+      }
+    });
+  },
   addSubmit: function(submit_user_id,submit_user_name,problem_id,lang,callback) {
     singleQuery('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `submit_user_name`,`lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(submit_user_name)+','+mysql.escape(lang)+',\'\')',
     function(err,result) {

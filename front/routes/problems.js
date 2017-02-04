@@ -1,6 +1,6 @@
 var sql       = require('./../sql');
 var passport  = require('passport');
-var fs        = require('fs');
+var fs        = require('fs-extra');
 var judge     = require('./../judger/judge');
 var languages = require('./../tools/languages');
 

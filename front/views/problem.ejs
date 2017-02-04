@@ -95,22 +95,21 @@
               </div>
               <div class="panel-body">
                 <% for(var i=0;i<sample_input.length;i++) { %>
-                  <h2><%=__("sample")+" "+(i+1)%></h2>
-                  <h3>
+                  <h4>
                     <%=__("input")%>
                     <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-in-"+i %>>
                       Copy
                     </button>
-                  </h3>
+                  </h4>
                   <div class="well">
                     <p id=<%= "p-in-"+i %>><%- sample_input[i].trim() %></p>
                   </div>
-                  <h3>
+                  <h4>
                     <%=__("output")%>
                     <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-out-"+i %>>
                       Copy
                     </button>
-                  </h3>
+                  </h4>
                   <div class="well">
                     <p id=<%= "p-out-"+i %>><%- sample_output[i].trim() %></p>
                   </div>

@@ -99,5 +99,19 @@
 	"submitInfoTitle": "%s번 제출 정보",
 	"resultCompileMessage": "컴파일러 오류",
 	"acceptProblemCount": "맞춘 문제수",
-	"judgeTitle": "mitsuha.co"
+	"judgeTitle": "mitsuha.co",
+	"returnMain": "사이트로 돌아가기",
+	"sudoMain": "관리자 메인",
+	"menuSudoMain": "관리자 메인",
+	"sudoMenuTitle": "관리자 모드",
+	"menuSudoProblems": "문제 편집",
+	"sudoActions": "작업",
+	"sudoProblemEdit": "편집",
+	"sudoProblemViewCases": "데이터 보기",
+	"sudoProblemDelete": "삭제",
+	"unauthorized": "unauthorized",
+	"return": "return",
+	"sample_input": "sample_input",
+	"sample_output": "sample_output",
+	"addProblem": "addProblem"
 }

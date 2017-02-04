@@ -11,6 +11,8 @@ var path              = require('path');
 var languages         = require('./tools/languages');
 var MySQLSessionStore = require('express-mysql-session')(session);
 var i18n              = require('i18n');
+var fs        = require('fs-extra');
+var fileManager = require('./express-file-manager/index');
 var bcrypt = require('./bcrypt');
 var app = express();
 
@@ -40,12 +42,6 @@ app.set('view engine','ejs');
 app.use('/static',express.static('public'));
 app.use(logger('dev'));
 app.use(cookieParser());
-app.use(function(req,res,next) {
-  if(req.query.hasOwnProperty('lang')) {
-    res.cookie('lang', req.query.lang, { maxAge: 900000, httpOnly: true });
-  }
-  next();
-});
 app.use(i18n.init);
 i18n.configure({
   locales: ['ko','en'],
@@ -56,13 +52,9 @@ i18n.configure({
   logDebugFn: function (msg) {
         console.log('debug', msg);
     },
-
-    // setting of log level WARN - default to require('debug')('i18n:warn')
     logWarnFn: function (msg) {
         console.log('warn', msg);
     },
-
-    // setting of log level ERROR - default to require('debug')('i18n:error')
     logErrorFn: function (msg) {
         console.log('error', msg);
     }
@@ -103,7 +95,7 @@ passport.serializeUser(function(user, done) {
         console.error(err);
         return done(err,null);
       }
-      done(null, {id: result[0].user_id, username: user[0].id,nickname: result[0].nickname});
+      done(null, {id: result[0].user_id, username: user[0].id,nickname: result[0].nickname, permissions: result[0].permissions});
     });
 });
 passport.deserializeUser(function(user, done) {
@@ -111,10 +103,25 @@ passport.deserializeUser(function(user, done) {
 });
 
 app.engine('html',require('ejs').renderFile);
-
+app.use(['/sudo', '/sudo*'],function(req,res,next) {
+  if(typeof req.user==="undefined"||req.user===null||!((req.user.permissions>>2)%2)) {
+    res.render('unauthorized', {
+      myid: req.user
+    });
+  }
+  else next();
+});
+app.use('/sudo/cases/',fileManager(path.resolve(__dirname,'./../cases'), {textExtensions: 'out'}));
+app.use(function(req,res,next) {
+  if(req.query.hasOwnProperty('lang')) {
+    res.cookie('lang', req.query.lang, { maxAge: 900000, httpOnly: true });
+  }
+  next();
+});
 var router_main = require('./routes/main')(app);
 var router_user = require('./routes/user')(app);
 var router_prob = require('./routes/problems')(app);
+var router_sudo = require('./routes/sudo')(app);
 
 var server = app.listen(3000, function() {
   console.log('Express server started on port 3000');

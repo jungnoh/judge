@@ -1,0 +1,20 @@
+.table>tbody>tr>td.label-result {
+  vertical-align: middle;
+}
+#div-content {
+  padding-top: 90px;
+}
+#div-pages {
+  text-align: center;
+  padding-bottom: 50px;
+}
+.limits {
+  font-weight: bold;
+  color: red;
+}
+#div-problem-info {
+  align-content: center;
+}
+.col {
+  margin-top: 5px;
+}

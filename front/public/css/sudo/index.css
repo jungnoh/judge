@@ -1,0 +1,12 @@
+#div-content {
+  padding-left: 20px;
+  padding-top: 70px;
+}
+@media screen and (max-width: 979px) {
+  #div-sidebar {
+    display: none;
+  }
+}
+#div-bottom-actions {
+  padding-bottom: 50px;
+}
