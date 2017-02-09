@@ -1,9 +1,9 @@
 var sql       = require('./../sql');
 var passport  = require('passport');
 var fs        = require('fs-extra');
-var fileManager = require('./../express-file-manager/index');
 var judge     = require('./../judger/judge');
 var languages = require('./../tools/languages');
+var fileman   = require('./file-manager');
 var moment    = require('moment');
 var winston   = require('winston');
 var path      = require('path');
@@ -87,13 +87,22 @@ module.exports = function(app)
               sample_input: req.body.sample_input,
               sample_output: req.body.sample_output,
               source: req.body.source};
-    sql.addProblem(data,function(err) {
+    sql.addProblem(data,function(err,problemID) {
       if(err) {
         res.json('{success: 0}');
         return;
       }
-      res.json('{success: 1}');
-      return;
+      fs.mkdir(path.join('./../cases/',problemID.toString()),function(err2) {
+        console.log('asdfasdf');
+        if(err2) {
+          res.json('{success: 0}');
+          return;
+        }
+        else {
+          res.json('{success: 1}');
+          return;
+        }
+      });
     });
   });
   app.get('/sudo/problems',function(req,res) {

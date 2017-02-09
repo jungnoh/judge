@@ -70,14 +70,13 @@ module.exports = {
     +', '+mysql.escape(data.sample_output)
     +', '+mysql.escape(data.source)
     +')';
-    console.log(query);
     singleQuery(query,
     function(err,result) {
-      if(err) callback(err);
+      if(err) callback(err,null);
       else {
         singleQuery('INSERT INTO `problem_stats` (`problem_id`) VALUES ('+mysql.escape(result.insertId)+')',function(err2) {
-          if(err2) callback(err2);
-          else callback(null);
+          if(err2) callback(err2,null);
+          else callback(null,result.insertId);
         });
       }
     });

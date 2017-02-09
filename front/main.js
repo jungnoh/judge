@@ -11,10 +11,10 @@ var path              = require('path');
 var languages         = require('./tools/languages');
 var MySQLSessionStore = require('express-mysql-session')(session);
 var i18n              = require('i18n');
-var fs        = require('fs-extra');
-var fileManager = require('./express-file-manager/index');
-var bcrypt = require('./bcrypt');
-var app = express();
+var fs                = require('fs-extra');
+var bcrypt            = require('./bcrypt');
+var app               = express();
+var fileman           = require('./file-manager');
 
 String.prototype.escapeSpecialChars = function() {
      return this.replace(/\\n/g, "\\n")
@@ -111,7 +111,7 @@ app.use(['/sudo', '/sudo*'],function(req,res,next) {
   }
   else next();
 });
-app.use('/sudo/cases/',fileManager(path.resolve(__dirname,'./../cases'), {textExtensions: 'out'}));
+app.use('/sudo/cases/',fileman(path.resolve(__dirname,'./../cases'), {textExtensions: 'out'}));
 app.use(function(req,res,next) {
   if(req.query.hasOwnProperty('lang')) {
     res.cookie('lang', req.query.lang, { maxAge: 900000, httpOnly: true });

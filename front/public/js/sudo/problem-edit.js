@@ -2,6 +2,8 @@ window.onload = function() {
   CKEDITOR.replace('descEditor');
   CKEDITOR.replace('inputEditor');
   CKEDITOR.replace('outputEditor');
+  //CKEDITOR.replace('inputExEditor', {toolbarGroups: [{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },{ name: 'about' }]});
+  //CKEDITOR.replace('outputExEditor', {toolbarGroups: [{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },{ name: 'about' }]});
   $('#btn-submit').click(function(e) {
     /*
     singleQuery('UPDATE `problems` SET `title` = '+mysql.escape(data.title)
