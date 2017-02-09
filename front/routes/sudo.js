@@ -42,6 +42,24 @@ module.exports = function(app)
       }
     });
   });
+  app.get('/sudo/updateCount/:id',function(req,res) {
+    if(req.params.id!==undefined) {
+      if(isNaN(req.params.id)) return res.redirect(req.query.return || '/sudo/problems');
+      else if(parseInt(req.params.id)<0||parseInt(req.params.id)>intMax) return res.redirect(req.query.return || '/sudo/problems');
+    }
+    else return res.redirect(req.query.return || '/sudo/problems');
+    fs.readdir(path.resolve('./../cases/'+req.params.id.toString()),function(err,files) {
+      if(err) {
+        return res.status(500).send('Error while executing readdir');
+      }
+      sql.updateCaseCount(req.params.id,Math.floor(files.length/2),function(err2) {
+        if(err2) {
+          return res.status(500).send('Error while updating count');
+        }
+        return res.redirect(req.query.return || '/sudo/problems');
+      });
+    });
+  });
   app.get('/sudo/problems/add',function(req,res) {
     res.render('sudo/problem-add', {
       myid: req.user
@@ -93,7 +111,6 @@ module.exports = function(app)
         return;
       }
       fs.mkdir(path.join('./../cases/',problemID.toString()),function(err2) {
-        console.log('asdfasdf');
         if(err2) {
           res.json('{success: 0}');
           return;

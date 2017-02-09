@@ -113,5 +113,8 @@
 	"return": "return",
 	"sample_input": "sample_input",
 	"sample_output": "sample_output",
-	"addProblem": "addProblem"
+	"addProblem": "addProblem",
+	"menuSudoProblemAdd": "menuSudoProblemAdd",
+	"menuSudoCases": "menuSudoCases",
+	"sudoProblemCountUpdate": "sudoProblemCountUpdate"
 }

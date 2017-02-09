@@ -106,5 +106,11 @@
 	"sudoActions": "sudoActions",
 	"sudoProblemEdit": "Edit",
 	"sudoProblemViewCases": "Cases",
-	"sudoProblemDelete": "Delete"
+	"sudoProblemDelete": "Delete",
+	"menuSudoProblemAdd": "menuSudoProblemAdd",
+	"menuSudoCases": "menuSudoCases",
+	"addProblem": "addProblem",
+	"return": "return",
+	"unauthorized": "unauthorized",
+	"sudoProblemCountUpdate": "sudoProblemCountUpdate"
 }

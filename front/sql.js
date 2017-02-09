@@ -81,6 +81,12 @@ module.exports = {
       }
     });
   },
+  updateCaseCount: function(problem_id,case_count,callback) {
+    singleQuery('update problems set case_count='+mysql.escape(case_count)+' where id='+mysql.escape(problem_id), function(err) {
+      if(err) callback(err);
+      else callback(null);
+    });
+  },
   addSubmit: function(submit_user_id,submit_user_name,problem_id,lang,callback) {
     singleQuery('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `submit_user_name`,`lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(submit_user_name)+','+mysql.escape(lang)+',\'\')',
     function(err,result) {
