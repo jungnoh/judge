@@ -69,7 +69,8 @@ module.exports = function(app)
           sql.signupUser(options, function(signUpErr) {
             if(signUpErr) {
               console.log(signUpErr);
-              return res.json({'success': 0,'message': err2.message});
+              //TODO i18n
+              return res.json({'success': 0,'message': 'Signup failed due to server error'});
             }
             else return res.json({'success': 1});
           });

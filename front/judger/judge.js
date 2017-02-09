@@ -52,7 +52,7 @@ module.exports = function(submitID,userID,callback) {
                   callback(updateCompileErr);
                   return;
                 }
-                sql.updateJudgeResult(submitID,problemInfo.problem_id,userID,3,function(updateJudgeError) {
+                sql.updateJudgeResult(submitID,problemInfo.problem_id,userID,3,function(updateJudgeErr) {
                   if(updateJudgeErr) {
                     winston.info(updateJudgeErr);
                     callback(updateJudgeErr);

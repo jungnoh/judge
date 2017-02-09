@@ -56,6 +56,14 @@ window.onload = function() {
       notifyField('p-error-email','Invalid email address.');
       return;
     }
+    if(nickname.length>20) {
+      notifyField('p-error-nickname','Nickname is too long.');
+      return;
+    }
+    if(org.length>20) {
+      notifyField('p-error-org','Organization is too long.');
+      return;
+    }
     var newForm = $('<form>', {}).append($('<input>', {
       'name' : 'id',
       'value': id,
@@ -105,9 +113,11 @@ function notifyField(id, value) {
   elem.style.display = 'inline';
 }
 function clearText() {
-  document.getElementById('p-error-tos').style.display     = 'none';
-  document.getElementById('p-error-id').style.display      = 'none';
-  document.getElementById('p-error-pw').style.display      = 'none';
-  document.getElementById('p-error-pwagain').style.display = 'none';
-  document.getElementById('p-error-email').style.display   = 'none';
+  document.getElementById('p-error-tos').style.display      = 'none';
+  document.getElementById('p-error-id').style.display       = 'none';
+  document.getElementById('p-error-pw').style.display       = 'none';
+  document.getElementById('p-error-pwagain').style.display  = 'none';
+  document.getElementById('p-error-email').style.display    = 'none';
+  document.getElementById('p-error-nickname').style.display = 'none';
+  document.getElementById('p-error-org').style.display      = 'none';
 }

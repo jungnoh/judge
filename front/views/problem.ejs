@@ -15,7 +15,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">Judge</a>
+          <a class="navbar-brand" href="/"><%=__("judgeTitle")%></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -34,7 +34,6 @@
           <h1>Problem not found</h1>
         </div>
       <% } else { %>
-        <!--Storing sample data for copying-->
         <div class="row">
           <div class="col-md-3">
             <div class="list-group" id="div-sidebar" data-spy="affix">
@@ -53,7 +52,7 @@
       		</div>
           <div class="col-md-9">
             <div class="page-header">
-              <h1><%= id+". "+title %></h1>
+              <h2><%= id+". "+title %></h2>
             </div>
             <p id="div-problem-info">
               <h4>
@@ -71,7 +70,23 @@
                 <h3 class="panel-title"><%=__("description")%></h3>
               </div>
               <div class="panel-body">
-                <p id="desc"><%= description %></p>
+                <p id="desc"><%- description %></p>
+              </div>
+            </div>
+            <div id="div-inputdesc" class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title"><%=__("inputdesc")%></h3>
+              </div>
+              <div class="panel-body">
+                <p id="desc"><%- input_desc %></p>
+              </div>
+            </div>
+            <div id="div-outputdesc" class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title"><%=__("outputdesc")%></h3>
+              </div>
+              <div class="panel-body">
+                <p id="desc"><%- output_desc %></p>
               </div>
             </div>
             <div id="div-sample-data" class="panel panel-info">
@@ -80,22 +95,21 @@
               </div>
               <div class="panel-body">
                 <% for(var i=0;i<sample_input.length;i++) { %>
-                  <h2><%=__("sample")+" "+(i+1)%></h2>
-                  <h3>
+                  <h4>
                     <%=__("input")%>
                     <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-in-"+i %>>
                       Copy
                     </button>
-                  </h3>
+                  </h4>
                   <div class="well">
                     <p id=<%= "p-in-"+i %>><%- sample_input[i].trim() %></p>
                   </div>
-                  <h3>
+                  <h4>
                     <%=__("output")%>
                     <button type="Button" class="btn btn-lg btn-link btn-copy" data-clipboard-action="copy" data-clipboard-target=<%= "#p-out-"+i %>>
                       Copy
                     </button>
-                  </h3>
+                  </h4>
                   <div class="well">
                     <p id=<%= "p-out-"+i %>><%- sample_output[i].trim() %></p>
                   </div>
@@ -138,5 +152,6 @@
         </div>
       </div>
     </div>
+    <%- include footer.ejs %>
   </body>
 </html>

@@ -1,6 +1,6 @@
 var sql       = require('./../sql');
 var passport  = require('passport');
-var fs        = require('fs');
+var fs        = require('fs-extra');
 var judge     = require('./../judger/judge');
 var languages = require('./../tools/languages');
 
@@ -12,7 +12,12 @@ module.exports = function(app) {
         res.json('{success: 0}');
         return;
       }
-      fs.writeFile('./../usercode/'+result, req.body.code.escapeSpecialChars(), function(err) {
+      var lines = JSON.parse(req.body.code.escapeSpecialChars());
+      var code='';
+      for(var i=0;i<lines.length;i++) {
+        code += (lines[i]+'\n');
+      }
+      fs.writeFile('./../usercode/'+result, code, function(err) {
         if(err) throw err;
         judge(result,req.user.id,function(err2) {
           console.error(err2);
@@ -69,6 +74,8 @@ module.exports = function(app) {
             found: 1,
             id: req.params.id,
             title: prob.title,
+            input_desc: prob.input_desc,
+            output_desc: prob.output_desc,
             submit_count: prob.submit_count,
             accept_count: prob.accept_count,
             accept_users: prob.accept_users,

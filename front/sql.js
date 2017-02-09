@@ -39,6 +39,48 @@ function singleQuery(query, callback) {
 }
 
 module.exports = {
+  editProblem: function(id,data,callback) {
+    var query='UPDATE `problems` SET `title` = '+mysql.escape(data.title)
+    +', `description` = '+mysql.escape(data.description)
+    +', `input_desc` = '+mysql.escape(data.input_desc)
+    +', `output_desc` = '+mysql.escape(data.output_desc)
+    +', `hint` = '+mysql.escape(data.hint)
+    +', `time_limit` = '+mysql.escape(data.time_limit)
+    +', `memory_limit` = '+mysql.escape(data.memory_limit)
+    +', `sample_input` = '+mysql.escape(data.sample_input)
+    +', `sample_output` = '+mysql.escape(data.sample_output)
+    +', `source` = '+mysql.escape(data.source)
+    +' WHERE `problems`.`id` = '+id;
+    singleQuery(query,
+    function(err) {
+      if(err) callback(err);
+      else callback(null);
+    });
+  },
+  addProblem: function(data,callback) {
+    var query='insert into `problems` (`title`, `description`, `input_desc`, `output_desc`, `hint`, `time_limit`, `memory_limit`, `sample_input`, `sample_output`, `source`) values ('
+    +mysql.escape(data.title)
+    +', '+mysql.escape(data.description)
+    +', '+mysql.escape(data.input_desc)
+    +', '+mysql.escape(data.output_desc)
+    +', '+mysql.escape(data.hint)
+    +', '+mysql.escape(data.time_limit)
+    +', '+mysql.escape(data.memory_limit)
+    +', '+mysql.escape(data.sample_input)
+    +', '+mysql.escape(data.sample_output)
+    +', '+mysql.escape(data.source)
+    +')';
+    singleQuery(query,
+    function(err,result) {
+      if(err) callback(err,null);
+      else {
+        singleQuery('INSERT INTO `problem_stats` (`problem_id`) VALUES ('+mysql.escape(result.insertId)+')',function(err2) {
+          if(err2) callback(err2,null);
+          else callback(null,result.insertId);
+        });
+      }
+    });
+  },
   addSubmit: function(submit_user_id,submit_user_name,problem_id,lang,callback) {
     singleQuery('INSERT INTO `submit_history` (`problem_id`, `submit_user_id`, `submit_user_name`,`lang`, `error_msg`) VALUES ('+mysql.escape(problem_id)+', '+mysql.escape(submit_user_id)+','+mysql.escape(submit_user_name)+','+mysql.escape(lang)+',\'\')',
     function(err,result) {
@@ -216,7 +258,7 @@ module.exports = {
     });
   },
   userRank: function(page,callback) {
-    singleQuery('select user_id,id, nickname, submit_count, ac_count from users order by ac_count desc, submit_count asc limit 25 offset '+mysql.escape(25*(page-1)), function(err,result) {
+    singleQuery('select user_id,id, nickname, submit_count, ac_count, ac_problem_count, ac_rate from users order by ac_problem_count desc, ac_rate desc limit 25 offset '+mysql.escape(25*(page-1)), function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);
     });
@@ -358,19 +400,26 @@ module.exports = {
         }
         if(result.length<2) {
           conn.query('update problem_stats set ac_users_count=ac_users_count+1 where problem_id='+mysql.escape(problemid),
-          function(err2,result2) {
+          function(err2) {
             if(err2) {
               winston.error(err2);
               return;
             }
             conn.query('update problems set accept_users=accept_users+1 where id='+mysql.escape(problemid),
-            function(err3,result3) {
+            function(err3) {
               if(err3) {
                 winston.error(err3);
                 return;
               }
-              callback(null,true);
-              return;
+              conn.query('update users set ac_problem_count=ac_problem_count+1 where user_id='+mysql.escape(userid),
+              function(err4) {
+                if(err4) {
+                  winston.error(err4);
+                  return;
+                }
+                callback(null,true);
+                return;
+              })
             });
           });
         }
