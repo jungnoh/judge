@@ -22,6 +22,15 @@ module.exports = function(app)
   app.get('/', function (request, response, next) {
     response.redirect(request.baseUrl + '/browse');
   });
+  app.use('/delete', function(req, res, next) {
+    fs.unlink((req.originalUrl || '').replace(/.*delete/, browseDir), function(err) {
+      if(err) {
+        console.log(err);
+        return res.status(500).end("Error deleting file.");
+      }
+      return res.status(200).end("Successfully deleted file");
+    });
+  });
   app.use('/upload', function(req, res, next) {
     upload(req,res,function(err) {
         var uploadDir = (req.originalUrl || '').replace(/.*upload/, browseDir);
@@ -160,6 +169,12 @@ module.exports = function(app)
         }).join('/');
         return baseUrl.replace(/\/browse\/?/, '/upload') + path;
     }
+    function rawUrlForDelete(path) {
+        path = path.split('/').map(function (part) {
+            return encodeURIComponent(part.replace(/\\\//g, '/'));
+        }).join('/');
+        return baseUrl.replace(/\/browse\/?/, '/delete') + path;
+    }
     if (request.method !== 'GET') return next();
     var baseUrl = (request.baseUrl || '');
     var stylePath = baseUrl.replace(/\/browse\/?$/, '/static');
@@ -236,7 +251,8 @@ module.exports = function(app)
 							name: path.basename(relativePath) || 'root',
 							children: dirListing,
               rawUrl: rawUrlForPath(relativePath),
-              uploadUrl: rawUrlForUpload(relativePath)
+              uploadUrl: rawUrlForUpload(relativePath),
+              deleteUrl: rawUrlForDelete(relativePath)
 						};
             var parent = relativePath.replace(/\/[^/]*$/, '') || '/';
 						dirData.parent = parent;

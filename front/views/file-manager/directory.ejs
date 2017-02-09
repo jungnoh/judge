@@ -13,6 +13,9 @@
 			integrity="sha256-jkaBMXLp+mraE29Q0r6gtTniSfPhS1N0R7YcQwdt7nQ="
 			crossorigin="anonymous">
 		</script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.contextMenu.min.css" integrity="sha256-2/jrmGqX2gfTEwggPIGEYYyxya8NqPeiTLGrKFCD0us=" crossorigin="anonymous" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.contextMenu.min.js" integrity="sha256-PdxU1/ZFS1BF+tX01Vr5QqwYU51advTVjRb6yvufIBA=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.ui.position.min.js" integrity="sha256-C7HjUf9VdfVJ5Dxet+nW9wK7rKLAhEkEYMjGXsw7FM8=" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<div id="path">
@@ -32,16 +35,16 @@
 				document.getElementById('new-file').onclick = function () {
 			        var filename = prompt('New file:', 'index.md');
 			        if (filename) {
-			            var r = new XMLHttpRequest();
-			            r.open('PUT', '<%=directory.rawUrl%>' + '/' + encodeURIComponent(filename));
-						r.onreadystatechange = function () {
-							if (r.readyState !== 4) return;
-							if (r.status < 200 || r.status >= 300) {
-								return alert(r.statusText);
-							}
-							location.reload();
-						};
-						r.send('');
+		            var r = new XMLHttpRequest();
+		            r.open('PUT', '<%=directory.rawUrl%>'+'/'+encodeURIComponent(filename));
+								r.onreadystatechange = function () {
+									if (r.readyState !== 4) return;
+									if (r.status < 200 || r.status >= 300) {
+										return alert(r.statusText);
+									}
+									location.reload();
+								};
+								r.send('');
 			        }
 			    };
 			</script>
@@ -49,7 +52,7 @@
 		<div id="main">
 			<ul class="dir">
 				<% directory.children.forEach(function (child) { %>
-					<li class="child child-<%=child.type%> type-<%=child.mimeCategory%> subtype-<%=child.mimeSubType%>"><% if (child.type !== 'directory') {%><a href="<%=child.rawUrl%>" class="child-action"></a><% } %><a href="<%=child.url%>"><%=child.name + (child.type === 'file' ? '' : '/')%></a></li>
+					<li class="right-menu-child child child-<%=child.type%> type-<%=child.mimeCategory%> subtype-<%=child.mimeSubType%>" data-downloadurl="<%=child.rawUrl%>" data-deleteurl="<%=child.rawUrl.replace(/\/raw\//,'/delete/')%>" data-editurl="<%=child.url%>"><% if (child.type !== 'directory') {%><a href="<%=child.rawUrl%>" class="child-action"></a><% } %><a href="<%=child.url%>"><%=child.name + (child.type === 'file' ? '' : '/')%></a></li>
 				<% });%>
 			</ul>
 		</div>

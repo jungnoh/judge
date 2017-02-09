@@ -29,3 +29,38 @@ window.onload = function() {
     });
   });
 };
+
+$(function() {
+    $.contextMenu({
+        selector: '.right-menu-child',
+        callback: function(key, options) {
+          if(key==='edit') {
+            location.href=options.$trigger[0].dataset["editurl"];
+          } else if(key=='download') {
+            location.href=options.$trigger[0].dataset["downloadurl"];
+          } else if(key=='delete') {
+            $.ajax(
+              { url: options.$trigger[0].dataset["deleteurl"],
+                success: function(result){
+                  alert(result);
+                  location.reload();
+                },
+                error: function(result) {
+                  alert(result);
+                }
+              });
+          }
+        },
+        items: {
+            "edit": {name: "Edit", icon: "edit"},
+            "download": {name: "Download", icon: "copy"},
+            "sep1": "---------",
+            "delete": {name: "Delete", icon: "delete"},
+        }
+    });
+
+    $('.context-menu-one').on('click', function(e){
+        alert(JSON.stringify(e));
+        console.log('clicked', this);
+    })
+});
