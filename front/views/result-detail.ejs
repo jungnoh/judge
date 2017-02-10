@@ -40,7 +40,10 @@
             <h3 id="title"><%=__("submitInfoTitle",submitInfo.submit_id)%></h1>
           </div>
         </div>
-        <script>var code=JSON.parse("<%-code%>"), submitInfo=JSON.parse("<%-JSON.stringify(submitInfo).replace(/\"/g,'\\x22')%>"), language="<%=lang[submitInfo.lang].ace_lang%>"</script>
+        <script>
+        var code=JSON.parse("<%-code%>"),
+         submitInfo=JSON.parse("<%-JSON.stringify(submitInfo).replace(/\"/g,'\\x22')%>"),
+         language="<%=lang[submitInfo.lang].ace_lang%>"</script>
         <%if(submitInfo.result===0) {%>
           <div class="<%="alert alert-"+class_types[submitInfo.result]%>" role="alert"><%=__("resultMsgQueued")%></div>
         <%} else if(submitInfo.result===1) {%>

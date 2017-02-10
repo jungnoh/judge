@@ -79,19 +79,21 @@ module.exports = function(app)
           var codeArray = data.toString().split("\n");
           var codeArrayString="[";
           for(var i=0;i<codeArray.length;i++) {
-            var codeString = codeArray[i].replace(/\\n/g, "\\n")
-             .replace(/\\'/g, "\\'")
-             .replace(/\\"/g, '\\"')
-             .replace(/\\&/g, "\\&")
-             .replace(/\\r/g, "\\r")
-             .replace(/\\t/g, "\\t")
-             .replace(/\\b/g, "\\b")
-             .replace(/\\f/g, "\\f")
-             .replace(/[\u0000-\u0019]+/g,"");
+            var codeString = codeArray[i].replace(/\\/g,"\\\\\\\\")
+                                      .replace(/\\'/g, "\\'")
+                                      .replace(/\\"/g, '\\"')
+                                      .replace(/\\&/g, "\\&")
+                                      .replace(/\\r/g, "\\r")
+                                      .replace(/\\t/g, "\\t")
+                                      .replace(/\\b/g, "\\b")
+                                      .replace(/\\f/g, "\\f")
+                                      .replace(/[\u0000-\u0019]+/g,"");
             codeArrayString+=("\\x22"+escape(codeString)+"\\x22");
             if(i<codeArray.length-1) codeArrayString+=", ";
           }
           codeArrayString+=']'
+          console.log(codeArrayString);
+          console.log(JSON.parse(codeArrayString.replace(/\\x22/g,'\"')));
           var now = moment(result[0].submit_time).utcOffset("+09:00");
           result[0].submit_time_text=now.fromNow();
           result[0].submit_time=now.format("YYYY.MM.DD A hh:mm:ss");
