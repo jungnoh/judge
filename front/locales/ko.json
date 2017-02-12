@@ -116,5 +116,7 @@
 	"addProblem": "addProblem",
 	"menuSudoProblemAdd": "menuSudoProblemAdd",
 	"menuSudoCases": "menuSudoCases",
-	"sudoProblemCountUpdate": "sudoProblemCountUpdate"
+	"sudoProblemCountUpdate": "sudoProblemCountUpdate",
+	"solvedProblems": "solvedProblems",
+	"triedProblems": "triedProblems"
 }

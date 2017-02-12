@@ -45,6 +45,7 @@
           <table class="table table-striped">
             <thead>
               <tr>
+                <th></th>
                 <th>#</th>
                 <th><%=__("problemName")%></th>
                 <th><%=__("acceptCount")%></th>
@@ -55,6 +56,7 @@
             <tbody>
               <% for(var i=0;i<problems.length;i++) { %>
                 <tr>
+                  <td class="td-result"><%if(solved.indexOf(problems[i].id)>-1){%><span class="label label-success">Y</span><%}else if(tried.indexOf(problems[i].id)>-1){%><span class="label label-danger">N</span><%}%></td>
                   <td><%=problems[i].id%></td>
                   <td><a href=<%= "/problems/"+problems[i].id %>><%=problems[i].title%></a></td>
                   <td><%=problems[i].accept_count%></td>

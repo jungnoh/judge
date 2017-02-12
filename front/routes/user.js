@@ -115,10 +115,18 @@ module.exports = function(app)
           }
           else times[val]=1;
         }
-        res.render('user-info',{
-          myid: req.user,
-          stats: result[0],
-          results: JSON.stringify(times)
+        sql.userSolvedProblems(req.params.id,function(err3,problems) {
+          if(err3) {
+            res.render('error.html');
+            return;
+          }
+          res.render('user-info',{
+            myid: req.user,
+            stats: result[0],
+            results: JSON.stringify(times),
+            solved: problems.solved,
+            tried: problems.tried
+          });
         });
       });
     });

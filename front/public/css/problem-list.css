@@ -1,6 +1,3 @@
-.table>tbody>tr>td.label-result {
-  vertical-align: middle;
-}
 #div-content {
   padding-top: 90px;
 }
@@ -34,4 +31,10 @@
   #div-sidebar {
     display: none;
   }
+}
+.table>tbody>tr>td.label-result {
+  vertical-align: middle;
+}
+.table tbody>tr>td.td-result{
+    vertical-align: middle;
 }

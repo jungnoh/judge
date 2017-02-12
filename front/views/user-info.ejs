@@ -100,6 +100,26 @@
           </table>
         </div>
         <div class="col-md-9">
+          <%if(solved.length>0) {%>
+            <div class="panel panel-default">
+              <div class="panel-heading"><h3 class="panel-title"><%=__("solvedProblems")%></h3></div>
+              <div class="panel-body">
+                <%for(var i=0;i<solved.length;i++) {%>
+                  <a href="/problems/<%=solved[i]%>"><%=solved[i]%></a>&nbsp;
+                <%}%>
+              </div>
+            </div>
+          <%}%>
+          <%if(tried.length>0) {%>
+            <div class="panel panel-default">
+              <div class="panel-heading"><h3 class="panel-title"><%=__("triedProblems")%></h3></div>
+              <div class="panel-body">
+                <%for(var i=0;i<tried.length;i++) {%>
+                  <a href="/problems/<%=tried[i]%>"><%=tried[i]%></a>&nbsp;
+                <%}%>
+              </div>
+            </div>
+          <%}%>
           <div class="panel panel-default">
             <div class="panel-heading"><h3 class="panel-title">Submit Stats</h3></div>
             <div class="panel-body panel-stat">

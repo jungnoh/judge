@@ -142,12 +142,33 @@ module.exports = function(app)
         res.redirect(re_url);
         return;
       }
-      else res.render('problem-list', {
-        myid: req.user,
-        problems: result,
-        page: page,
-        startid: startid
-      });
+      else {
+        if(req.user!==undefined) {
+          sql.userSolvedProblems(req.user.id,function(err3,problems) {
+            if(err3) {
+              res.render('error.html');
+              return;
+            }
+            console.log(JSON.stringify(problems));
+            res.render('problem-list', {
+              myid: req.user,
+              problems: result,
+              page: page,
+              startid: startid,
+              solved: problems.solved,
+              tried: problems.tried
+            });
+          });
+        }
+        else res.render('problem-list', {
+          myid: req.user,
+          problems: result,
+          page: page,
+          startid: startid,
+          solved: [],
+          tried: []
+        });
+      }
     });
   });
   app.get('/result', function(req,res) {

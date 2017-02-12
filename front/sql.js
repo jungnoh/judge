@@ -130,6 +130,46 @@ module.exports = {
       else callback(null,result);
     });
   },
+  userSolvedProblems: function(id,callback) {
+    singleQuery('select problem_id, result from submit_history where submit_user_id='+mysql.escape(id)+' order by problem_id', function(err,result) {
+      if(err) callback(err,null);
+      else {
+        var correct=[],tried=[];
+        //typeof arrayName[index] === 'undefined'
+        for(var i=0;i<result.length;i++) {
+          if(result[i].result===10) {
+            if(correct.length==0||correct[correct.length-1]!=result[i].problem_id) {
+              correct.push(result[i].problem_id);
+            }
+          }
+        }
+        for(var i=0;i<result.length;i++) {
+          if(result[i].result!==10) {
+            var start=0,end=correct.length-1,value=-1;
+            //binary search
+            while(start<=end) {
+              console.log(start+" "+end);
+              var mid=Math.floor((start+end)/2);
+              if(correct[mid]===result[i].problem_id) {
+                value=mid;
+                break;
+              }
+              if(correct[mid]>result[i].problem_id) {
+                end=mid-1;
+              }
+              else start=mid+1;
+            }
+            if(value<0) {
+              if(tried.length===0||tried[tried.length-1]!=result[i].problem_id) {
+                tried.push(result[i].problem_id);
+              }
+            }
+          }
+        }
+        callback(null,{solved:correct, tried:tried});
+      }
+    });
+  },
   userExists: function(id,email,callback) {
     singleQuery('select id from users where email='+mysql.escape(email)+' or id='+mysql.escape(id), function(err,result) {
       if(err) callback(err,null);
