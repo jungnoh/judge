@@ -10,10 +10,13 @@ var moment = require('moment');
 
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, path.resolve('./uploads'));
+    var dir=(req.originalUrl || '').replace(/.*upload/, '');
+    if(dir[0]!=='/') dir='/'+dir;
+    dir=path.resolve(browseDir,'.'+dir);
+    callback(null, dir);
   },
   filename: function (req, file, callback) {
-    callback(null, file.fieldname + '-' + Date.now());
+    callback(null, file.originalname);
   }
 });
 var upload = multer({ storage : storage }).array('uploadFiles',20);
@@ -39,17 +42,7 @@ module.exports = function(app)
           console.log(err);
           return res.end("Error uploading file.");
         }
-        for(var i=0;i<req.files.length;i++) {
-          fs.move(path.join('./uploads',req.files[i].filename),path.join(uploadDir,req.files[i].originalname), function (err) {
-            if (err) {
-              console.log(req.files.length);
-              fs.remove(err.path,function(err2){if(err2) console.log(err2);})
-              return console.error(err);
-            }
-            console.log(req.files.length);
-            console.log("success!")
-          });
-        }
+
         res.end("File is uploaded");
     });
   });
