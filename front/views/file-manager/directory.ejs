@@ -31,23 +31,6 @@
 			</form>
 			<a id="upload-file">upload file</a>
 			<a id="new-file">new file</a>
-			<script>
-				document.getElementById('new-file').onclick = function () {
-			        var filename = prompt('New file:', 'index.md');
-			        if (filename) {
-		            var r = new XMLHttpRequest();
-		            r.open('PUT', '<%=directory.rawUrl%>'+'/'+encodeURIComponent(filename));
-								r.onreadystatechange = function () {
-									if (r.readyState !== 4) return;
-									if (r.status < 200 || r.status >= 300) {
-										return alert(r.statusText);
-									}
-									location.reload();
-								};
-								r.send('');
-			        }
-			    };
-			</script>
 		</div>
 		<div id="main">
 			<ul class="dir">
@@ -56,6 +39,23 @@
 				<% });%>
 			</ul>
 		</div>
+		<script>
+			document.getElementById('new-file').onclick = function () {
+			      var filename = prompt('New file:', 'index.md');
+			      if (filename) {
+			        var r = new XMLHttpRequest();
+			        r.open('PUT', '<%=directory.rawUrl%>'+'/'+encodeURIComponent(filename));
+			        r.onreadystatechange = function () {
+			          if (r.readyState !== 4) return;
+			          if (r.status < 200 || r.status >= 300) {
+			            return alert(r.statusText);
+			          }
+			          location.reload();
+			        };
+			        r.send('');
+			      }
+			  };
+		</script>
 		<script src="<%=style%>/js/file-manager/directory.js"></script>
 		<script src="<%=style%>/js/file-manager/page-drop.js"></script>
 		<script>
