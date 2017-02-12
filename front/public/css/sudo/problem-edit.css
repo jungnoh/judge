@@ -18,3 +18,10 @@
 .col {
   margin-top: 5px;
 }
+.textarea-io {
+  width:100%;
+  resize: none;
+  box-sizing: border-box;         /* For IE and modern versions of Chrome */
+  -moz-box-sizing: border-box;    /* For Firefox                          */
+  -webkit-box-sizing: border-box;
+}

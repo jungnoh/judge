@@ -32,3 +32,6 @@
 #div-bottom-actions {
   padding-bottom: 50px;
 }
+.p-io {
+  white-space: pre-line;
+}

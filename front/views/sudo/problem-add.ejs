@@ -82,17 +82,25 @@
       </div>
       <div class="row">
         <div class="col">
-          <div class="input-group">
-            <span class="input-group-addon" id="title-sample-in"><%=__("input")%></span>
-            <input type="text" class="form-control" id="input-sample-in" aria-describedby="basic-addon3" value="[]">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><%=__("sample_input")%></h3>
+            </div>
+            <div class="panel-body">
+              <textarea name="inputExEditor" id="editor-in-sample" class="textarea-io" rows=10></textarea>
+            </div>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <div class="input-group">
-            <span class="input-group-addon" id="title-sample-out"><%=__("output")%></span>
-            <input type="text" class="form-control" id="input-sample-out" aria-describedby="basic-addon3" value="[]">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><%=__("sample_output")%></h3>
+            </div>
+            <div class="panel-body">
+              <textarea name="outputExEditor" id="editor-out-sample" class="textarea-io" rows=10></textarea>
+            </div>
           </div>
         </div>
       </div>

@@ -2,8 +2,6 @@ window.onload = function() {
   CKEDITOR.replace('descEditor');
   CKEDITOR.replace('inputEditor');
   CKEDITOR.replace('outputEditor');
-  //CKEDITOR.replace('inputExEditor', {toolbarGroups: [{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },{ name: 'about' }]});
-  //CKEDITOR.replace('outputExEditor', {toolbarGroups: [{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },{ name: 'about' }]});
   $('#btn-submit').click(function(e) {
     /*
     singleQuery('UPDATE `problems` SET `title` = '+mysql.escape(data.title)
@@ -16,12 +14,13 @@ window.onload = function() {
     +', `sample_input` = '+mysql.escape(data.sample_input)
     +', `sample_output` = '+mysql.escape(data.sample_output)+' WHERE `problems`.`id` = '+id,
     */
+
     var title         = document.getElementById('input-title').value,
         time          = document.getElementById('input-time').value,
         memory        = document.getElementById('input-memory').value,
         source        = document.getElementById('input-source').value,
-        sample_input  = document.getElementById('input-sample-in').value,
-        sample_output = document.getElementById('input-sample-out').value,
+        sample_input  = JSON.stringify([document.getElementById('editor-in-sample').value.replace('/\n/g','\\n')]),
+        sample_output = JSON.stringify([document.getElementById('editor-out-sample').value.replace('/\n/g','\\n')]),
         desc          = CKEDITOR.instances['editor-desc'].document.getBody().getHtml(),
         input         = CKEDITOR.instances['editor-input'].document.getBody().getHtml(),
         output        = CKEDITOR.instances['editor-output'].document.getBody().getHtml();
@@ -81,5 +80,5 @@ window.onload = function() {
   });
   $('#btn-return').click(function(e) {
     location.href='/sudo/problems';
-  });_
+  });
 };
