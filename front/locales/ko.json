@@ -111,12 +111,12 @@
 	"sudoProblemDelete": "삭제",
 	"unauthorized": "unauthorized",
 	"return": "return",
-	"sample_input": "sample_input",
-	"sample_output": "sample_output",
-	"addProblem": "addProblem",
-	"menuSudoProblemAdd": "menuSudoProblemAdd",
-	"menuSudoCases": "menuSudoCases",
-	"sudoProblemCountUpdate": "sudoProblemCountUpdate",
-	"solvedProblems": "solvedProblems",
-	"triedProblems": "triedProblems"
+	"sample_input": "샘플 입력",
+	"sample_output": "샘플 출력",
+	"addProblem": "문제 추가",
+	"menuSudoProblemAdd": "문제 추가",
+	"menuSudoCases": "데이터 편집",
+	"sudoProblemCountUpdate": "데이터 개수 업데이트",
+	"solvedProblems": "맞은 문제들",
+	"triedProblems": "실패한 문제들"
 }
