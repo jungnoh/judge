@@ -6,6 +6,7 @@ var express = require('express');
 var options = require('./../file-settings').options;
 var browseDir = require('./../file-settings').browseDir;
 var multer = require('multer');
+var moment = require('moment');
 
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -23,13 +24,13 @@ module.exports = function(app)
     response.redirect(request.baseUrl + '/browse');
   });
   app.use('/delete', function(req, res, next) {
-    fs.unlink((req.originalUrl || '').replace(/.*delete/, browseDir), function(err) {
+    fs.move((req.originalUrl || '').replace(/.*delete/, browseDir), path.resolve(browseDir,'./../data-removed/'+new Date().valueOf()+'/'+req.originalUrl.substring(req.originalUrl.lastIndexOf('/'))), function (err) {
       if(err) {
         console.log(err);
-        return res.status(500).end("Error deleting file.");
+        return res.status(500).end("Error while deleting file.");
       }
       return res.status(200).end("Successfully deleted file");
-    });
+    })
   });
   app.use('/upload', function(req, res, next) {
     upload(req,res,function(err) {
@@ -50,6 +51,15 @@ module.exports = function(app)
           });
         }
         res.end("File is uploaded");
+    });
+  });
+  app.use('/mkdir', function(req, res, next) {
+    fs.mkdirs((req.originalUrl || '').replace(/.*mkdir/, browseDir), function(err) {
+      if(err) {
+        console.log(err);
+        return res.status(500).end("Error while creating folder.");
+      }
+      return res.status(200).end("Successfully created folder");
     });
   });
   app.use('/raw', function (request, response, next) {

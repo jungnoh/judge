@@ -29,7 +29,6 @@ window.onload = function() {
     });
   });
 };
-
 $(function() {
     $.contextMenu({
         selector: '.right-menu-child',
@@ -55,7 +54,37 @@ $(function() {
             "edit": {name: "Edit", icon: "edit"},
             "download": {name: "Download", icon: "copy"},
             "sep1": "---------",
-            "delete": {name: "Delete", icon: "delete"},
+            "delete": {name: "Delete", icon: "delete"}
+        }
+    });
+
+    $('.context-menu-one').on('click', function(e){
+        alert(JSON.stringify(e));
+        console.log('clicked', this);
+    })
+});
+
+$(function() {
+    $.contextMenu({
+        selector: 'body',
+        callback: function(key, options) {
+          var name = prompt("Enter new folder name", "");
+          var url = location.href.replace(/\/browse/,'/mkdir');
+          if(url[url.length-1]!=='/') url=url+'/';
+          url=url+name;
+          $.ajax(
+            { url: url,
+            success: function(result) {
+              alert(result);
+              location.reload();
+            },
+            error: function(result) {
+              alert(JSON.stringify(result));
+            }
+          });
+        },
+        items: {
+            "mkdir": {name: "New Folder", icon: "add"}
         }
     });
 
