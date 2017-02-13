@@ -2,12 +2,9 @@ var mysql        = require('mysql');
 var result_codes = require('./tools/result_codes');
 var bcrypt       = require('./bcrypt');
 var winston      = require('winston');
-var pool = mysql.createPool({
-  connectionLimit: 30,
-  user     : 'root',
-  password : 'asdfasdf',
-  database : 'judge'
-});
+var fs           = require('fs-extra');
+var poolConfig   = JSON.parse(fs.readFileSync('sql-config.json'));
+var pool = mysql.createPool(poolConfig);
 
 function getPoolConnection(callback) {
   pool.getConnection(function(err,conn) {
