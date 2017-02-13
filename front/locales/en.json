@@ -118,5 +118,7 @@
 	"menuSudoCases": "Edit Cases",
 	"sudoProblemCountUpdate": "Update Data Count",
 	"solvedProblems": "Solved Problems",
-	"triedProblems": "Tried Problems"
+	"triedProblems": "Tried Problems",
+	"hideProblem": "hideProblem",
+	"showProblem": "showProblem"
 }

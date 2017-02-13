@@ -81,6 +81,28 @@ module.exports = {
       }
     });
   },
+  deleteProblem: function(id,callback) {
+    singleQuery('delete from problems where id='+mysql.escape(id),function(err) {
+      if(err) callback(err);
+      else callback(null);
+    });
+  },
+  toggleProblemActive: function(id,callback) {
+    singleQuery('select active from problems where id='+mysql.escape(id), function(err,result) {
+      if(err) callback(err,null);
+      else if(result.length<1) callback(null,false);
+      else {
+        var query='update problems set active=';
+        if(result[0].active) query+='false';
+        else query+='true';
+        query+=(' where id='+mysql.escape(id));
+        singleQuery(query,function(err2) {
+          if(err2) callback(err2,false);
+          else callback(null,true);
+        });
+      }
+    });
+  },
   updateCaseCount: function(problem_id,case_count,callback) {
     singleQuery('update problems set case_count='+mysql.escape(case_count)+' where id='+mysql.escape(problem_id), function(err) {
       if(err) callback(err);
@@ -193,7 +215,17 @@ module.exports = {
     if(page!==null) {
       offset=(page-1)*25;
     }
-    singleQuery('select id, title, submit_count, accept_count from problems where id>='+mysql.escape(numberStart)+' order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
+    singleQuery('select id, title, submit_count, accept_count, active from problems where id>='+mysql.escape(numberStart)+' and active=true order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result);
+    });
+  },
+  problemListRoot: function(page,numberStart,callback) {
+    var offset=0;
+    if(page!==null) {
+      offset=(page-1)*25;
+    }
+    singleQuery('select id, title, submit_count, accept_count, active from problems where id>='+mysql.escape(numberStart)+' order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);
     });

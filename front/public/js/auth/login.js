@@ -22,6 +22,7 @@ window.onload = function() {
     }).done(function(data) {
       if(data.success===0) {
         alert(data.message);
+        location.reload();
       }
       else {
         window.location.href = document.referrer;

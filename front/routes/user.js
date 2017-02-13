@@ -24,7 +24,7 @@ module.exports = function(app)
         return res.json({'success': 0, 'message': res.__('loginProcessError')});
       }
       if(!user) {
-        return res.json({'success': 0, 'message': res.__('loginProcessError')});
+        return res.json({'success': 0, 'message': res.__('loginWrongError')});
       }
       req.login(user, function (errLogin) {
         if(errLogin) {

@@ -24,6 +24,14 @@ module.exports = function(app)
       myid: req.user
     });
   });
+  app.get('/sudo/toggleActive/:id',function(req,res) {
+    sql.toggleProblemActive(req.params.id,function(err,result) {
+      if(err) {
+        res.render('error.html');
+      }
+      res.redirect(req.query.return||'/sudo/problems');
+    })
+  });
   app.get('/sudo/problems/edit/:id',function(req,res) {
     sql.problemInfo(req.params.id, function(err,result) {
       if(err) {
@@ -122,6 +130,13 @@ module.exports = function(app)
       });
     });
   });
+  app.get('/sudo/problems/delete/:id',function(req,res) {
+    console.log('got');
+    sql.deleteProblem(req.params.id,function(err) {
+      if(err) res.status(500).end('Error while deleting problem');
+      else res.status(200).end('Successfully deleted problem');
+    });
+  });
   app.get('/sudo/problems',function(req,res) {
     var page=1,startid=0;
     if(req.query.page!==undefined) {
@@ -136,7 +151,7 @@ module.exports = function(app)
         if(startid<0||startid>intMax) startid=0;
       }
     }
-    sql.problemList(page,startid,function(err,result) {
+    sql.problemListRoot(page,startid,function(err,result) {
       if(err) {
         res.render('error.html');
         return;

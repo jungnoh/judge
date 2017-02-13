@@ -70,6 +70,12 @@ module.exports = function(app) {
         }
         else {
           var prob=result[0];
+          if(!prob.active) {
+            if(typeof req.user==="undefined"||req.user===null||!((req.user.permissions>>2)%2)) {
+              res.render('unauthorized');
+              return;
+            }
+          }
           res.render('problem', {
             found: 1,
             id: req.params.id,

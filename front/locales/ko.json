@@ -118,5 +118,8 @@
 	"menuSudoCases": "데이터 편집",
 	"sudoProblemCountUpdate": "데이터 개수 업데이트",
 	"solvedProblems": "맞은 문제들",
-	"triedProblems": "실패한 문제들"
+	"triedProblems": "실패한 문제들",
+	"hideProblem": "hideProblem",
+	"showProblem": "showProblem",
+	"loginWrongError": "loginWrongError"
 }

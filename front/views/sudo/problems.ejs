@@ -62,10 +62,11 @@
                     <%}%>
                   </td>
                   <td>
-                    <button type="button" class="btn btn-sm btn-normal" id="btn-problemEdit" onclick="location.href='<%="/sudo/problems/edit/"+problems[i].id%>'"><%=__("sudoProblemEdit")%></button>
-                    <button type="button" class="btn btn-sm btn-normal" id="btn-problemCases" onclick="location.href='<%="/sudo/cases/browse/"+problems[i].id%>'"><%=__("sudoProblemViewCases")%></a></button>
-                    <button type="button" class="btn btn-sm btn-danger" id="btn-problemDelete"><%=__("sudoProblemDelete")%></button>
-                    <button type="button" class="btn btn-sm btn-danger" id="btn-problemCountUpdate" onclick="location.href='<%="/sudo/updateCount/"+problems[i].id+'?return='%>'+location.href"><%=__("sudoProblemCountUpdate")%></button>
+                    <button type="button" class="btn btn-sm btn-normal btn-problemEdit" onclick="location.href='<%="/sudo/problems/edit/"+problems[i].id%>'"><%=__("sudoProblemEdit")%></button>
+                    <button type="button" class="btn btn-sm btn-normal btn-problemCases" onclick="location.href='<%="/sudo/cases/browse/"+problems[i].id%>'"><%=__("sudoProblemViewCases")%></a></button>
+                    <button type="button" class="btn btn-sm btn-danger btn-problemDelete" data-id="<%=problems[i].id%>"><%=__("sudoProblemDelete")%></button>
+                    <button type="button" class="btn btn-sm btn-info btn-problemCountUpdate" onclick="location.href='<%="/sudo/updateCount/"+problems[i].id+'?return='%>'+location.href"><%=__("sudoProblemCountUpdate")%></button>
+                    <button type="button" class="btn btn-sm <%if(problems[i].active){%>btn-success<%}else{%>btn-warning<%}%>" onclick="location.href='<%="/sudo/toggleActive/"+problems[i].id+'?return='%>'+location.href"><%if(problems[i].active){%><%=__("hideProblem")%><%}else{%><%=__("showProblem")%><%}%></button>
                   </td>
                 </tr>
               <% } %>
