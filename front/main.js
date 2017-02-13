@@ -16,6 +16,49 @@ var bcrypt            = require('./bcrypt');
 var app               = express();
 var fileman           = require('./file-manager');
 
+
+
+
+'use strict';
+
+// returns an instance of node-greenlock with additional helper methods
+var lex = require('greenlock-express').create({
+  // set to https://acme-v01.api.letsencrypt.org/directory in production
+  server: 'https://acme-v01.api.letsencrypt.org/directory '
+// If you wish to replace the default plugins, you may do so here
+//
+, challenges: { 'http-01': require('le-challenge-fs').create({ webrootPath: '/tmp/acme-challenges' }) }
+, store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' })
+
+// You probably wouldn't need to replace the default sni handler
+// See https://git.daplie.com/Daplie/le-sni-auto if you think you do
+//, sni: require('le-sni-auto').create({})
+
+, approveDomains: approveDomains
+});
+
+function approveDomains(opts, certs, cb) {
+  // This is where you check your database and associated
+  // email addresses with domains and agreements and such
+  opts.approveDomains=[ 'mitsuha.co', 'www.mitsuha.co','was.sasa.hs.kr' ];
+
+  // The domains being approved for the first time are listed in opts.domains
+  // Certs being renewed are listed in certs.altnames
+  if (certs) {
+    opts.domains = certs.altnames;
+  }
+  else {
+    opts.email = 'studiodoth@protonmail.com';
+    opts.agreeTos = true;
+  }
+
+  // NOTE: you can also change other options such as `challengeType` and `challenge`
+  // opts.challengeType = 'http-01';
+  // opts.challenge = require('le-challenge-fs').create({});
+
+  cb(null, { options: opts, certs: certs });
+}
+
 String.prototype.escapeSpecialChars = function() {
      return this.replace(/\\n/g, "\\n")
                 .replace(/\\'/g, "\\'")
@@ -123,15 +166,20 @@ var router_user = require('./routes/user')(app);
 var router_prob = require('./routes/problems')(app);
 var router_sudo = require('./routes/sudo')(app);
 
-var server = app.listen(3000, function() {
-  console.log('Express server started on port 3000');
-  sql.getLanguages(function(err,result) {
-    if(err) {
-      console.error('Failed to get languages');
-      console.error(err)
-    }
-    for(var i=0;i<result.length;i++) {
-      languages[result[i].codename]=result[i];
-    }
-  });
+sql.getLanguages(function(err,result) {
+  if(err) {
+    console.error('Failed to get languages');
+    console.error(err)
+  }
+  for(var i=0;i<result.length;i++) {
+    languages[result[i].codename]=result[i];
+  }
+});
+
+require('http').createServer(lex.middleware(require('redirect-https')())).listen(3000, function () {
+  console.log("Listening for ACME http-01 challenges on", this.address());
+});
+
+require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(443, function () {
+  console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
 });
