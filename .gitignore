@@ -1,5 +1,7 @@
 /run
-front/node_modules/
+front/node_modules/*
 judge_tmp/*
 usercode/*
 userdata/*
+cases/*
+data-removed/*
