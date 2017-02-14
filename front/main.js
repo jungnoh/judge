@@ -21,11 +21,22 @@ var fileman           = require('./file-manager');
 // returns an instance of node-greenlock with additional helper methods
 var lex = require('greenlock-express').create({
   // set to https://acme-v01.api.letsencrypt.org/directory in production
-  server: 'staging'
+  server: 'https://acme-v01.api.letsencrypt.org/directory'
 // If you wish to replace the default plugins, you may do so here
 //
-, challenges: { 'http-01': require('le-challenge-fs').create({ webrootPath: '/tmp/acme-challenges' }) }
-, store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' })
+, challenges: { 'tls-sni-01': require('le-challenge-sni').create({ webrootPath: '/tmp/acme-challenges' }) }
+, challengeType: 'tls-sni-01'
+, store: require('le-store-certbot').create({
+    configDir: '/etc/letsencrypt',
+    privkeyPath: ':configDir/live/:hostname/privkey.pem',
+    fullchainPath: ':configDir/live/:hostname/fullchain.pem',
+    certPath: ':configDir/live/:hostname/cert.pem',
+    chainPath: ':configDir/live/:hostname/chain.pem',
+    workDir: '/var/lib/letsencrypt',
+    logsDir: '/var/log/letsencrypt',
+    webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge',
+    debug: false
+  })
 
 // You probably wouldn't need to replace the default sni handler
 // See https://git.daplie.com/Daplie/le-sni-auto if you think you do
@@ -37,7 +48,7 @@ var lex = require('greenlock-express').create({
 function approveDomains(opts, certs, cb) {
   // This is where you check your database and associated
   // email addresses with domains and agreements and such
-  opts.approveDomains=[ 'mitsuha.co', 'www.mitsuha.co','was.sasa.hs.kr' ];
+  opts.approveDomains=[ 'mitsuha.co', 'www.mitsuha.co','was.sasa.hs.kr', '172.16.84.154' ];
 
   // The domains being approved for the first time are listed in opts.domains
   // Certs being renewed are listed in certs.altnames
@@ -174,7 +185,7 @@ sql.getLanguages(function(err,result) {
   }
 });
 
-require('http').createServer(lex.middleware(require('redirect-https')())).listen(41628, function () {
+require('http').createServer(lex.middleware(require('redirect-https')({port:31628}))).listen(41628, function () {
   console.log("Listening for ACME http-01 challenges on", this.address());
 });
 
