@@ -24,8 +24,8 @@ var lex = require('greenlock-express').create({
   server: 'https://acme-v01.api.letsencrypt.org/directory'
 // If you wish to replace the default plugins, you may do so here
 //
-, challenges: { 'tls-sni-01': require('le-challenge-sni').create({ webrootPath: '/tmp/acme-challenges' }) }
-, challengeType: 'tls-sni-01'
+, challenges: { 'dns-01': require('le-challenge-dns').create({debug: false }) }
+, challengeType: 'dns-01'
 , store: require('le-store-certbot').create({
     configDir: '/etc/letsencrypt',
     privkeyPath: ':configDir/live/:hostname/privkey.pem',
@@ -42,13 +42,13 @@ var lex = require('greenlock-express').create({
 // See https://git.daplie.com/Daplie/le-sni-auto if you think you do
 //, sni: require('le-sni-auto').create({})
 
-, approveDomains: approveDomains
+, approveDomains:approveDomains 
 });
 
 function approveDomains(opts, certs, cb) {
   // This is where you check your database and associated
   // email addresses with domains and agreements and such
-  opts.approveDomains=[ 'mitsuha.co', 'www.mitsuha.co','was.sasa.hs.kr', '172.16.84.154' ];
+  opts.approveDomains=[ 'mitsuha.co', 'www.mitsuha.co','was.sasa.hs.kr'];
 
   // The domains being approved for the first time are listed in opts.domains
   // Certs being renewed are listed in certs.altnames

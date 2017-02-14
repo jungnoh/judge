@@ -1,6 +1,6 @@
 {
   "connectionLimit": 100,
   "user": "root",
-  "password": "asdfasdf",
+  "password": "onlinejudge@",
   "database": "judge"
 }
