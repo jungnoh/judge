@@ -49,10 +49,16 @@ module.exports = {
     });
   },
   deleteType: function(id, callback) {
-    singleQuery('delete from types where id='+mysql.escape(id),function(err) {
-      if(err) callback(err);
-      else callback(null);
-    });
+    singleQuery('update problems set `type`=0 where `type`='+mysql.escape(id), function(err2) {
+      if(err2) {
+        callback(err2);
+        return;
+      }
+      singleQuery('delete from types where id='+mysql.escape(id),function(err) {
+        if(err) callback(err);
+        else callback(null);
+      });
+    })
   },
   getTypes: function(callback) {
     singleQuery('select * from types', function(err,result) {
