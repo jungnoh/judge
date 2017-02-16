@@ -15,35 +15,37 @@ var fs                = require('fs-extra');
 var bcrypt            = require('./bcrypt');
 var app               = express();
 var fileman           = require('./file-manager');
-
+var DEBUG             = true;
 'use strict';
 
 // returns an instance of node-greenlock with additional helper methods
-var lex = require('greenlock-express').create({
-  // set to https://acme-v01.api.letsencrypt.org/directory in production
-  server: 'https://acme-v01.api.letsencrypt.org/directory'
-// If you wish to replace the default plugins, you may do so here
-//
-, challenges: { 'dns-01': require('le-challenge-dns').create({debug: false }) }
-, challengeType: 'dns-01'
-, store: require('le-store-certbot').create({
-    configDir: '/etc/letsencrypt',
-    privkeyPath: ':configDir/live/:hostname/privkey.pem',
-    fullchainPath: ':configDir/live/:hostname/fullchain.pem',
-    certPath: ':configDir/live/:hostname/cert.pem',
-    chainPath: ':configDir/live/:hostname/chain.pem',
-    workDir: '/var/lib/letsencrypt',
-    logsDir: '/var/log/letsencrypt',
-    webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge',
-    debug: false
-  })
+var lex=null;
+if(!DEBUG) {
+  require('greenlock-express').create({
+    // set to https://acme-v01.api.letsencrypt.org/directory in production
+    server: 'https://acme-v01.api.letsencrypt.org/directory'
+  // If you wish to replace the default plugins, you may do so here
+  //
+  , challenges: { 'dns-01': require('le-challenge-dns').create({debug: false }) }
+  , challengeType: 'dns-01'
+  , store: require('le-store-certbot').create({
+      configDir: '/etc/letsencrypt',
+      privkeyPath: ':configDir/live/:hostname/privkey.pem',
+      fullchainPath: ':configDir/live/:hostname/fullchain.pem',
+      certPath: ':configDir/live/:hostname/cert.pem',
+      chainPath: ':configDir/live/:hostname/chain.pem',
+      workDir: '/var/lib/letsencrypt',
+      logsDir: '/var/log/letsencrypt',
+      webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge',
+      debug: false
+      // You probably wouldn't need to replace the default sni handler
+      // See https://git.daplie.com/Daplie/le-sni-auto if you think you do
+      //, sni: require('le-sni-auto').create({})
 
-// You probably wouldn't need to replace the default sni handler
-// See https://git.daplie.com/Daplie/le-sni-auto if you think you do
-//, sni: require('le-sni-auto').create({})
-
-, approveDomains:approveDomains 
-});
+      , approveDomains:approveDomains
+      })
+    });
+}
 
 function approveDomains(opts, certs, cb) {
   // This is where you check your database and associated
@@ -163,6 +165,14 @@ app.use(['/sudo', '/sudo*'],function(req,res,next) {
   }
   else next();
 });
+app.use(['/sudo/master', '/sudo/master*'],function(req,res,next) {
+  if(typeof req.user==="undefined"||req.user===null||!((req.user.permissions>>3)%2)) {
+    res.render('unauthorized', {
+      myid: req.user
+    });
+  }
+  else next();
+});
 app.use('/sudo/cases/',fileman(path.resolve(__dirname,'./../cases'), {textExtensions: 'out'}));
 app.use(function(req,res,next) {
   if(req.query.hasOwnProperty('lang')) {
@@ -184,11 +194,17 @@ sql.getLanguages(function(err,result) {
     languages[result[i].codename]=result[i];
   }
 });
+if(DEBUG) {
+  app.listen(41628, function() {
+    console.log('Debug mode, listening at port 41628')
+  })
+}
+else {
+  require('http').createServer(lex.middleware(require('redirect-https')({port:31628}))).listen(41628, function () {
+    console.log("Listening for ACME http-01 challenges on", this.address());
+  });
 
-require('http').createServer(lex.middleware(require('redirect-https')({port:31628}))).listen(41628, function () {
-  console.log("Listening for ACME http-01 challenges on", this.address());
-});
-
-require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(31628, function () {
-  console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
-});
+  require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(31628, function () {
+    console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
+  });
+}

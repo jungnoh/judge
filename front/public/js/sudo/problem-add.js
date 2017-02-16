@@ -2,6 +2,7 @@ window.onload = function() {
   CKEDITOR.replace('descEditor');
   CKEDITOR.replace('inputEditor');
   CKEDITOR.replace('outputEditor');
+  var mySelect = document.getElementById('select-type');
   $('#btn-submit').click(function(e) {
     /*
     singleQuery('UPDATE `problems` SET `title` = '+mysql.escape(data.title)
@@ -22,7 +23,8 @@ window.onload = function() {
         sample_output = JSON.stringify([document.getElementById('editor-out-sample').value.replace('/\n/g','\\n')]),
         desc          = CKEDITOR.instances['editor-desc'].document.getBody().getHtml(),
         input         = CKEDITOR.instances['editor-input'].document.getBody().getHtml(),
-        output        = CKEDITOR.instances['editor-output'].document.getBody().getHtml();
+        output        = CKEDITOR.instances['editor-output'].document.getBody().getHtml(),
+        type          = mySelect.options[mySelect.selectedIndex].value;
     var newForm = $('<form>', {}).append($('<input>', {
       'name' : 'time_limit',
       'value': time,
@@ -59,6 +61,10 @@ window.onload = function() {
       'name' : 'output_desc',
       'value': output,
       'type' : 'hidden'
+    })).append($('<input>', {
+      'name' : 'type',
+      'value': type,
+      'type' : 'hidden'
     }));
     $.ajax({
        url: '/sudo/problems/add',
@@ -79,5 +85,5 @@ window.onload = function() {
   });
   $('#btn-return').click(function(e) {
     location.href='/sudo/problems';
-  });_
+  });
 };

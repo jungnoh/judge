@@ -118,7 +118,7 @@ module.exports = function(app)
       res.render('about.html');
   });
   app.get('/problems',function(req,res) {
-    var page=1,startid=0;
+    var page=1,startid=0,type=-1;
     if(req.query.page!==undefined) {
       if(!isNaN(req.query.page)) {
         page=parseInt(req.query.page,10);
@@ -131,44 +131,64 @@ module.exports = function(app)
         if(startid<0||startid>intMax) startid=0;
       }
     }
-    sql.problemList(page,startid,function(err,result) {
+    if(req.query.startid!==undefined) {
+      if(!isNaN(req.query.startid)) {
+        startid=parseInt(req.query.startid,10);
+        if(startid<0||startid>intMax) startid=0;
+      }
+    }
+    if(req.query.type!==undefined) {
+      if(!isNaN(req.query.type)) {
+        type=parseInt(req.query.type,10);
+      }
+    }
+    sql.problemList(page,startid,type,function(err,result) {
       if(err) {
         res.render('error.html');
         return;
       }
-      if(result.length===0 && page>1) {
-        var re_url='/problems?page='+(page-1);
-        if(startid!==0) re_url+=('&startid='+startid);
-        res.redirect(re_url);
-        return;
-      }
-      else {
-        if(req.user!==undefined) {
-          sql.userSolvedProblems(req.user.id,function(err3,problems) {
-            if(err3) {
-              res.render('error.html');
-              return;
-            }
-            console.log(JSON.stringify(problems));
-            res.render('problem-list', {
-              myid: req.user,
-              problems: result,
-              page: page,
-              startid: startid,
-              solved: problems.solved,
-              tried: problems.tried
+      sql.getTypes(function(typeError, types) {
+        if(typeError) {
+          res.render('error.html');
+          return;
+        }
+        if(result.length===0 && page>1) {
+          var re_url='/problems?page='+(page-1);
+          if(startid!==0) re_url+=('&startid='+startid);
+          res.redirect(re_url);
+          return;
+        }
+        else {
+          if(req.user!==undefined) {
+            sql.userSolvedProblems(req.user.id,function(err3,problems) {
+              if(err3) {
+                res.render('error.html');
+                return;
+              }
+              res.render('problem-list', {
+                myid: req.user,
+                problems: result,
+                page: page,
+                startid: startid,
+                solved: problems.solved,
+                tried: problems.tried,
+                currentType: type,
+                types: types
+              });
             });
+          }
+          else res.render('problem-list', {
+            myid: req.user,
+            problems: result,
+            page: page,
+            startid: startid,
+            solved: [],
+            tried: [],
+            currentType: type,
+            types: types
           });
         }
-        else res.render('problem-list', {
-          myid: req.user,
-          problems: result,
-          page: page,
-          startid: startid,
-          solved: [],
-          tried: []
-        });
-      }
+      });
     });
   });
   app.get('/result', function(req,res) {

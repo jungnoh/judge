@@ -24,6 +24,15 @@
             <li><a href="/sudo/problems"><%=__("menuSudoProblems")%></a></li>
             <li class="active"><a href="/sudo/problems/add"><%=__("menuSudoProblemAdd")%></a></li>
             <li><a href="/sudo/cases"><%=__("menuSudoCases")%></a></li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%=__("masterMenus")%>
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/sudo/master/types"><%=__("editTypes")%></a></li>
+                <li><a href="/sudo/master/accounts"><%=__("manageAccounts")%></a></li>
+                <li><a href="/sudo/master/server"><%=__("serverStatus")%></a></li>
+              </ul>
+            </li>
           </ul>
           <%- include ./../topbar-right.ejs %>
         </div>
@@ -78,6 +87,17 @@
             <span class="input-group-addon" id="title-time"><%=__("source")%></span>
             <input type="text" class="form-control" id="input-source" aria-describedby="basic-addon3" value="">
           </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <%=__("selectType") %>:
+          <select id="select-type">
+            <option value="0"><%=__("none")%></option>
+            <% for(var i=0;i<types.length;i++) {%>
+              <option value="<%= types[i].id %>"><%= types[i].title %></option>
+            <% } %>
+          </select>
         </div>
       </div>
       <div class="row">

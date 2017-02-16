@@ -35,10 +35,10 @@
       <div class="row">
         <div class="col-md-3">
           <div class="list-group" id="div-sidebar" data-spy="affix">
-            <a class="list-group-item active" href="#">Problems</a>
-            <a class="list-group-item" href="#">Level 1</a>
-            <a class="list-group-item" href="#">Level 2</a>
-            <a class="list-group-item" href="#">Level 3</a>
+            <a class="list-group-item item-types <%=(currentType==-1)?'active':''%>" data-type="-1"><%=__("problems")%></a>
+            <%for(var i=0;i<types.length;i++) {%>
+              <a class="list-group-item item-types <%=(currentType==types[i].id)?'active':''%>" data-type="<%=types[i].id%>"><%=types[i].title%></a>
+            <%}%>
         	</div>
     		</div>
         <div class="col-md-9">

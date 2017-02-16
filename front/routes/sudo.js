@@ -33,21 +33,28 @@ module.exports = function(app)
     })
   });
   app.get('/sudo/problems/edit/:id',function(req,res) {
-    sql.problemInfo(req.params.id, function(err,result) {
-      if(err) {
+    sql.getTypes(function(err2,types) {
+      if(err2) {
         res.render('error.html');
-      } else if(result.length!=1) {
-          res.render('sudo/problem-edit', {
-            found: 0,
-            myid: req.user
-          });
-      } else {
-        res.render('sudo/problem-edit', {
-          found: 1,
-          problem: result[0],
-          myid: req.user
-        })
+        return;
       }
+      sql.problemInfo(req.params.id, function(err,result) {
+        if(err) {
+          res.render('error.html');
+        } else if(result.length!=1) {
+            res.render('sudo/problem-edit', {
+              found: 0,
+              myid: req.user
+            });
+        } else {
+          res.render('sudo/problem-edit', {
+            found: 1,
+            problem: result[0],
+            types: types,
+            myid: req.user
+          })
+        }
+      });
     });
   });
   app.get('/sudo/updateCount/:id',function(req,res) {
@@ -69,9 +76,54 @@ module.exports = function(app)
     });
   });
   app.get('/sudo/problems/add',function(req,res) {
-    res.render('sudo/problem-add', {
-      myid: req.user
-    })
+    sql.getTypes(function(err,result) {
+      if(err) {
+        res.render('error.html');
+        return;
+      }
+      res.render('sudo/problem-add', {
+        myid: req.user,
+        types: result
+      });
+    });
+  });
+  app.get('/sudo/master/types',function(req,res) {
+    sql.getTypes(function(err,result) {
+      if(err) {
+        res.render('error.html');
+        return;
+      }
+      res.render('sudo/types', {
+        myid: req.user,
+        types: result
+      });
+    });
+  });
+  app.post('/sudo/master/types/add',function(req,res) {
+    sql.addType(req.body.title,req.body.desc,function(err,result) {
+      if(err) {
+        res.status(500).end('Failed');
+      }
+      else res.status(200).end('Success');
+    });
+  });
+  app.post('/sudo/master/types/edit',function(req,res) {
+    if(!checkNum(req.body.id)) return res.status(400).end('Bad Input');
+    sql.updateType(req.body.id,req.body.title,req.body.desc,function(err,result) {
+      if(err) {
+        res.status(500).end('Failed');
+      }
+      else res.status(200).end('Success');
+    });
+  });
+  app.post('/sudo/master/types/delete',function(req,res) {
+    if(!checkNum(req.body.id)) return res.status(400).end('Bad Input');
+    sql.deleteType(req.body.id,function(err,result) {
+      if(err) {
+        res.status(500).end('Failed');
+      }
+      else res.status(200).end('Success');
+    });
   });
   app.post('/sudo/problems/:id/update',function(req,res) {
     if(!checkNum(req.params.id)||!checkNum(req.body.time_limit)||!checkNum(req.body.memory_limit)) {
@@ -88,7 +140,8 @@ module.exports = function(app)
               memory_limit: req.body.memory_limit,
               sample_input: req.body.sample_input,
               sample_output: req.body.sample_output,
-              source: req.body.source};
+              source: req.body.source,
+              type: req.body.type};
     sql.editProblem(id,data,function(err) {
       if(err) {
         res.json('{success: 0}');
@@ -112,7 +165,8 @@ module.exports = function(app)
               memory_limit: req.body.memory_limit,
               sample_input: req.body.sample_input,
               sample_output: req.body.sample_output,
-              source: req.body.source};
+              source: req.body.source,
+              type: req.body.type};
     sql.addProblem(data,function(err,problemID) {
       if(err) {
         res.json('{success: 0}');
@@ -131,14 +185,13 @@ module.exports = function(app)
     });
   });
   app.get('/sudo/problems/delete/:id',function(req,res) {
-    console.log('got');
     sql.deleteProblem(req.params.id,function(err) {
       if(err) res.status(500).end('Error while deleting problem');
       else res.status(200).end('Successfully deleted problem');
     });
   });
   app.get('/sudo/problems',function(req,res) {
-    var page=1,startid=0;
+    var page=1,startid=0,type=-1;
     if(req.query.page!==undefined) {
       if(!isNaN(req.query.page)) {
         page=parseInt(req.query.page,10);
@@ -151,7 +204,12 @@ module.exports = function(app)
         if(startid<0||startid>intMax) startid=0;
       }
     }
-    sql.problemListRoot(page,startid,function(err,result) {
+    if(req.query.type!==undefined) {
+      if(!isNaN(req.query.type)) {
+        type=parseInt(req.query.type,10);
+      }
+    }
+    sql.problemListRoot(page,startid,type,function(err,result) {
       if(err) {
         res.render('error.html');
         return;

@@ -36,6 +36,30 @@ function singleQuery(query, callback) {
 }
 
 module.exports = {
+  addType: function(title, desc, callback) {
+    singleQuery('insert into types (`title`, `description`) values ('+mysql.escape(title)+','+mysql.escape(desc)+')', function(err,result) {
+      callback(err,result.insertId);
+      return;
+    });
+  },
+  updateType: function(id, title, desc, callback) {
+    singleQuery('update types set `title`='+mysql.escape(title)+', `description`='+mysql.escape(desc)+' where `id`='+mysql.escape(id), function(err) {
+      callback(err);
+      return;
+    });
+  },
+  deleteType: function(id, callback) {
+    singleQuery('delete from types where id='+mysql.escape(id),function(err) {
+      if(err) callback(err);
+      else callback(null);
+    });
+  },
+  getTypes: function(callback) {
+    singleQuery('select * from types', function(err,result) {
+      callback(err,result);
+      return;
+    });
+  },
   editProblem: function(id,data,callback) {
     var query='UPDATE `problems` SET `title` = '+mysql.escape(data.title)
     +', `description` = '+mysql.escape(data.description)
@@ -47,6 +71,7 @@ module.exports = {
     +', `sample_input` = '+mysql.escape(data.sample_input)
     +', `sample_output` = '+mysql.escape(data.sample_output)
     +', `source` = '+mysql.escape(data.source)
+    +', `type` = '+mysql.escape(data.type)
     +' WHERE `problems`.`id` = '+id;
     singleQuery(query,
     function(err) {
@@ -55,7 +80,7 @@ module.exports = {
     });
   },
   addProblem: function(data,callback) {
-    var query='insert into `problems` (`title`, `description`, `input_desc`, `output_desc`, `hint`, `time_limit`, `memory_limit`, `sample_input`, `sample_output`, `source`) values ('
+    var query='insert into `problems` (`title`, `description`, `input_desc`, `output_desc`, `hint`, `time_limit`, `memory_limit`, `sample_input`, `sample_output`, `source`, `type`) values ('
     +mysql.escape(data.title)
     +', '+mysql.escape(data.description)
     +', '+mysql.escape(data.input_desc)
@@ -66,6 +91,7 @@ module.exports = {
     +', '+mysql.escape(data.sample_input)
     +', '+mysql.escape(data.sample_output)
     +', '+mysql.escape(data.source)
+    +', '+mysql.escape(data.type)
     +')';
     singleQuery(query,
     function(err,result) {
@@ -207,12 +233,15 @@ module.exports = {
       else callback(null,result);
     });
   },
-  problemList: function(page,numberStart,callback) {
+  problemList: function(page,numberStart,type,callback) {
     var offset=0;
     if(page!==null) {
       offset=(page-1)*25;
     }
-    singleQuery('select id, title, submit_count, accept_count, active from problems where id>='+mysql.escape(numberStart)+' and active=true order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
+    var query='select id, title, submit_count, accept_count, active, type from problems where id>='+mysql.escape(numberStart)+' and active=true';
+    if(type>=0) query+=' and type='+mysql.escape(type);
+    query+=' order by id limit 25 offset '+mysql.escape(offset)
+    singleQuery(query, function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);
     });
@@ -222,7 +251,10 @@ module.exports = {
     if(page!==null) {
       offset=(page-1)*25;
     }
-    singleQuery('select id, title, submit_count, accept_count, active from problems where id>='+mysql.escape(numberStart)+' order by id limit 25 offset '+mysql.escape(offset), function(err,result) {
+    var query='select id, title, submit_count, accept_count, active, type from problems where id>='+mysql.escape(numberStart);
+    if(type>=0) query+=' and type='+mysql.escape(type);
+    query+=' order by id limit 25 offset '+mysql.escape(offset)
+    singleQuery(query, function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);
     });
@@ -274,43 +306,10 @@ module.exports = {
         queryCount++;
         query+='lang='+mysql.escape(options.lang);
       }
-      if(options.username!==undefined) {
+      if(options.type!==undefined) {
         if(queryCount>0) query+=' and ';
         queryCount++;
-        query+='submit_user_name='+mysql.escape(options.username);
-      }
-    }
-    query+=' order by submit_id desc';
-    if(sortOptions!==null && Object.keys(sortOptions).length>0) {
-      if(sortOptions.limit!==undefined) {
-        query+=' limit '+sortOptions.limit;
-      }
-      if(sortOptions.offset!==undefined) {
-        query+=' offset '+sortOptions.offset;
-      }
-    }
-    singleQuery(query, function(err,result) {
-      if(err) callback(err,null);
-      else callback(null,result);
-    });
-  },
-  submitHistory: function(options,sortOptions,callback) {
-    var query='select * from submit_history', queryCount=0;
-    if(options!==null && Object.keys(options).length>0) {
-      query+=' where '
-      if(options.problem!==undefined) {
-        queryCount++;
-        query+='problem_id='+mysql.escape(options.problem);
-      }
-      if(options.user_id!==undefined) {
-        if(queryCount>0) query+=' and ';
-        queryCount++;
-        query+='submit_user_id='+mysql.escape(options.user_id);
-      }
-      if(options.lang!==undefined) {
-        if(queryCount>0) query+=' and ';
-        queryCount++;
-        query+='lang='+mysql.escape(options.lang);
+        query+='type='+mysql.escape(options.type);
       }
       if(options.username!==undefined) {
         if(queryCount>0) query+=' and ';
