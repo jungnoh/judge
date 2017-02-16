@@ -252,7 +252,7 @@ module.exports = {
       else callback(null,result);
     });
   },
-  problemListRoot: function(page,numberStart,callback) {
+  problemListRoot: function(page,numberStart,type,callback) {
     var offset=0;
     if(page!==null) {
       offset=(page-1)*25;
