@@ -15,20 +15,18 @@ var fs                = require('fs-extra');
 var bcrypt            = require('./bcrypt');
 var app               = express();
 var fileman           = require('./file-manager');
-var DEBUG             = true;
+var NO_SSL            = false;
 'use strict';
 
 // returns an instance of node-greenlock with additional helper methods
 var lex=null;
-if(!DEBUG) {
-  require('greenlock-express').create({
-    // set to https://acme-v01.api.letsencrypt.org/directory in production
-    server: 'https://acme-v01.api.letsencrypt.org/directory'
-  // If you wish to replace the default plugins, you may do so here
-  //
-  , challenges: { 'dns-01': require('le-challenge-dns').create({debug: false }) }
-  , challengeType: 'dns-01'
-  , store: require('le-store-certbot').create({
+NO_SSL=process.argv[2]==='-nossl';
+if(!NO_SSL) {
+  lex=require('greenlock-express').create({
+    server: 'https://acme-v01.api.letsencrypt.org/directory',
+    challenges: { 'dns-01': require('le-challenge-dns').create({debug: false }) },
+    challengeType: 'dns-01',
+    store: require('le-store-certbot').create({
       configDir: '/etc/letsencrypt',
       privkeyPath: ':configDir/live/:hostname/privkey.pem',
       fullchainPath: ':configDir/live/:hostname/fullchain.pem',
@@ -37,23 +35,14 @@ if(!DEBUG) {
       workDir: '/var/lib/letsencrypt',
       logsDir: '/var/log/letsencrypt',
       webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge',
-      debug: false
-      // You probably wouldn't need to replace the default sni handler
-      // See https://git.daplie.com/Daplie/le-sni-auto if you think you do
-      //, sni: require('le-sni-auto').create({})
-
-      , approveDomains:approveDomains
-      })
-    });
+      debug: false,
+      approveDomains:approveDomains
+    })
+  });
 }
 
 function approveDomains(opts, certs, cb) {
-  // This is where you check your database and associated
-  // email addresses with domains and agreements and such
   opts.approveDomains=[ 'mitsuha.co', 'www.mitsuha.co','was.sasa.hs.kr'];
-
-  // The domains being approved for the first time are listed in opts.domains
-  // Certs being renewed are listed in certs.altnames
   if (certs) {
     opts.domains = certs.altnames;
   }
@@ -61,14 +50,8 @@ function approveDomains(opts, certs, cb) {
     opts.email = 'studiodoth@protonmail.com';
     opts.agreeTos = true;
   }
-
-  // NOTE: you can also change other options such as `challengeType` and `challenge`
-  // opts.challengeType = 'http-01';
-  // opts.challenge = require('le-challenge-fs').create({});
-
   cb(null, { options: opts, certs: certs });
 }
-
 
 String.prototype.escapeSpecialChars = function() {
      return this.replace(/\\n/g, "\\n")
@@ -80,7 +63,6 @@ String.prototype.escapeSpecialChars = function() {
                 .replace(/\\b/g, "\\b")
                 .replace(/\\f/g, "\\f");
 };
-
 var options = {
     host: 'localhost',
     port: 3306,
@@ -194,9 +176,9 @@ sql.getLanguages(function(err,result) {
     languages[result[i].codename]=result[i];
   }
 });
-if(DEBUG) {
+if(NO_SSL) {
   app.listen(41628, function() {
-    console.log('Debug mode, listening at port 41628')
+    console.log('NOSSL mode, listening at port 41628')
   })
 }
 else {

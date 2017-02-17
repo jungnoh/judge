@@ -63,6 +63,9 @@
                 </span>&nbsp;
                 <span class="label label-success label-limit-info"><%= __("timeLimit")+" : "+time_limit+" sec" %></span>
                 <span class="label label-success label-limit-info"><%=  __("memoryLimit")+" : "+memory_limit+" MB" %></span>
+                <%if(type>0) {%>
+                  <span class="label label-info label-limit-info"><%=typeTitle%></span>
+                <%}%>
               </h4>
             </p>
             <div id="div-problem" class="panel panel-info">

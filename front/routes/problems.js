@@ -76,24 +76,33 @@ module.exports = function(app) {
               return;
             }
           }
-          res.render('problem', {
-            found: 1,
-            id: req.params.id,
-            title: prob.title,
-            input_desc: prob.input_desc,
-            output_desc: prob.output_desc,
-            submit_count: prob.submit_count,
-            accept_count: prob.accept_count,
-            accept_users: prob.accept_users,
-            description: prob.description,
-            hint: prob.hint,
-            added_date: prob.added_date,
-            source: prob.source,
-            time_limit: prob.time_limit,
-            memory_limit: prob.memory_limit,
-            sample_input: JSON.parse(prob.sample_input),
-            sample_output: JSON.parse(prob.sample_output),
-            myid: req.user
+          sql.getTypeTitle(prob.type, function(err2,typeTitle) {
+            if(err2) {
+              res.render('error.html');
+              return;
+            }
+            res.render('problem', {
+              found: 1,
+              id: req.params.id,
+              title: prob.title,
+              input_desc: prob.input_desc,
+              output_desc: prob.output_desc,
+              submit_count: prob.submit_count,
+              accept_count: prob.accept_count,
+              accept_users: prob.accept_users,
+              description: prob.description,
+              hint: prob.hint,
+              added_date: prob.added_date,
+              source: prob.source,
+              time_limit: prob.time_limit,
+              memory_limit: prob.memory_limit,
+              sample_input: JSON.parse(prob.sample_input),
+              sample_output: JSON.parse(prob.sample_output),
+              myid: req.user,
+              type: prob.type,
+              typeTitle: typeTitle
+            });
+            return;
           });
         }
       }

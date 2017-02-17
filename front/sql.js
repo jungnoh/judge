@@ -66,6 +66,12 @@ module.exports = {
       return;
     });
   },
+  getTypeTitle: function(id, callback) {
+    singleQuery('select title from types where id='+mysql.escape(id), function(err, result) {
+      if(err) callback(err, null);
+      else callback(null, result.length===0?'':result[0].title);
+    });
+  },
   editProblem: function(id,data,callback) {
     var query='UPDATE `problems` SET `title` = '+mysql.escape(data.title)
     +', `description` = '+mysql.escape(data.description)
@@ -341,6 +347,13 @@ module.exports = {
     singleQuery('select user_id,id, nickname, submit_count, ac_count, ac_problem_count, ac_rate from users order by ac_problem_count desc, ac_rate desc limit 25 offset '+mysql.escape(25*(page-1)), function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);
+    });
+  },
+  getUserRank: function(id,callback) {
+    singleQuery('SELECT (select COUNT(*)+1 from users where ac_problem_count>t.ac_problem_count or (ac_problem_count=t.ac_problem_count and ac_rate>t.ac_rate)) as rank from users as t where user_id='+mysql.escape(id), function(err,result) {
+      if(err) callback(err,null);
+      else if(result.length===0) callback(null,-1);
+      else callback(null,result[0].rank);
     });
   },
   submitInfo: function(submit_id,callback) {

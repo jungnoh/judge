@@ -92,8 +92,6 @@ module.exports = function(app)
             if(i<codeArray.length-1) codeArrayString+=", ";
           }
           codeArrayString+=']'
-          console.log(codeArrayString);
-          console.log(JSON.parse(codeArrayString.replace(/\\x22/g,'\"')));
           var now = moment(result[0].submit_time).utcOffset("+09:00");
           result[0].submit_time_text=now.fromNow();
           result[0].submit_time=now.format("YYYY.MM.DD A hh:mm:ss");

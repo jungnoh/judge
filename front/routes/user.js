@@ -120,12 +120,19 @@ module.exports = function(app)
             res.render('error.html');
             return;
           }
-          res.render('user-info',{
-            myid: req.user,
-            stats: result[0],
-            results: JSON.stringify(times),
-            solved: problems.solved,
-            tried: problems.tried
+          sql.getUserRank(req.params.id,function(err4,rank) {
+            if(err4) {
+              res.render('error.html');
+              return;
+            }
+            res.render('user-info',{
+              myid: req.user,
+              rank: rank,
+              stats: result[0],
+              results: JSON.stringify(times),
+              solved: problems.solved,
+              tried: problems.tried
+            });
           });
         });
       });
