@@ -1,16 +1,30 @@
 CREATE DATABASE `judge`;
-CREATE TABLE `judge`.`languages` (
+USE `judge`;
+CREATE TABLE `languages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `codename` varchar(30) NOT NULL,
-  `compile` int(1) NOT NULL DEFAULT 1,
+  `compile` int(1) NOT NULL DEFAULT '1',
   `ace_lang` varchar(100) NOT NULL,
   `run_command` varchar(1000) NOT NULL,
   `compile_command` varchar(1000) NOT NULL,
   `source_name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-CREATE TABLE `judge`.`problems` (
+CREATE TABLE `problem_stats` (
+  `problem_id` int(11) NOT NULL,
+  `submit_count` int(11) NOT NULL DEFAULT '0',
+  `ac_count` int(11) NOT NULL DEFAULT '0',
+  `ac_users_count` int(11) NOT NULL DEFAULT '0',
+  `ce_count` int(11) NOT NULL DEFAULT '0',
+  `re_count` int(11) NOT NULL DEFAULT '0',
+  `me_count` int(11) NOT NULL DEFAULT '0',
+  `wa_count` int(11) NOT NULL DEFAULT '0',
+  `tle_count` int(11) NOT NULL DEFAULT '0',
+  `ole_count` int(11) NOT NULL DEFAULT '0',
+  UNIQUE KEY `problem_id` (`problem_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `problems` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(200) NOT NULL,
   `submit_count` int(11) NOT NULL DEFAULT '0',
@@ -27,22 +41,11 @@ CREATE TABLE `judge`.`problems` (
   `memory_limit` int(11) DEFAULT '256',
   `sample_input` text,
   `sample_output` text,
+  `active` tinyint(1) NOT NULL DEFAULT '0',
+  `type` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
-CREATE TABLE `judge`.`problem_stats` (
-  `problem_id` int(11) NOT NULL,
-  `submit_count` int(11) NOT NULL DEFAULT '0',
-  `ac_count` int(11) NOT NULL DEFAULT '0',
-  `ac_users_count` int(11) NOT NULL DEFAULT '0',
-  `ce_count` int(11) NOT NULL DEFAULT '0',
-  `re_count` int(11) NOT NULL DEFAULT '0',
-  `me_count` int(11) NOT NULL DEFAULT '0',
-  `wa_count` int(11) NOT NULL DEFAULT '0',
-  `tle_count` int(11) NOT NULL DEFAULT '0',
-  `ole_count` int(11) NOT NULL DEFAULT '0',
-  UNIQUE KEY `problem_id` (`problem_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-CREATE TABLE `judge`.`submit_history` (
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+CREATE TABLE `submit_history` (
   `submit_id` int(11) NOT NULL AUTO_INCREMENT,
   `submit_user_id` int(11) NOT NULL,
   `submit_user_name` varchar(20) NOT NULL,
@@ -55,31 +58,32 @@ CREATE TABLE `judge`.`submit_history` (
   `result` int(11) NOT NULL DEFAULT '0' COMMENT 'See enum resultValues',
   PRIMARY KEY (`submit_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8;
-CREATE TABLE `users` (
- `user_id` int(11) NOT NULL AUTO_INCREMENT,
- `id` varchar(20) NOT NULL,
- `email` varchar(100) NOT NULL,
- `organization` varchar(100) NOT NULL,
- `password` varchar(300) NOT NULL,
- `nickname` varchar(25) NOT NULL,
- `comment` text NOT NULL,
- `submit_count` int(11) NOT NULL DEFAULT '0',
- `ac_count` int(11) NOT NULL DEFAULT '0',
- `ce_count` int(11) NOT NULL DEFAULT '0',
- `re_count` int(11) NOT NULL DEFAULT '0',
- `me_count` int(11) NOT NULL DEFAULT '0',
- `wa_count` int(11) NOT NULL DEFAULT '0',
- `tle_count` int(11) NOT NULL DEFAULT '0',
- `ole_count` int(11) NOT NULL DEFAULT '0',
- `last_login` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
- `permissions` int(11) NOT NULL DEFAULT '1',
- `ac_rate` double GENERATED ALWAYS AS IF(`submit_count`==0,0,(((`ac_count` * 100) / `submit_count`))) VIRTUAL,
- PRIMARY KEY (`user_id`)
+CREATE TABLE `types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(500) NOT NULL,
+  `description` mediumtext NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-INSERT INTO `judge`.`languages` (`id`, `name`, `codename`, `ace_lang`, `compile`, `run_command`, `compile_command`, `source_name`) VALUES
-(1, 'C++', 'cpp', 'ace/mode/c_cpp',1,'["run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpprun\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cppbuild\",\"/workspace/runner\"]','source.cpp'),
-(2, 'C++11', 'cpp11', 'ace/mode/c_cpp',1,'[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11build\",\"/workspace/runner\"]','source.cpp'),
-(3, 'C++14', 'cpp14', 'ace/mode/c_cpp',1,'[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14build\",\"/workspace/runner\"]','source.cpp'),
-(4, 'C99', 'c99', 'ace/mode/c_cpp',1,'[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"c99run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"c99build\",\"/workspace/runner\"]','source.c');
-INSERT INTO `judge`.`users` (`user_id`, `id`, `email`, `organization`, `password`, `nickname`, `comment`, `submit_count`, `ac_count`, `ce_count`, `re_count`, `me_count`, `wa_count`, `tle_count`, `ole_count`, `last_login`, `permissions`) VALUES
-(3, 'asdf', 'nope', 'admins', '$2a$10$s5PrwyVVnA.ycScb1EaG3.JpMjcqMWBZqBnTpFRR0fUK4chBlHdQK', 'admin', 'hi', 0, 0, 0, 0, 0, 0, 0, 0, CURRENT_TIMESTAMP, 1);
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `organization` varchar(100) NOT NULL,
+  `password` varchar(300) NOT NULL,
+  `nickname` varchar(25) NOT NULL,
+  `comment` text NOT NULL,
+  `submit_count` int(11) NOT NULL DEFAULT '0',
+  `ac_count` int(11) NOT NULL DEFAULT '0',
+  `ac_problem_count` int(11) NOT NULL DEFAULT '0',
+  `ce_count` int(11) NOT NULL DEFAULT '0',
+  `re_count` int(11) NOT NULL DEFAULT '0',
+  `me_count` int(11) NOT NULL DEFAULT '0',
+  `wa_count` int(11) NOT NULL DEFAULT '0',
+  `tle_count` int(11) NOT NULL DEFAULT '0',
+  `ole_count` int(11) NOT NULL DEFAULT '0',
+  `last_login` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `permissions` int(11) NOT NULL DEFAULT '1',
+  `ac_rate` double GENERATED ALWAYS AS (coalesce(((`ac_count` * 100) / nullif(`submit_count`,0)),0)) VIRTUAL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8;
+INSERT INTO `languages` VALUES (1,'C++','cpp',1,'ace/mode/c_cpp','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpprun\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cppbuild\",\"/workspace/runner\"]','source.cpp'),(2,'C++11','cpp11',1,'ace/mode/c_cpp','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp11build\",\"/workspace/runner\"]','source.cpp'),(3,'C++14','cpp14',1,'ace/mode/c_cpp','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"cpp14build\",\"/workspace/runner\"]','source.cpp'),(4,'C99','c99',1,'ace/mode/c_cpp','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"c99run\",\"/workspace/runner\",\"{2}\",\"{3}\",\"-m\"]','[\"run\",\"-m=2G\",\"--network=none\",\"-v={0}/judge_tmp/{1}:/judgeData\",\"c99build\",\"/workspace/runner\"]','source.c');
