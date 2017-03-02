@@ -36,9 +36,13 @@ module.exports = function(app)
         return;
       }
       if(result.length===0 && page>1) {
-        var re_url='/rank?page='+(page-1);
-        res.redirect(re_url);
-        return;
+        sql.userCount(function(err,result) {
+          var re_url='/rank?page='
+          if(err) re_url+='1';
+          else re_url+=Math.ceil(result/25);
+          res.redirect(re_url);
+          return;
+        });
       }
       else res.render('rank', {
         myid: req.user,
@@ -151,10 +155,12 @@ module.exports = function(app)
           return;
         }
         if(result.length===0 && page>1) {
-          var re_url='/problems?page='+(page-1);
-          if(startid!==0) re_url+=('&startid='+startid);
-          res.redirect(re_url);
-          return;
+          sql.problemCount(0,function(err,result) {
+            var re_url='/problems?page='+Math.ceil(result/25);
+            if(startid!==0) re_url+=('&startid='+startid);
+            res.redirect(re_url);
+            return;
+          });
         }
         else {
           if(req.user!==undefined) {

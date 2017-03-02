@@ -271,6 +271,14 @@ module.exports = {
       else callback(null,result);
     });
   },
+  problemCount: function(includeHidden, callback) {
+    var query='select count(*) from problems';
+    if(includeHidden===0) query+=' where active=true';
+    singleQuery(query, function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result[0]['count(*)']);
+    });
+  },
   submitCount: function(options,callback) {
     var query='select count(*) from submit_history', queryCount=0;
     if(options!==null && Object.keys(options).length>0) {
@@ -354,6 +362,12 @@ module.exports = {
       if(err) callback(err,null);
       else if(result.length===0) callback(null,-1);
       else callback(null,result[0].rank);
+    });
+  },
+  userCount: function(callback) {
+    singleQuery('select count(*) from users', function(err,result) {
+      if(err) callback(err,null);
+      else callback(null,result[0]['count(*)']);
     });
   },
   submitInfo: function(submit_id,callback) {

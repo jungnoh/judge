@@ -215,10 +215,12 @@ module.exports = function(app)
         return;
       }
       if(result.length===0 && page>1) {
-        var re_url='/sudo/problems?page='+(page-1);
-        if(startid!==0) re_url+=('&startid='+startid);
-        res.redirect(re_url);
-        return;
+        sql.problemCount(1,function(err,result) {
+          var re_url='/sudo/problems?page='+Math.ceil(result/25);
+          if(startid!==0) re_url+=('&startid='+startid);
+          res.redirect(re_url);
+          return;
+        });
       }
       else res.render('sudo/problems', {
         myid: req.user,
