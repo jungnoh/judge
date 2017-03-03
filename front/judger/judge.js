@@ -6,9 +6,28 @@ var compile_info = require('./compile_info');
 var result_codes = require('./../tools/result_codes');
 var winston      = require('winston');
 var rootDir      = path.resolve(__dirname,'./../..');
+var kue          = require('kue');
 
-//callback: function(err)
+var judgeQueue = kue.createQueue();
+judgeQueue.process('judge', 4, function(job, done){
+  startJudge(job.data.submitID,job.data.userID,done);
+});
+
 module.exports = function(submitID,userID,callback) {
+  var job = judgeQueue.create('judge',{'submitID': submitID, 'userID': userID}).save();
+  job.on('complete', function(result){
+    console.log('Job completed with data ', result);
+  }).on('failed attempt', function(errorMessage, doneAttempts){
+    console.log('Job failed');
+  }).on('failed', function(errorMessage){
+    console.log('Job failed');
+  }).on('progress', function(progress, data){
+    console.log('\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
+  });
+};
+
+
+var startJudge = function(submitID,userID,callback) {
   //Fetch Problem, Submit Information
   sql.submitInfo(submitID,function(submitInfoErr,submitResult) {
     if(submitInfoErr) {

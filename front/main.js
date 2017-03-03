@@ -15,6 +15,7 @@ var fs                = require('fs-extra');
 var bcrypt            = require('./bcrypt');
 var app               = express();
 var fileman           = require('./file-manager');
+var kue               = require('kue');
 var NO_SSL            = false;
 'use strict';
 
@@ -162,6 +163,9 @@ app.use(function(req,res,next) {
   }
   next();
 });
+
+app.use('/sudo/master/kue', kue.app);
+
 var router_main = require('./routes/main')(app);
 var router_user = require('./routes/user')(app);
 var router_prob = require('./routes/problems')(app);

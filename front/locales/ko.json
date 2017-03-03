@@ -138,5 +138,6 @@
 	"save": "저장",
 	"error": "오류",
 	"titleEmpty": "제목이 없습니다.",
-	"all": "전체"
+	"all": "전체",
+	"kueManage": "kueManage"
 }
