@@ -19,10 +19,10 @@ mkdir data-removed cases judge_tmp usercode
 mysql -uroot -p"$password" < setup_db.sql
 cd front
 cwd
-#sudo npm install --prefix ./front/node_modules
-#sudo npm install -g n
-#sudo n stable
-#sudo npm rebuild
+sudo npm install --prefix ./front/node_modules
+sudo npm install -g n
+sudo n stable
+sudo npm rebuild
 cd ..
 cd ..
 cd Dockerfiles
