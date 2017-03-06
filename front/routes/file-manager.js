@@ -7,6 +7,7 @@ var options = require('./../file-settings').options;
 var browseDir = require('./../file-settings').browseDir;
 var multer = require('multer');
 var moment = require('moment');
+var urlencode = require('urlencode');
 
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -27,7 +28,7 @@ module.exports = function(app)
     response.redirect(request.baseUrl + '/browse');
   });
   app.use('/delete', function(req, res, next) {
-    fs.move((req.originalUrl || '').replace(/.*delete/, browseDir), path.resolve(browseDir,'./../data-removed/'+new Date().valueOf()+'/'+req.originalUrl.substring(req.originalUrl.lastIndexOf('/'))), function (err) {
+    fs.move((urlencode.decode(req.originalUrl) || '').replace(/.*delete/, browseDir), path.resolve(browseDir,'./../data-removed/'+new Date().valueOf()+'/'+req.originalUrl.substring(urlencode.decode(req.originalUrl.lastIndexOf('/')))), function (err) {
       if(err) {
         console.log(err);
         return res.status(500).end("Error while deleting file.");

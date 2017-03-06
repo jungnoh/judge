@@ -1,1 +1,0 @@
-gcc source.c -o run -std=c99 -O2 -Wall --static 
