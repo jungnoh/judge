@@ -1,4 +1,5 @@
-// C++ Run
+// Online Judge Runner Application
+// Written for [C++11]
 // Edit the following values for each language:
 // LANG_TIME_BONUS, LANG_MEM_BONUS, PROCESS_COUNT_LIM, runCmd
 
@@ -14,7 +15,6 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #define MEGA 1048576
-#define NOBODY -2
 #define FILE_LIM MEGA<<9; //512MB
 #define RAM_LIM MEGA<<10; //1GB
 #define LANG TIME_BONUS 0 //set this for each language
@@ -44,6 +44,7 @@ int getMem(int proc) {
     fp = fopen(cmd,"r");
     if(fp==NULL) return -1; //process exited
     while(fgets(buf,BUF_SIZE,fp)!=NULL) {
+        //printf("%s",buf);
         if(strlen(msg)>strlen(buf)) continue;
         flg=1;
         for(i=0;msg[i];i++) {
@@ -61,15 +62,17 @@ int getMem(int proc) {
         fclose(fp);
         return val;
     }
-    //return val;
     return -1;
 }
 int main(int argc, const char * argv[]) {
-    // ./run [mem_limit] [time_limit] [work path]
-    const char *runCmd = "./run", *path=argv[3];
-    int memLimit,timeLimit; //timeLimit in seconds, memLimit in MBs
-    memLimit=atoi(argv[1])<<10;
+    // ./run [mem_limit] [time_limit] [-m if memory is in mbs]
+    const char *runCmd = "./run";
+    system("cp /judgeData/run run; cp /judgeData/data.in data.in");
+    int memLimit,timeLimit; //timeLimit in seconds, memLimit in kBs
+    memLimit=atoi(argv[1]);
     timeLimit=atoi(argv[2]);
+    //printf("%s %d %d",runCmd,memLimit,timeLimit);
+    if(strcmp(argv[3],"-m")==0) memLimit=memLimit<<10;
     int pid = fork();
     if(pid==0) {
         int fdout = open("out.txt", O_RDWR | O_CREAT, 0664 | O_TRUNC);
@@ -97,22 +100,19 @@ int main(int argc, const char * argv[]) {
         setrlimit(RLIMIT_CPU,&lim);
         //alarm(0);
         //alarm(timeLimit+1);
-        setuid(NOBODY);
-        seteuid(NOBODY);
-        setreuid(NOBODY,NOBODY);
-        chdir(path);
         execlp(runCmd,runCmd,NULL);
         exit(0);
     }
     else {
+        //printf("%d",pid);
         rusage usage;
-        int sig,status,result;
-        long long maxMem=0,tempMem=0;
-        long long usedTime;
-        pid_t pid2;
+        int sig,status,maxMem=0,tempMem=0,result;
+        long usedTime;
+        //pid_t cpid = wait4(pid,&status,options,&usage);
         if(maxMem==0) maxMem=getMem(pid);
         while(1) {
-            pid2=wait4(pid,&status,0,&usage);
+            //printf("[[%d]]",maxMem);
+            wait4(pid,&status,0,&usage);
             tempMem=getMem(pid);
             if(tempMem>maxMem)
                 maxMem=tempMem;
@@ -159,13 +159,13 @@ int main(int argc, const char * argv[]) {
             }
         }
         //finish up
-        chdir(path);
         FILE *res=fopen("result.json","w");
         usedTime=usage.ru_stime.tv_sec*1000+usage.ru_stime.tv_usec/1000;
         usedTime+=usage.ru_utime.tv_sec*1000+usage.ru_utime.tv_usec/1000;
         if(result==TLE) usedTime=timeLimit*1000;
-        fprintf(res,"{\"mem\":%lld,\"time\":%lld,\"res\":%d}\n",maxMem,usedTime,result);
+        fprintf(res,"{\"mem\":%d,\"time\":%ld,\"res\":%d}\n",maxMem,usedTime,result);
         //printf('%d %d %d %d',usage.ru_stime.tv_sec)
         fclose(res);
+        system("mv error.txt /judgeData/error.txt; mv out.txt /judgeData/out.txt; mv result.json /judgeData/result.json");
     }
 }
