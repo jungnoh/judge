@@ -64,7 +64,7 @@ var startJudge = function(submitID,userID,callback) {
             if(compileResult===0) {
               winston.info('['+submitID+'] Compile Failed');
               var errorMessage=fs.readFileSync(path.resolve(rootDir,'./judge_tmp/'+submitID+'/compile_error.txt'));
-              fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
+              //fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
               sql.updateCompileError(submitID,errorMessage,function(updateCompileErr,updateCompileResult) {
                 if(updateCompileErr) {
                   winston.info(updateCompileErr);
@@ -114,7 +114,7 @@ var startJudge = function(submitID,userID,callback) {
                     callback(judgeErr);
                     return;
                   }
-                  fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
+                  //fs.removeSync(path.resolve(rootDir,'./judge_tmp/'+submitID));
                   callback(null);
                   return;
                 });
