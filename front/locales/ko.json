@@ -81,7 +81,7 @@
 	"recentSubmissionMap": "최근 제출 그래프",
 	"submitsSoFar": "지금까지 %s번 제출함",
 	"logout": "로그아웃",
-	"submitHistory": "제출 통계",
+	"submitHistory": "제출 상황",
 	"problemID": "문제 번호",
 	"outputdesc": "출력 데이터 형식",
 	"inputdesc": "입력 데이터 형식",
@@ -139,5 +139,13 @@
 	"error": "오류",
 	"titleEmpty": "제목이 없습니다.",
 	"all": "전체",
-	"kueManage": "kueManage"
+	"kueManage": "Manage Kue",
+	"resultDetail": "채점 결과",
+	"judgeResult": "채점 결과",
+	"problemInfo": "문제 정보",
+	"sudoModeTitle": "#root@mitsuha.co",
+	"sudoProblems": "#root@mitsuha.co",
+	"sudoProblemAdd": "#root@mitsuha.co",
+	"sudoTypes": "#root@mitsuha.co",
+	"problemStats": "문제 통계"
 }

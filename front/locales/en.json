@@ -138,5 +138,8 @@
 	"save": "Save",
 	"error": "Error",
 	"titleEmpty": "Title is empty.",
-	"all": "All"
+	"all": "All",
+	"judgeResult": "Judge Result",
+	"problemInfo": "Problem Information",
+	"resultDetail": "Result Detail"
 }
