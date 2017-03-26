@@ -2,8 +2,8 @@ window.onload = function() {
   $('#btn-write').click(function(e) {
     //onclick="document.location.href='<%='/board/write'+(subject==undefined?'':('?subject='+subject))%>'"
     var res = {};
-    if(subject!=undefined) res['subject']=subject;
-    if(subjectProblem!=undefined) res['subjectProblem']=subjectProblem;
+    if(typeof subject!='undefined') res['subject']=subject;
+    if(typeof subjectProblem!='undefined') res['subjectProblem']=subjectProblem;
     document.location.href='/board/write?'+$.param(res);
   });
   $('#btn-prevpage').click(function(e) {

@@ -2,7 +2,7 @@
 echo -e "Enter MySQL root password: \c "
 read -s password
 sudo apt update
-sudo apt upgrade
+sudo apt upgrade -y
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password '"$password"
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password '"$password"
 sudo apt install -y --no-install-recommends git vim nodejs nodejs-legacy npm apt-transport-https ca-certificates curl software-properties-common redis-server mysql-server
