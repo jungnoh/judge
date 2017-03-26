@@ -247,8 +247,8 @@ module.exports = function(app)
       }
       else {
         for(var i=0;i<result.length;i++) {
-          //var now = moment(result[i].submit_time).utcOffset("+09:00").locale('ko');
-          var now = moment(result[i].submit_time).utcOffset("+09:00");
+          var now = moment(result[i].submit_time).utcOffset("+09:00").locale('ko');
+          //var now = moment(result[i].submit_time).utcOffset("+09:00");
           result[i].submit_time_text=now.fromNow();
           result[i].submit_time=now.format("YYYY.MM.DD A hh:mm:ss");
         }

@@ -47,7 +47,7 @@
               <% } %>
               <a class="list-group-item" href="<%= "/problems/"+id+"/submit" %>"><%=__("submit")%></a>
               <a class="list-group-item" href="<%= "/problems/"+id+"/stats" %>"><%=__("stats")%></a>
-              <a class="list-group-item" href="#source"><%=__("forum")%></a>
+              <a class="list-group-item" href="<%='/board?subject=qna&subjectProblem='+id%>"><%=__("forum")%></a>
           	</div>
       		</div>
           <div class="col-md-9">

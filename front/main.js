@@ -127,13 +127,13 @@ passport.use(new localStrategy({
   }
 ));
 passport.serializeUser(function(user, done) {
-    sql.userInfo_Username(user[0].id,function(err,result) {
-      if(err) {
-        console.error(err);
-        return done(err,null);
-      }
-      done(null, {id: result[0].user_id, username: user[0].id,nickname: result[0].nickname, permissions: result[0].permissions});
-    });
+  sql.userInfo_Username(user[0].id,function(err,result) {
+    if(err) {
+      console.error(err);
+      return done(err,null);
+    }
+    done(null, {id: result[0].user_id, username: user[0].id,nickname: result[0].nickname, permissions: result[0].permissions});
+  });
 });
 passport.deserializeUser(function(user, done) {
     done(null, user);
@@ -170,6 +170,7 @@ var router_main = require('./routes/main')(app);
 var router_user = require('./routes/user')(app);
 var router_prob = require('./routes/problems')(app);
 var router_sudo = require('./routes/sudo')(app);
+var router_sudo = require('./routes/board')(app);
 
 sql.getLanguages(function(err,result) {
   if(err) {

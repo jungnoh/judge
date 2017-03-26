@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <title><%=__("userInfo")%></title>
+    <%- include ./../head.ejs %>
+    <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/board/write.css">
+    <script src="/static/js/board/write.js"></script>
+  </head>
+  <body>
+    <%if(subjectProblem!=0){%><script>var subjectProblem=<%=subjectProblem%>, problemBoard=1;</script><%}%>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><%=__("judgeTitle")%></a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown active">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%=__("board")%>
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/board"><%=__("board")%></a></li>
+                <li><a href="/board/free"><%=__("free")%></a></li>
+                <li><a href="/board/code"><%=__("code")%></a></li>
+                <li><a href="/board/qna"><%=__("qna")%></a></li>
+                <li><a href="/board/help"><%=__("help")%></a></li>
+              </ul>
+            </li>
+            <li><a href="/problems"><%=__("problems")%></a></li>
+            <li><a href="/result"><%=__("submitHistory")%></a></li>
+            <li><a href="/rank"><%=__("rank")%></a></li>
+            <li><a href="#"><%=__("contests")%></a></li>
+          </ul>
+          <%- include ./../topbar-right.ejs %>
+        </div>
+      </div>
+    </nav>
+    <div class="container" id="div-content">
+      <div class="row">
+        <div class="page-header" id="div-post-header">
+          <h1><%=__("write")%> <small><%=myid.nickname%></small></h1>
+        </div>
+      </div>
+      <h4>
+      <%=__("subject")%>:
+      <%if(subjectProblem==0){%>
+        <select id="select-subject">
+          <option value="free"><%=__("free")%></option>
+          <option value="code"><%=__("code")%></option>
+          <option value="qna"><%=__("qna")%></option>
+          <option value="help"><%=__("help")%></option>
+        </select>
+      <%}else{%>
+        <%=__("qna")%> - <%=__("problemText",subjectProblem)%>
+      <%}%>
+    </h4>
+      <div class="row">
+        <div class="col">
+          <div class="input-group">
+            <span class="input-group-addon" id="title-title"><%=__("title")%></span>
+            <input type="text" class="form-control" id="input-title" aria-describedby="basic-addon3">
+          </div>
+        </div>
+      </div>
+      <div class="row" id="div-content-editor">
+        <div class="col">
+          <textarea name="contentEditor" id="editor-content" class="textarea-io" rows=20></textarea>
+        </div>
+      </div>
+      <div class="row" id="div-controls">
+        <div class="col">
+          <button type="button" class="btn btn-md btn-success" id="btn-submit"><%=__("submit")%></button>
+        </div>
+      </div>
+    </div>
+    <%- include ./../footer.ejs %>
+  </body>
+</html>

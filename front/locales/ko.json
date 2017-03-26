@@ -147,5 +147,21 @@
 	"sudoProblems": "#root@mitsuha.co",
 	"sudoProblemAdd": "#root@mitsuha.co",
 	"sudoTypes": "#root@mitsuha.co",
-	"problemStats": "문제 통계"
+	"problemStats": "문제 통계",
+	"userInfo": "userInfo",
+	"boardMainTitle": "boardMainTitle",
+	"free": "아무말 대잔치",
+	"code": "코드 이야기",
+	"qna": "질문과 답변",
+	"help": "이용문의",
+	"author": "글쓴이",
+	"written_time": "작성시간",
+	"notFoundMessage": "찾을 수 없습니다.",
+	"commentText": "댓글 %s개",
+	"board": "board",
+	"writeComment": "writeComment",
+	"erase": "erase",
+	"eraseAll": "eraseAll",
+	"write": "write",
+	"subject": "subject"
 }

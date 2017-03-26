@@ -36,6 +36,86 @@ function singleQuery(query, callback) {
 }
 
 module.exports = {
+  boardList: function(page, options, callback) {
+    var query='select * from board_post',queryCount=0;
+    if(options!=null) {
+      query+=' where ';
+      if(options.subjectProblem!==undefined) {
+        queryCount++;
+        query+='subject_problem='+mysql.escape(options.subjectProblem);
+      }
+      if(options.subject!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='subject='+mysql.escape(options.subject);
+      }
+    }
+    query+=' order by upload_time desc limit 25';
+    console.log(query);
+    singleQuery(query, function(err,result) {
+      callback(err,result);
+      return;
+    });
+  },
+  boardCount: function(page, options, callback) {
+    var query='select count(*) from board_post',queryCount=0;
+    if(options!=null) {
+      query+=' where ';
+      if(options.subjectProblem!==undefined) {
+        queryCount++;
+        query+='subject_problem='+mysql.escape(options.subjectProblem);
+      }
+      if(options.subject!==undefined) {
+        if(queryCount>0) query+=' and ';
+        queryCount++;
+        query+='subject='+mysql.escape(options.subject);
+      }
+    }
+    console.log(query);
+    singleQuery(query, function(err,result) {
+      callback(err,result[0]['count(*)']);
+      return;
+    });
+  },//sql.boardCommentAdd(req.user.id,req.user.nickname,req.body.subject,req.body.title,req.body.content,
+
+  boardPost: function(id, callback) {
+    singleQuery('select * from board_post where id='+mysql.escape(id), function(err,post) {
+      if(err) {
+        callback(err,null);
+        return;
+      }
+      callback(null, post[0]);
+    });
+  },
+  boardPostWrite: function(authorID, authorNick, subject, subjectProblem, title, content, callback) {
+    singleQuery('insert into board_post (`author`,`author_nick`,`subject`,`subject_problem`,`title`,`content`) values ('
+    +mysql.escape(authorID)+','+mysql.escape(authorNick)+','+mysql.escape(subject)+','+mysql.escape(subjectProblem)+','+mysql.escape(title)+','+mysql.escape(content)+')', function(err,result) {
+      callback(err,result.insertId);
+    });
+  },
+  boardComment: function(id, page, callback) {
+    singleQuery('select * from board_comment where parent_id='+mysql.escape(id)+' order by upload_time desc limit 20', function(err,comments) {
+      if(err) {
+        callback(err,null);
+        return;
+      }
+      callback(null,comments);
+    });
+  },
+  boardCommentAdd: function(postID, authorID, authorNick, content, callback) {
+    singleQuery('insert into board_comment (`parent_id`,`author_id`,`author_nick`,`content`) values ('+mysql.escape(postID)+','+mysql.escape(authorID)+','+mysql.escape(authorNick)+','+mysql.escape(content)+')', function(err) {
+      callback(err);
+    });
+  },
+  boardCommentCount: function(id, callback) {
+    singleQuery('select count(*) from board_comment where parent_id='+mysql.escape(id), function(err,result) {
+      if(err) {
+        callback(err,null);
+        return;
+      }
+      callback(null,result[0]['count(*)']);
+    });
+  },
   addType: function(title, desc, callback) {
     singleQuery('insert into types (`title`, `description`) values ('+mysql.escape(title)+','+mysql.escape(desc)+')', function(err,result) {
       callback(err,result.insertId);
