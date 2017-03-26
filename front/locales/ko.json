@@ -158,10 +158,11 @@
 	"written_time": "작성시간",
 	"notFoundMessage": "찾을 수 없습니다.",
 	"commentText": "댓글 %s개",
-	"board": "board",
-	"writeComment": "writeComment",
-	"erase": "erase",
-	"eraseAll": "eraseAll",
-	"write": "write",
-	"subject": "subject"
+	"board": "게시판",
+	"allPosts": "전체 게시물",
+	"writeComment": "댓글 쓰기",
+	"erase": "지우기",
+	"eraseAll": "모두 지우기",
+	"write": "쓰기",
+	"subject": "주제"
 }
