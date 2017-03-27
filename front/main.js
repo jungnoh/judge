@@ -17,6 +17,7 @@ var app               = express();
 var fileman           = require('./file-manager');
 var kue               = require('kue');
 var cluster           = require('cluster');
+var RedisStore        = require('connect-redis')(session)
 var NO_SSL            = false;
 'use strict';
 
@@ -98,7 +99,14 @@ if(cluster.isMaster) {
   });
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.text());
-  app.use(session({ secret: cookieKey, resave: true, saveUninitialized: true }));
+  app.use(session({
+    store: new RedisStore({
+      url: 'redis://localhost:6379'
+    }),
+    secret: cookieKey,
+    resave: true,
+    saveUninitialized: false
+  }));
   app.use(passport.initialize());
   app.use(passport.session());
 
