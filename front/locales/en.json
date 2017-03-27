@@ -141,5 +141,11 @@
 	"all": "All",
 	"judgeResult": "Judge Result",
 	"problemInfo": "Problem Information",
-	"resultDetail": "Result Detail"
+	"resultDetail": "Result Detail",
+	"board": "board",
+	"allPosts": "allPosts",
+	"free": "free",
+	"code": "code",
+	"qna": "qna",
+	"help": "help"
 }

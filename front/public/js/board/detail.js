@@ -67,14 +67,14 @@ window.onload = function() {
       alert(data);
     });
   });
-  $('#btn-delete-post').click(function(e)) {
+  $('#btn-delete-post').click(function(e) {
     $.ajax({
       url: '/board/post/'+id+'/delete',
       type: 'PUT'
     }).done(function(data) {
-      window.location.href = '/board/post';
+      window.location.href = '/board';
     }).fail(function(data) {
       alert(data);
     });
-  };
+  });
 }
