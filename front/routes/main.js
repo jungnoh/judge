@@ -2,7 +2,6 @@ var sql       = require('./../sql');
 var passport  = require('passport');
 var fs        = require('fs-extra');
 var judge     = require('./../judger/judge');
-var languages = require('./../tools/languages');
 var moment    = require('moment');
 var winston   = require('winston');
 var path      = require('path');
@@ -104,7 +103,7 @@ module.exports = function(app)
             found: 1,
             submitInfo: result[0],
             code: codeArrayString,
-            lang: languages
+            lang: global.lang
           });
         });
       });
@@ -254,7 +253,7 @@ module.exports = function(app)
         }
         res.render('judge-result', {
           myid: req.user,
-          lang: languages,
+          lang: global.lang,
           page: page,
           id: req.params.id,
           submits: result,

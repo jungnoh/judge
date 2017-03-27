@@ -8,7 +8,6 @@ var passport          = require('passport');
 var localStrategy     = require('passport-local').Strategy;
 var sql               = require('./sql');
 var path              = require('path');
-var languages         = require('./tools/languages');
 var MySQLSessionStore = require('express-mysql-session')(session);
 var i18n              = require('i18n');
 var fs                = require('fs-extra');
@@ -179,14 +178,15 @@ if(cluster.isMaster) {
   var router_prob = require('./routes/problems')(app);
   var router_sudo = require('./routes/sudo')(app);
   var router_sudo = require('./routes/board')(app);
-
   sql.getLanguages(function(err,result) {
     if(err) {
       console.error('Failed to get languages');
       console.error(err)
     }
+    global.lang = {};
     for(var i=0;i<result.length;i++) {
-      languages[result[i].codename]=result[i];
+      global.lang[result[i].codename]=result[i];
+      console.log('Loaded language '+result[i].codename);
     }
   });
   if(NO_SSL) {

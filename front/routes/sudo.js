@@ -2,7 +2,6 @@ var sql       = require('./../sql');
 var passport  = require('passport');
 var fs        = require('fs-extra');
 var judge     = require('./../judger/judge');
-var languages = require('./../tools/languages');
 var fileman   = require('./file-manager');
 var moment    = require('moment');
 var winston   = require('winston');

@@ -1,27 +1,26 @@
 var rootDir = __dirname+'/../..';
-var languages = require('./../tools/languages');
 module.exports = {
-  validLanguage: function(lang) {
-    return !(languages[lang]===undefined);
+  validLanguage: function(langList,lang) {
+    return !(langList[lang]===undefined);
   },
-  needsCompile: function(lang) {
-    return languages[lang].compile;
+  needsCompile: function(langList,lang) {
+    return langList[lang].compile;
   },
-  getSourceName: function(lang) {
-    return languages[lang].source_name;
+  getSourceName: function(langList,lang) {
+    return langList[lang].source_name;
   },
-  getRunArgs: function(lang,submitID,mem,time) {
+  getRunArgs: function(langList,lang,submitID,mem,time) {
     //{0} rootDir, {1} submitID, {2} mem, {3} time
     var args=[];
-    var lang_args=JSON.parse(languages[lang].run_command);
+    var lang_args=JSON.parse(langList[lang].run_command);
     for(var i=0;i<lang_args.length;i++) {
       args.push(buildCommand(lang_args[i],submitID,mem,time));
     }
     return args;
   },
-  getCompileArgs: function(lang, submitID) {
+  getCompileArgs: function(langList,lang, submitID) {
     var args=[];
-    var lang_args=JSON.parse(languages[lang].compile_command);
+    var lang_args=JSON.parse(langList[lang].compile_command);
     //console.log(lang_args);
     for(var i=0;i<lang_args.length;i++) {
       args.push(buildCommand(lang_args[i],submitID));

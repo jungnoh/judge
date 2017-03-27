@@ -2,7 +2,6 @@ var sql       = require('./../sql');
 var passport  = require('passport');
 var fs        = require('fs');
 var judge     = require('./../judger/judge');
-var languages = require('./../tools/languages');
 var i18n      = require('i18n');
 var moment    = require('moment');
 const intMax  = 2147483647;

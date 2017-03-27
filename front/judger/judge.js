@@ -9,13 +9,23 @@ var rootDir      = path.resolve(__dirname,'./../..');
 var kue          = require('kue');
 
 var judgeQueue = kue.createQueue();
+var langList={};
 judgeQueue.process('judge', 4, function(job, done){
-  startJudge(job.data.submitID,job.data.userID,done);
+  sql.getLanguages(function(err,result) {
+    if(err) {
+      console.error('Failed to get languages');
+      console.error(err)
+    }
+    for(var i=0;i<result.length;i++) {
+      langList[result[i].codename]=result[i];
+    }
+    startJudge(job.data.submitID,job.data.userID,done);
+  });
 });
 
 module.exports = function(submitID,userID,callback) {
   var job = judgeQueue.create('judge',{'submitID': submitID, 'userID': userID}).save();
-  job.on('complete', function(result){
+  job.on('complete', function(result) {
     console.log('Job completed with data ', result);
   }).on('failed attempt', function(errorMessage, doneAttempts){
     console.log('Job failed');
@@ -25,8 +35,6 @@ module.exports = function(submitID,userID,callback) {
     console.log('\r  job #' + job.id + ' ' + progress + '% complete with data ', data );
   });
 };
-
-
 var startJudge = function(submitID,userID,callback) {
   //Fetch Problem, Submit Information
   sql.submitInfo(submitID,function(submitInfoErr,submitResult) {
@@ -160,7 +168,7 @@ function judgeProblem(submitInfo,userID,probInfo,caseNo,mem,time,callback) {
     removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/error.txt'));
     removeIfExist(path.resolve(rootDir,'./judge_tmp/'+submitInfo.submit_id+'/result.json'));
     fs.copySync(path.resolve(rootDir+'/cases/'+probInfo.id+'/'+caseNo+'.in'),path.resolve(rootDir+'/judge_tmp/'+submitInfo.submit_id+'/data.in'));
-    cprocess.execFile('docker',compile_info.getRunArgs(submitInfo.lang,submitInfo.submit_id,probInfo.memory_limit,probInfo.time_limit), function(error,stdout,stderr) {
+    cprocess.execFile('docker',compile_info.getRunArgs(langList,submitInfo.lang,submitInfo.submit_id,probInfo.memory_limit,probInfo.time_limit), function(error,stdout,stderr) {
       console.log(stdout);
       console.error(stderr);
       var result_json=JSON.parse(fs.readFileSync(path.resolve(rootDir+'/judge_tmp/'+submitInfo.submit_id+'/result.json'),'utf8'));
@@ -248,13 +256,13 @@ function normalJudge(problemID, caseNo, result) {
 }
 function doCompile(submitID,lang,callback) {
   console.log('['+submitID+'] Compiling ');
-  if(!compile_info.validLanguage(lang)) {
+  if(!compile_info.validLanguage(langList,lang)) {
     callback(2);
     return;
   }
-  else if(compile_info.needsCompile(lang)) {
-    fs.copySync(path.resolve(rootDir+'/usercode/'+submitID),path.resolve(rootDir+'/judge_tmp/'+submitID+'/'+compile_info.getSourceName(lang)));
-    cprocess.execFile('docker',compile_info.getCompileArgs(lang,submitID), function(error,stdout,stderr) {
+  else if(compile_info.needsCompile(langList,lang)) {
+    fs.copySync(path.resolve(rootDir+'/usercode/'+submitID),path.resolve(rootDir+'/judge_tmp/'+submitID+'/'+compile_info.getSourceName(langList,lang)));
+    cprocess.execFile('docker',compile_info.getCompileArgs(langList,lang,submitID), function(error,stdout,stderr) {
       console.log(stdout);
       console.error(stderr);
       if(error) {

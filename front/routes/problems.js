@@ -2,7 +2,6 @@ var sql       = require('./../sql');
 var passport  = require('passport');
 var fs        = require('fs-extra');
 var judge     = require('./../judger/judge');
-var languages = require('./../tools/languages');
 
 module.exports = function(app) {
   app.post('/problems/:id/submit',function(req,res) {
