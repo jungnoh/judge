@@ -37,6 +37,11 @@ function singleQuery(query, callback) {
 
 module.exports = {
   boardList: function(page, options, callback) {
+    var offset=0;
+    if(page<1) page=1;
+    if(page!==null) {
+      offset=(page-1)*25;
+    }
     var query='select * from board_post',queryCount=0;
     if(options!=null) {
       query+=' where ';
@@ -50,8 +55,7 @@ module.exports = {
         query+='subject='+mysql.escape(options.subject);
       }
     }
-    query+=' order by upload_time desc limit 25';
-    console.log(query);
+    query+=' order by upload_time desc limit 25 offset '+mysql.escape(offset);
     singleQuery(query, function(err,result) {
       callback(err,result);
       return;
@@ -71,13 +75,11 @@ module.exports = {
         query+='subject='+mysql.escape(options.subject);
       }
     }
-    console.log(query);
     singleQuery(query, function(err,result) {
       callback(err,result[0]['count(*)']);
       return;
     });
   },//sql.boardCommentAdd(req.user.id,req.user.nickname,req.body.subject,req.body.title,req.body.content,
-
   boardPost: function(id, callback) {
     singleQuery('select * from board_post where id='+mysql.escape(id), function(err,post) {
       if(err) {
@@ -93,8 +95,38 @@ module.exports = {
       callback(err,result.insertId);
     });
   },
+  boardPostEdit: function(id, title, content, callback) {
+    singleQuery('update board_post set `title`='+mysql.escape(title)+' `content`='+mysql.escape(content)+' where `id`='+mysql.escape(id), function(err) {
+      callback(err);
+    });
+  },
+  boardPostSudoEdit: function(id, subject, subjectProblem, title, content, callback) {
+    singleQuery('update board_post set `subject`='+mysql.escape(subject)+' `subject_problem`='+mysql.escape(subjectProblem)+' `title`='+mysql.escape(title)+' `content`='+mysql.escape(content)+' where `id`='+mysql.escape(id), function(err) {
+      callback(err);
+    })
+  },
+  boardPostDelete: function(id, callback) {
+    singleQuery('delete from board_post where id='+mysql.escape(id), function(err) {
+      if(err) {
+        callback(err);
+        return;
+      }
+      singleQuery('delete from board_comment where parent_id='+mysql.escape(id), function(err2) {
+        if(err2) {
+          callback(err2);
+          return;
+        }
+        callback(null);
+      });
+    });
+  },
   boardComment: function(id, page, callback) {
-    singleQuery('select * from board_comment where parent_id='+mysql.escape(id)+' order by upload_time desc limit 20', function(err,comments) {
+    var offset=0;
+    if(page<1) page=1;
+    if(page!==null) {
+      offset=(page-1)*25;
+    }
+    singleQuery('select * from board_comment where parent_id='+mysql.escape(id)+' order by upload_time desc limit 20 offset '+mysql.escape(offset), function(err,comments) {
       if(err) {
         callback(err,null);
         return;
@@ -285,7 +317,6 @@ module.exports = {
             var start=0,end=correct.length-1,value=-1;
             //binary search
             while(start<=end) {
-              console.log(start+" "+end);
               var mid=Math.floor((start+end)/2);
               if(correct[mid]===result[i].problem_id) {
                 value=mid;

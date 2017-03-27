@@ -67,6 +67,13 @@
               <div class="page-header" id="div-comment-header">
                 <h3><%=__("commentText",post.comment_count)%></h3>
               </div>
+                <div class="post-controls">
+                  <%if(isPrivileged) {%>
+                    <button type="button" class="btn btn-sm btn-danger" id="btn-delete-post"><%=__("delete")%></button>
+                    <button type="button" class="btn btn-sm btn-warning" id="btn-edit-post"><%=__("edit")%></button>
+                  <%}%>
+                  <button type="button" class="btn btn-sm btn-info" id="btn-link-post"><%=__("copyLink")%></button>
+                </div>
               <div id="div-comments">
                 <%for(var i=0;i<comments.length;i++) {%>
                   <div class="panel panel-default">

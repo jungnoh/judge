@@ -164,5 +164,10 @@
 	"erase": "지우기",
 	"eraseAll": "모두 지우기",
 	"write": "쓰기",
-	"subject": "주제"
+	"subject": "주제",
+	"postDetail": "postDetail",
+	"": "",
+	"copyLink": "copyLink",
+	"delete": "delete",
+	"edit": "edit"
 }

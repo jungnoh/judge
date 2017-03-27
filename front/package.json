@@ -4,6 +4,7 @@
   "dependencies": {
     "bcrypt": "^1.0.2",
     "body-parser": "^1.15.2",
+    "cluster": "^0.7.7",
     "connect-redis": "^3.2.0",
     "cookie-parser": "^1.4.3",
     "ejs": "^2.5.5",

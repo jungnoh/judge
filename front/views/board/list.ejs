@@ -51,25 +51,30 @@
         <div class="col-md-3">
           <div class="list-group" id="div-sidebar" data-spy="affix">
             <a class="list-group-item item-types active" data-type="-1"><%=__("board")%></a>
+            <a class="list-group-item" href="/board"><%=__("allPosts")%></a></li>
+            <a class="list-group-item" href="/board/free"><%=__("free")%></a></li>
+            <a class="list-group-item" href="/board/code"><%=__("code")%></a></li>
+            <a class="list-group-item" href="/board/qna"><%=__("qna")%></a></li>
+            <a class="list-group-item" href="/board/help"><%=__("help")%></a></li>
         	</div>
     		</div>
         <div class="col-md-9">
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>#</th>
-                <th><%=__("title")%></th>
-                <th><%=__("author")%></th>
-                <th><%=__("written_time")%></th>
+                <th class="hidden-xs hidden-sm col-md-1">#</th>
+                <th class="col-xs-6"><%=__("title")%></th>
+                <th class="col-xs-3"><%=__("author")%></th>
+                <th class="hidden-xs hidden-sm col-md-2"><%=__("written_time")%></th>
               </tr>
             </thead>
             <tbody>
               <%for(var i=0;i<posts.length;i++) {%>
                 <tr>
-                  <td><%=posts[i].id%></td>
+                  <td class="hidden-xs"><%=posts[i].id%></td>
                   <td><a href="<%='/board/post/'+posts[i].id%>"><%=posts[i].title%></a></td>
                   <td><a href="<%='/user/'+posts[i].author%>"><%=posts[i].author_nick%></a></td>
-                  <td data-toggle="tooltip" data-placement="left" title="<%=posts[i].upload_time%>"><%=posts[i].upload_time_text%></td>
+                  <td class="col-time" data-toggle="tooltip" data-placement="left" title="<%=posts[i].upload_time%>"><%=posts[i].upload_time_text%></td>
                 </tr>
               <%}%>
             </tbody>

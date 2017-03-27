@@ -56,12 +56,12 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th></th>
-                <th>#</th>
-                <th><%=__("problemName")%></th>
-                <th><%=__("acceptCount")%></th>
-                <th><%=__("submitCount")%></th>
-                <th><%=__("acRate")%></th>
+                <th class="col-xs-1"></th>
+                <th class="col-xs-1">#</th>
+                <th class="col-xs-4"><%=__("problemName")%></th>
+                <th class="col-xs-2 hidden-xs hidden-sm"><%=__("acceptCount")%></th>
+                <th class="col-xs-2 hidden-xs hidden-sm"><%=__("submitCount")%></th>
+                <th class="col-xs-2"><%=__("acRate")%></th>
               </tr>
             </thead>
             <tbody>
@@ -70,8 +70,8 @@
                   <td class="td-result"><%if(solved.indexOf(problems[i].id)>-1){%><span class="label label-success">Y</span><%}else if(tried.indexOf(problems[i].id)>-1){%><span class="label label-danger">N</span><%}%></td>
                   <td><%=problems[i].id%></td>
                   <td><a href=<%= "/problems/"+problems[i].id %>><%=problems[i].title%></a></td>
-                  <td><%=problems[i].accept_count%></td>
-                  <td><%=problems[i].submit_count%></td>
+                  <td class="hidden-xs hidden-sm"><%=problems[i].accept_count%></td>
+                  <td class="hidden-xs hidden-sm"><%=problems[i].submit_count%></td>
                   <td>
                     <%if(problems[i].submit_count>0) {%>
                        <%=((problems[i].accept_count*100)/problems[i].submit_count).toFixed(0)+"%" %>

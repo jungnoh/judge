@@ -21,9 +21,27 @@ module.exports = function(app)
       subjectProblem: (req.query.subjectProblem==undefined||req.query.subjectProblem==null)?0:req.query.subjectProblem
     });
   });
+  app.put('/board/post/:id/delete',function(req,res) {
+    sql.boardPost(req.params.id, function(err,post) {
+      if(err) {
+        res.status(500).end('Server Error');
+      }
+      if(post==undefined||post==null) {
+        res.status(404).end('Post not Found');
+      }
+      if(req.user==null?false:(req.user.id==post.author||((req.user.permissions>>3)%2))) {
+        sql.boardPostDelete(req.params.id, function(err2) {
+          if(err2) res.status(500).end('Server Error');
+          else res.status(200).end('Ok');
+        });
+      } else {
+        res.status(403).end('Unauthorized');
+      }
+    });
+  });
   app.post('/board/post/:id/comment',function(req,res) {
     if(req.user==null||req.user==undefined) {
-      res.status(304).end('Unauthorized');
+      res.status(403).end('Unauthorized');
       return;
     }
     sql.boardCommentAdd(req.params.id,req.user.id,req.user.nickname,req.body.content, function(err) {
@@ -33,7 +51,7 @@ module.exports = function(app)
   });
   app.post('/board/post/write',function(req,res) {
     if(req.user==null||req.user==undefined) {
-      res.status(304).end('Unauthorized');
+      res.status(403).end('Unauthorized');
       return;
     }
     var subjectProblem=0;
@@ -62,6 +80,7 @@ module.exports = function(app)
       post.upload_time=now.format("YYYY.MM.DD A hh:mm:ss");
       var cpage=1;
       if(req.query.cpage!=undefined) cpage=parseInt(req.query.cpage);
+      if(cpage<1) cpage=1;
       sql.boardComment(req.params.id,cpage,function(err2,comments) {
         if(err2) {
           res.render('./../error.html');
@@ -84,6 +103,7 @@ module.exports = function(app)
           subject: req.query.subject,
           found: true,
           post: post,
+          isPrivileged: req.user==null?false:(req.user.id==post.author||((req.user.permissions>>3)%2)),
           cpage: cpage,
           comments: comments
         });
@@ -105,6 +125,7 @@ module.exports = function(app)
   app.get('/board',function(req,res) {
     var options={},elementCount=0,page=1;
     if(req.query.page!=undefined) page=parseInt(req.query.page);
+    if(page<1) page=1;
     if(req.query.subjectProblem!=undefined) {
       options["subjectProblem"]=req.query.subjectProblem;
       elementCount++;

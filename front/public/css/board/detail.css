@@ -51,3 +51,11 @@
   padding-top: 10px;
   text-align: right;
 }
+#div-post-body {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#div-comment-write {
+  padding-left: 15px;
+  padding-right: 15px;  
+}
