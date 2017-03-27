@@ -68,6 +68,9 @@ window.onload = function() {
     });
   });
   $('#btn-delete-post').click(function(e) {
+    if(!confirm('정말로 삭제하시겠습니까?') {
+      return;
+    }
     $.ajax({
       url: '/board/post/'+id+'/delete',
       type: 'PUT'
