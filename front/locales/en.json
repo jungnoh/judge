@@ -142,10 +142,10 @@
 	"judgeResult": "Judge Result",
 	"problemInfo": "Problem Information",
 	"resultDetail": "Result Detail",
-	"board": "board",
-	"allPosts": "allPosts",
-	"free": "free",
-	"code": "code",
-	"qna": "qna",
-	"help": "help"
+	"board": "Forum",
+	"allPosts": "All Posts",
+	"free": "Anything",
+	"code": "C",
+	"qna": "Q&A",
+	"help": "Help"
 }

@@ -148,8 +148,8 @@
 	"sudoProblemAdd": "#root@mitsuha.co",
 	"sudoTypes": "#root@mitsuha.co",
 	"problemStats": "문제 통계",
-	"userInfo": "userInfo",
-	"boardMainTitle": "boardMainTitle",
+	"userInfo": "사용자 정보",
+	"boardMainTitle": "게시판",
 	"free": "아무말 대잔치",
 	"code": "코드 이야기",
 	"qna": "질문과 답변",
@@ -166,8 +166,7 @@
 	"write": "쓰기",
 	"subject": "주제",
 	"postDetail": "postDetail",
-	"": "",
-	"copyLink": "copyLink",
-	"delete": "delete",
-	"edit": "edit"
+	"copyLink": "링크 복사",
+	"delete": "삭제",
+	"edit": "편집"
 }
