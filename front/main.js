@@ -96,8 +96,8 @@ if(cluster.isMaster) {
     directory: __dirname + '/locales',
     queryParameter: 'lang'
   });
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.text());
+  app.use(bodyParser.urlencoded({ extended: true, limit: '512mb' }));
+  app.use(bodyParser.text({limit: '512mb'}));
   app.use(session({
     store: new RedisStore({
       url: 'redis://localhost:6379'

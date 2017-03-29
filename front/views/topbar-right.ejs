@@ -6,6 +6,9 @@
 <% } else { %>
   <ul id="navbar-userinfo" class="nav navbar-nav navbar-right">
     <li><a href=<%="/user/"+myid.id%> id="navbar-me-btn"><span class="glyphicon glyphicon-heart"></span> <%= myid.nickname %></a></li>
+    <%if((myid.permissions>>2)%2) {%>
+      <li><a href="/sudo" id="navbar-login-btn"><span class="glyphicon glyphicon-cog"></span> <%=__("menuSudoMain")%></a></li>
+    <%}%>
     <li><a href="/auth/logout" id="navbar-logout-btn"><span class="glyphicon glyphicon-off"></span> <%=__("logout")%></a></li>
   </ul>
 <% } %>

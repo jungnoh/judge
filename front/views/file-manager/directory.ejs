@@ -31,6 +31,7 @@
 			</form>
 			<a id="upload-file">upload file</a>
 			<a id="new-file">new file</a>
+			<a id="return" href="/sudo">return to root</a>
 		</div>
 		<div id="main">
 			<ul class="dir">
@@ -41,7 +42,7 @@
 		</div>
 		<script>
 			document.getElementById('new-file').onclick = function () {
-			      var filename = prompt('New file:', 'index.md');
+			      var filename = prompt('New file:', '');
 			      if (filename) {
 			        var r = new XMLHttpRequest();
 			        r.open('PUT', '<%=directory.rawUrl%>'+'/'+encodeURIComponent(filename));
