@@ -21,7 +21,7 @@ var NO_SSL            = false;
 'use strict';
 
 NO_SSL=process.argv[2]==='-nossl';
-/*
+
 if(cluster.isMaster) {
   // Count the machine's CPUs
   var cpuCount = require('os').cpus().length;
@@ -29,8 +29,8 @@ if(cluster.isMaster) {
   for (var i=0;i<1; i++) {
       cluster.fork();
   }
-} else {*/
-  //console.log('Worker %d running!', cluster.worker.id);
+} else {
+  console.log('Worker %d running!', cluster.worker.id);
   // returns an instance of node-greenlock with additional helper methods
   var lex=null;
   if(!NO_SSL) {
@@ -204,4 +204,4 @@ if(cluster.isMaster) {
       console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
     });
   }
-//}
+}
