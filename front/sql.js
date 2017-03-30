@@ -487,7 +487,7 @@ module.exports = {
       else callback(null,result);
     });
   },
-  updateCompileError: function(submit_id,msg,callback) {
+  updateJudgeError: function(submit_id,msg,callback) {
     singleQuery('update submit_history set error_msg='+mysql.escape(msg)+' where submit_id='+mysql.escape(submit_id), function(err,result) {
       if(err) callback(err,null);
       else callback(null,result);

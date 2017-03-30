@@ -147,5 +147,6 @@
 	"free": "Anything",
 	"code": "C",
 	"qna": "Q&A",
-	"help": "Help"
+	"help": "Help",
+	"resultErrorDiff": "Output Difference (Read <a href=\"https://unix.stackexchange.com/questions/81998/understanding-of-diff-output\">here</a> for help)"
 }

@@ -51,6 +51,12 @@ module.exports = function(app)
     });
   });
   app.get('/result/detail/:id',function(req,res) {
+    if(typeof req.user==="undefined"||req.user===null) {
+      res.render('unauthorized', {
+        myid: req.user
+      });
+      return;
+    }
     var submitID=0;
     if(!isNaN(req.params.id)) {
       submitID=parseInt(req.params.id,10);
@@ -70,6 +76,12 @@ module.exports = function(app)
           res.render('result-detail', {
             myid: req.user,
             found: 0
+          });
+          return;
+        }
+        else if(result[0].submit_user_id!=req.user.user_id&&!((req.user.permissions>>3)%2)) {
+          res.render('unauthorized', {
+            myid: req.user
           });
           return;
         }

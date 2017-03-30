@@ -109,7 +109,11 @@ CREATE TABLE `users` (
   `ac_rate` double GENERATED ALWAYS AS (coalesce(((`ac_count` * 100) / nullif(`submit_count`,0)),0)) VIRTUAL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8;
-create trigger comment_add before insert on board_comment
-for each row update board_post set comment_count=comment_count+1 where id=NEW.parent_id;
-create trigger comment_remove before delete on board_comment
-for each row update board_post set comment_count=comment_count-1 where id=OLD.parent_id;
+CREATE TRIGGER `add_comment_count` AFTER INSERT ON `board_comment`
+ FOR EACH ROW update board_post set `comment_count`=`comment_count`+1 where `id`=NEW.parent_id;
+CREATE TRIGGER `append_submit_count_stat` BEFORE INSERT ON `submit_history`
+ FOR EACH ROW update problem_stats set `submit_count`=`submit_count`+1 where `problem_id`=NEW.problem_id;
+CREATE TRIGGER `append_submit_count_prob` BEFORE INSERT ON `submit_history`
+ FOR EACH ROW update problems set `submit_count`=`submit_count`+1 where `id`=NEW.problem_id;
+CREATE TRIGGER `add_comment_remove` BEFORE DELETE ON `board_comment`
+ FOR EACH ROW UPDATE board_post SET `comment_count`=`comment_count`-1 WHERE `id`=OLD.parent_id;

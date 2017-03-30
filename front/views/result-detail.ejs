@@ -115,6 +115,12 @@
             <%=submitInfo.error_msg%>
           </div>
         <% } %>
+        <% if(submitInfo.result===6) { %>
+          <div class="alert alert-warning" role="alert">
+            <h4><%-__("resultErrorDiff")%></h4>
+            <%-submitInfo.error_msg.replace(/\n/gi, '<br>')%>
+          </div>
+        <% } %>
       <% } %>
     </div>
     <%- include footer.ejs %>

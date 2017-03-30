@@ -169,5 +169,6 @@
 	"copyLink": "링크 복사",
 	"delete": "삭제",
 	"edit": "편집",
-	"": ""
+	"": "",
+	"resultErrorDiff": "Output Difference (Read <a href=\"https://unix.stackexchange.com/questions/81998/understanding-of-diff-output\">here</a> for help)"
 }
